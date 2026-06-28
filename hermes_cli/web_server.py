@@ -2493,6 +2493,40 @@ def _dashboard_spawn_executable() -> str:
     return exe
 
 
+def _dashboard_spawn_details() -> Tuple[str, Dict[str, str]]:
+    """Windowless interpreter + env overlay for detached dashboard actions.
+
+    On Windows the venv ``Scripts\\pythonw.exe`` is a uv launcher shim that
+    re-execs the *base* console ``python.exe`` — which allocates a conhost and
+    flashes a terminal even under ``CREATE_NO_WINDOW``. ``hermes gateway`` actions
+    spawned from the dashboard (notably the "restart gateway" button) therefore
+    flash unless we launch the base ``pythonw.exe`` directly. Reuse the gateway's
+    own resolver so this matches the (already windowless) ``_spawn_detached``
+    path, returning ``(executable, env_overlay)`` where the overlay carries the
+    ``PYTHONPATH``/``VIRTUAL_ENV`` the base interpreter needs to import
+    ``hermes_cli`` without the venv launcher. Falls back to the simple sibling
+    ``pythonw.exe`` on any resolution failure. ``({sys.executable}, {})`` on POSIX.
+    """
+    if sys.platform != "win32":
+        return sys.executable, {}
+    try:
+        from hermes_cli.gateway import PROJECT_ROOT, get_python_path
+        from hermes_cli.gateway_windows import _resolve_detached_python
+
+        executable, venv_dir, extra_pythonpath = _resolve_detached_python(get_python_path())
+        entries = [str(PROJECT_ROOT), *extra_pythonpath]
+        existing = os.environ.get("PYTHONPATH", "")
+        if existing:
+            entries.append(existing)
+        overlay = {
+            "VIRTUAL_ENV": str(venv_dir),
+            "PYTHONPATH": os.pathsep.join(e for e in entries if e),
+        }
+        return executable, overlay
+    except Exception:
+        return _dashboard_spawn_executable(), {}
+
+
 def _spawn_hermes_action(subcommand: List[str], name: str) -> subprocess.Popen:
     """Spawn ``hermes <subcommand>`` detached and record the Popen handle.
 
@@ -2507,14 +2541,15 @@ def _spawn_hermes_action(subcommand: List[str], name: str) -> subprocess.Popen:
         f"\n=== {name} started {time.strftime('%Y-%m-%d %H:%M:%S')} ===\n".encode()
     )
 
-    cmd = [_dashboard_spawn_executable(), "-m", "hermes_cli.main", *subcommand]
+    spawn_exe, spawn_env_overlay = _dashboard_spawn_details()
+    cmd = [spawn_exe, "-m", "hermes_cli.main", *subcommand]
 
     popen_kwargs: Dict[str, Any] = {
         "cwd": str(PROJECT_ROOT),
         "stdin": subprocess.DEVNULL,
         "stdout": log_file,
         "stderr": subprocess.STDOUT,
-        "env": {**os.environ, "HERMES_NONINTERACTIVE": "1"},
+        "env": {**os.environ, "HERMES_NONINTERACTIVE": "1", **spawn_env_overlay},
     }
     if sys.platform == "win32":
         popen_kwargs["creationflags"] = windows_detach_flags()
