@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils'
 import { upsertDesktopActionTask } from '@/store/activity'
 import { $pinnedSessionIds, pinSession, unpinSession } from '@/store/layout'
 import { $sessions, sessionPinId } from '@/store/session'
+import { $desktopVersion } from '@/store/updates'
 
 import { useRefreshHotkey } from '../hooks/use-refresh-hotkey'
 import { useRouteEnumParam } from '../hooks/use-route-enum-param'
@@ -110,6 +111,8 @@ export function CommandCenterView({ initialSection, onClose, onDeleteSession, on
   const cc = t.commandCenter
   const sessions = useStore($sessions)
   const pinnedSessionIds = useStore($pinnedSessionIds)
+  const desktopVersion = useStore($desktopVersion)
+  const isPackaged = desktopVersion?.isPackaged ?? false
 
   const [section, setSection] = useRouteEnumParam('section', SECTIONS, initialSection ?? 'sessions')
 
@@ -385,9 +388,11 @@ export function CommandCenterView({ initialSection, onClose, onDeleteSession, on
                         <Button onClick={() => void runSystemAction('restart')} size="xs" variant="text">
                           {cc.restartGateway}
                         </Button>
-                        <Button onClick={() => void runSystemAction('update')} size="xs" variant="textStrong">
-                          {cc.updateHermes}
-                        </Button>
+                        {!isPackaged && (
+                          <Button onClick={() => void runSystemAction('update')} size="xs" variant="textStrong">
+                            {cc.updateHermes}
+                          </Button>
+                        )}
                       </div>
                     </div>
                     {systemAction && (

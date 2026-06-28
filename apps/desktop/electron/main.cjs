@@ -30661,7 +30661,8 @@ ipcMain.handle("hermes:version", async () => ({
   electronVersion: process.versions.electron,
   nodeVersion: process.versions.node,
   platform: process.platform,
-  hermesRoot: resolveUpdateRoot()
+  hermesRoot: resolveUpdateRoot(),
+  isPackaged: IS_PACKAGED
 }));
 function uninstallVenvPython() {
   return getVenvPython(VENV_ROOT);

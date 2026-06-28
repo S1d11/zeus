@@ -254,6 +254,7 @@ export interface DesktopVersionInfo {
   nodeVersion: string
   platform: string
   hermesRoot: string
+  isPackaged?: boolean
 }
 
 export type DesktopUninstallMode = 'full' | 'gui' | 'lite'

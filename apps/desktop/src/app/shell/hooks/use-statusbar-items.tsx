@@ -182,10 +182,14 @@ export function useStatusbarItems({
     const behind = updateStatus?.behind ?? 0
     const applying = updateApply.applying || updateApply.stage === 'restart'
     const remote = connection?.mode === 'remote'
+    // For packaged (NSIS) installs, the git-based updater is irrelevant —
+    // electron-updater handles updates via GitHub releases. Hide the behind
+    // indicator and don't open the git update overlay.
+    const isPackaged = desktopVersion?.isPackaged ?? false
 
     const version = appVersion ? `v${appVersion}` : (sha ?? copy.unknown)
     const base = remote ? copy.clientLabel(appVersion ?? sha ?? copy.unknown) : version
-    const behindHint = !applying && behind > 0 ? ` (+${behind})` : ''
+    const behindHint = !applying && behind > 0 && !isPackaged ? ` (+${behind})` : ''
 
     const label = applying
       ? `${base} · ${updateApply.stage === 'restart' ? copy.restart : copy.update}`
@@ -193,7 +197,7 @@ export function useStatusbarItems({
 
     const tooltip = [
       applying ? updateApply.message || copy.updateInProgress : null,
-      !applying && behind > 0 && copy.commitsBehind(behind, updateStatus?.branch ?? '...'),
+      !applying && behind > 0 && !isPackaged && copy.commitsBehind(behind, updateStatus?.branch ?? '...'),
       appVersion && copy.desktopVersion(appVersion),
       sha && copy.commit(sha),
       updateStatus?.branch && copy.branch(updateStatus.branch)
@@ -202,18 +206,25 @@ export function useStatusbarItems({
       .join(' · ')
 
     return {
-      className: !applying && behind > 0 ? 'text-primary hover:text-primary' : undefined,
+      className: !applying && behind > 0 && !isPackaged ? 'text-primary hover:text-primary' : undefined,
       detail: appVersion && sha && !applying && !remote ? sha : undefined,
       hidden: !appVersion && !sha,
       icon: applying ? <Loader2 className="size-3 animate-spin" /> : <Hash className="size-3" />,
       id: 'version-client',
       label,
-      onSelect: () => openUpdateOverlayFor('client'),
+      onSelect: () => {
+        if (isPackaged) {
+          return  // No git-based overlay for packaged installs
+        }
+
+        openUpdateOverlayFor('client')
+      },
       title: tooltip || undefined,
       variant: 'action'
     }
   }, [
     desktopVersion?.appVersion,
+    desktopVersion?.isPackaged,
     connection?.mode,
     copy,
     updateApply.applying,

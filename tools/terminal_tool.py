@@ -928,7 +928,10 @@ from tools.environments.ssh import SSHEnvironment as _SSHEnvironment
 from tools.environments.docker import DockerEnvironment as _DockerEnvironment
 from tools.environments.modal import ModalEnvironment as _ModalEnvironment
 from tools.environments.managed_modal import ManagedModalEnvironment as _ManagedModalEnvironment
-from tools.environments.powershell import PowerShellEnvironment as _PowerShellEnvironment
+try:
+    from tools.environments.powershell import PowerShellEnvironment as _PowerShellEnvironment
+except ImportError:
+    _PowerShellEnvironment = None  # type: ignore[assignment]
 from tools.managed_tool_gateway import is_managed_tool_gateway_ready
 import sys
 
@@ -1387,6 +1390,12 @@ def _create_environment(env_type: str, image: str, cwd: str, timeout: int,
         return _LocalEnvironment(cwd=cwd, timeout=timeout)
 
     elif env_type == "powershell":
+        if _PowerShellEnvironment is None:
+            raise RuntimeError(
+                "PowerShell environment backend is not available. "
+                "The 'tools.environments.powershell' module is missing. "
+                "Use 'local' instead, or install the powershell backend."
+            )
         return _PowerShellEnvironment(cwd=cwd, timeout=timeout)
     
     elif env_type == "docker":

@@ -166,6 +166,13 @@ export function maybeNotifyUpdateAvailable(status: DesktopUpdateStatus | null) {
     return
   }
 
+  // For packaged (NSIS) installs, the git-based updater is irrelevant —
+  // electron-updater handles updates via GitHub releases. Don't show the
+  // git-based "commits behind" toast.
+  if ($desktopVersion.get()?.isPackaged) {
+    return
+  }
+
   if (isUpdateToastSnoozed()) {
     return
   }
@@ -290,6 +297,12 @@ export async function checkUpdates(): Promise<DesktopUpdateStatus | null> {
   const bridge = window.hermesDesktop?.updates
 
   if (!bridge || $updateChecking.get()) {
+    return $updateStatus.get()
+  }
+
+  // For packaged (NSIS) installs, skip the git-based update check entirely —
+  // electron-updater handles updates via GitHub releases.
+  if ($desktopVersion.get()?.isPackaged) {
     return $updateStatus.get()
   }
 

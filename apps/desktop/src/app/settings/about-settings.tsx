@@ -53,6 +53,9 @@ export function AboutSettings() {
   const apply = useStore($updateApply)
   const checking = useStore($updateChecking)
   const [justChecked, setJustChecked] = useState(false)
+  // For packaged (NSIS) installs, the git-based updater is irrelevant —
+  // electron-updater handles updates via GitHub releases.
+  const isPackaged = version?.isPackaged ?? false
 
   // The version atom is loaded once at app boot, which makes About show a
   // stale number after a self-update (the running binary is current, the
@@ -108,73 +111,105 @@ export function AboutSettings() {
       <div className="mx-auto mt-4 w-full max-w-2xl">
         <SectionHeading icon={RefreshCw} title={a.updates} />
 
-        <div
-          className={cn(
-            'rounded-xl border px-4 py-3 text-sm',
-            statusTone === 'available' && 'border-primary/30 bg-primary/5 text-foreground',
-            statusTone === 'error' && 'border-destructive/35 bg-destructive/5 text-destructive',
-            statusTone === 'idle' && 'border-border/70 bg-muted/20 text-foreground'
-          )}
-        >
-          <div className="flex items-start gap-2">
-            {statusTone === 'available' ? (
-              <Codicon className="mt-0.5 size-4 shrink-0 text-primary" name="cloud-download" size="1rem" />
-            ) : statusTone === 'error' ? null : (
+        {isPackaged ? (
+          <div className="rounded-xl border border-border/70 bg-muted/20 px-4 py-3 text-sm text-muted-foreground">
+            <div className="flex items-start gap-2">
               <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-            )}
-            <div className="min-w-0">
-              <p className="font-medium">{statusLine}</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {a.lastChecked(relativeTime(status?.fetchedAt, a))}
-                {justChecked && !checking ? a.justNowSuffix : ''}
-              </p>
+              <div className="min-w-0">
+                <p className="font-medium text-foreground">Updates are handled automatically</p>
+                <p className="mt-1 text-xs">
+                  Zeus checks for new versions from GitHub Releases and installs them automatically.
+                </p>
+              </div>
+            </div>
+            <div className="mt-3 flex flex-wrap items-center gap-4">
+              <Button asChild className="ml-auto" size="sm" variant="text">
+                <a
+                  href={RELEASE_NOTES_URL}
+                  onClick={event => {
+                    event.preventDefault()
+                    void window.hermesDesktop?.openExternal?.(RELEASE_NOTES_URL)
+                  }}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <ExternalLink className="size-3" />
+                  {a.releaseNotes}
+                </a>
+              </Button>
             </div>
           </div>
-
-          <div className="mt-3 flex flex-wrap items-center gap-4">
-            <Button
-              disabled={checking || applying || !supported}
-              onClick={() => void handleCheck()}
-              size="sm"
-              variant="textStrong"
-            >
-              {checking ? <Loader2 className="size-3 animate-spin" /> : <RefreshCw className="size-3" />}
-              {checking ? a.checking : a.checkNow}
-            </Button>
-
-            {behind > 0 && supported && !applying && (
-              <>
-                <Button onClick={() => startActiveUpdate()} size="sm">
-                  {a.updateNow}
-                </Button>
-                <Button onClick={() => openUpdatesWindow()} size="sm" variant="textStrong">
-                  {a.seeWhatsNew}
-                </Button>
-              </>
+        ) : (
+          <div
+            className={cn(
+              'rounded-xl border px-4 py-3 text-sm',
+              statusTone === 'available' && 'border-primary/30 bg-primary/5 text-foreground',
+              statusTone === 'error' && 'border-destructive/35 bg-destructive/5 text-destructive',
+              statusTone === 'idle' && 'border-border/70 bg-muted/20 text-foreground'
             )}
+          >
+            <div className="flex items-start gap-2">
+              {statusTone === 'available' ? (
+                <Codicon className="mt-0.5 size-4 shrink-0 text-primary" name="cloud-download" size="1rem" />
+              ) : statusTone === 'error' ? null : (
+                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+              )}
+              <div className="min-w-0">
+                <p className="font-medium">{statusLine}</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {a.lastChecked(relativeTime(status?.fetchedAt, a))}
+                  {justChecked && !checking ? a.justNowSuffix : ''}
+                </p>
+              </div>
+            </div>
 
-            <Button asChild className="ml-auto" size="sm" variant="text">
-              <a
-                href={RELEASE_NOTES_URL}
-                onClick={event => {
-                  event.preventDefault()
-                  void window.hermesDesktop?.openExternal?.(RELEASE_NOTES_URL)
-                }}
-                rel="noreferrer"
-                target="_blank"
+            <div className="mt-3 flex flex-wrap items-center gap-4">
+              <Button
+                disabled={checking || applying || !supported}
+                onClick={() => void handleCheck()}
+                size="sm"
+                variant="textStrong"
               >
-                <ExternalLink className="size-3" />
-                {a.releaseNotes}
-              </a>
-            </Button>
-          </div>
-        </div>
+                {checking ? <Loader2 className="size-3 animate-spin" /> : <RefreshCw className="size-3" />}
+                {checking ? a.checking : a.checkNow}
+              </Button>
 
-        <ListRow
-          description={a.automaticUpdatesDesc}
-          hint={a.branchCommit(status?.branch ?? 'unknown', status?.currentSha?.slice(0, 7) ?? 'unknown')}
-          title={a.automaticUpdates}
-        />
+              {behind > 0 && supported && !applying && (
+                <>
+                  <Button onClick={() => startActiveUpdate()} size="sm">
+                    {a.updateNow}
+                  </Button>
+                  <Button onClick={() => openUpdatesWindow()} size="sm" variant="textStrong">
+                    {a.seeWhatsNew}
+                  </Button>
+                </>
+              )}
+
+              <Button asChild className="ml-auto" size="sm" variant="text">
+                <a
+                  href={RELEASE_NOTES_URL}
+                  onClick={event => {
+                    event.preventDefault()
+                    void window.hermesDesktop?.openExternal?.(RELEASE_NOTES_URL)
+                  }}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <ExternalLink className="size-3" />
+                  {a.releaseNotes}
+                </a>
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {!isPackaged && (
+          <ListRow
+            description={a.automaticUpdatesDesc}
+            hint={a.branchCommit(status?.branch ?? 'unknown', status?.currentSha?.slice(0, 7) ?? 'unknown')}
+            title={a.automaticUpdates}
+          />
+        )}
 
         <UninstallSection />
       </div>
