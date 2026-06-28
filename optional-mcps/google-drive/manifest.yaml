@@ -1,0 +1,29 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: google-drive
+description: Search, read, create, and manage files and folders in Google Drive.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-google-drive"
+
+auth:
+  type: oauth
+  provider: google
+  scopes:
+    - "https://www.googleapis.com/auth/drive.readonly"
+    - "https://www.googleapis.com/auth/drive.file"
+  env_var: GOOGLE_DRIVE_OAUTH_TOKEN
+
+post_install: |
+  On first connection, Hermes will open a browser to authenticate with Google
+  and request Google Drive permissions. After auth, restart your Hermes
+  session so the Google Drive tools are loaded.
+
+  Requires a Google OAuth client ID configured in Hermes settings under
+  Providers > OAuth.

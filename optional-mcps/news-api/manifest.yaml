@@ -1,0 +1,32 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: news-api
+description: Fetch breaking news headlines, search articles, and get source listings from NewsAPI.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-news-api"
+
+auth:
+  type: api_key
+  env:
+    - name: NEWS_API_KEY
+      prompt: "NewsAPI key (newsapi.org/register)"
+      required: true
+      secret: true
+
+post_install: |
+  Get a free NewsAPI key at https://newsapi.org/register (free tier:
+  100 requests/day, articles delayed 24h — developer tier for real-time).
+
+  The news-api MCP provides tools for:
+    - Top headlines by country, category, or source
+    - Full-text article search with date filters
+    - Source listings (BBC, CNN, TechCrunch, etc.)
+
+  Start a new Hermes session to load the news-api tools.

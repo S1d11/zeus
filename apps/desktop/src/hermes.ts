@@ -18,6 +18,9 @@ import type {
   HermesConfig,
   HermesConfigRecord,
   LogsResponse,
+  McpCatalogResponse,
+  McpInstallResponse,
+  McpServerInfo,
   MemoryProviderConfig,
   MemoryProviderOAuthStatus,
   MessagingPlatformsResponse,
@@ -78,6 +81,12 @@ export type {
   HermesConfig,
   HermesConfigRecord,
   LogsResponse,
+  McpCatalogDiagnostic,
+  McpCatalogEntry,
+  McpCatalogEnvVar,
+  McpCatalogResponse,
+  McpInstallResponse,
+  McpServerInfo,
   MemoryProviderConfig,
   MemoryProviderOAuthStatus,
   MessagingEnvVarInfo,
@@ -121,10 +130,10 @@ export type {
 export class HermesGateway extends JsonRpcGatewayClient {
   constructor() {
     super({
-      closedErrorMessage: 'Hermes gateway connection closed',
-      connectErrorMessage: 'Could not connect to Hermes gateway',
+      closedErrorMessage: 'Zeus gateway connection closed',
+      connectErrorMessage: 'Could not connect to Zeus gateway',
       createRequestId: nextId => nextId,
-      notConnectedErrorMessage: 'Hermes gateway is not connected',
+      notConnectedErrorMessage: 'Zeus gateway is not connected',
       requestTimeoutMs: DEFAULT_GATEWAY_REQUEST_TIMEOUT_MS
     })
   }
@@ -831,5 +840,54 @@ export function speakText(text: string): Promise<AudioSpeakResponse> {
 export function getElevenLabsVoices(): Promise<ElevenLabsVoicesResponse> {
   return window.hermesDesktop.api<ElevenLabsVoicesResponse>({
     path: '/api/audio/elevenlabs/voices'
+  })
+}
+
+// ─── MCP catalog & server management ────────────────────────────────────────
+
+export function getMcpCatalog(): Promise<McpCatalogResponse> {
+  return window.hermesDesktop.api<McpCatalogResponse>({
+    ...profileScoped(),
+    path: '/api/mcp/catalog'
+  })
+}
+
+export function installMcpCatalogEntry(
+  name: string,
+  env: Record<string, string> = {},
+  enable = true
+): Promise<McpInstallResponse> {
+  return window.hermesDesktop.api<McpInstallResponse>({
+    ...profileScoped(),
+    path: '/api/mcp/catalog/install',
+    method: 'POST',
+    body: { name, env, enable }
+  })
+}
+
+export function getMcpServers(): Promise<{ servers: McpServerInfo[] }> {
+  return window.hermesDesktop.api<{ servers: McpServerInfo[] }>({
+    ...profileScoped(),
+    path: '/api/mcp/servers'
+  })
+}
+
+export function setMcpServerEnabled(
+  name: string,
+  enabled: boolean
+): Promise<{ ok: boolean; name: string; enabled: boolean }> {
+  return window.hermesDesktop.api<{ ok: boolean; name: string; enabled: boolean }>({
+    ...profileScoped(),
+    path: `/api/mcp/servers/${encodeURIComponent(name)}/enabled`,
+    method: 'PUT',
+    body: { enabled }
+  })
+}
+
+export function deleteMcpServer(name: string): Promise<{ ok: boolean; name: string }> {
+  return window.hermesDesktop.api<{ ok: boolean; name: string }>({
+    ...profileScoped(),
+    path: `/api/mcp/servers/${encodeURIComponent(name)}`,
+    method: 'DELETE'
   })
 }

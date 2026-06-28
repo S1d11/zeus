@@ -1,0 +1,27 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: asana
+description: Create, update, and search Asana tasks, projects, sections, and comments.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-asana"
+
+auth:
+  type: api_key
+  env:
+    - name: ASANA_ACCESS_TOKEN
+      prompt: "Asana personal access token (my.asana.com > Profile > Settings > Apps > Developer)"
+      required: true
+      secret: true
+
+post_install: |
+  Generate a personal access token at https://my.asana.com under
+  Profile > Settings > Apps > Developer app management.
+
+  Start a new Hermes session to load the Asana tools.

@@ -1,0 +1,23 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: sequential-thinking
+description: Dynamic, reflective problem-solving — lets the AI think through complex problems step by step.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-sequential-thinking"
+
+auth:
+  type: none
+
+post_install: |
+  The Sequential Thinking MCP provides a structured thinking tool that lets
+  the AI break down complex problems, revise its approach mid-thought, branch
+  into alternative paths, and revisit earlier steps. No API key needed.
+
+  Start a new Hermes session to load the sequential-thinking tools.

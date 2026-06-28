@@ -1,0 +1,37 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: spotify
+description: Control Spotify playback — play, pause, skip, search tracks, manage playlists, and get recommendations.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-spotify"
+
+auth:
+  type: api_key
+  env:
+    - name: SPOTIFY_CLIENT_ID
+      prompt: "Spotify app client ID (developer.spotify.com/dashboard)"
+      required: true
+      secret: false
+    - name: SPOTIFY_CLIENT_SECRET
+      prompt: "Spotify app client secret"
+      required: true
+      secret: true
+    - name: SPOTIFY_REFRESH_TOKEN
+      prompt: "Spotify refresh token (generate via OAuth flow)"
+      required: true
+      secret: true
+
+post_install: |
+  Create an app at https://developer.spotify.com/dashboard, add your redirect
+  URI, and generate a refresh token via the OAuth flow. The Spotify MCP
+  provides tools for playback control, search, playlist management, and
+  track recommendations.
+
+  Start a new Hermes session to load the Spotify tools.

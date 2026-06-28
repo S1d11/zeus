@@ -1,0 +1,32 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: discord
+description: Send messages, read channels, manage roles, and search guild history on Discord.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-discord"
+
+auth:
+  type: api_key
+  env:
+    - name: DISCORD_BOT_TOKEN
+      prompt: "Discord bot token (Developer Portal > Bot > Reset Token)"
+      required: true
+      secret: true
+    - name: DISCORD_GUILD_ID
+      prompt: "Discord guild (server) ID (enable Developer Mode, right-click server > Copy ID)"
+      required: true
+      secret: false
+
+post_install: |
+  Create a bot at https://discord.com/developers/applications, enable the
+  MESSAGE CONTENT and SERVER MEMBERS privileged intents, generate a token,
+  and invite the bot to your server with appropriate permissions.
+
+  Start a new Hermes session to load the Discord tools.

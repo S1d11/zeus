@@ -8,12 +8,14 @@ export const ARTIFACTS_ROUTE = '/artifacts'
 export const CRON_ROUTE = '/cron'
 export const PROFILES_ROUTE = '/profiles'
 export const AGENTS_ROUTE = '/agents'
+export const CONNECTIONS_ROUTE = '/connections'
 
 export type AppView =
   | 'agents'
   | 'artifacts'
   | 'chat'
   | 'command-center'
+  | 'connections'
   | 'cron'
   | 'messaging'
   | 'profiles'
@@ -24,6 +26,7 @@ export type AppRouteId =
   | 'agents'
   | 'artifacts'
   | 'command-center'
+  | 'connections'
   | 'cron'
   | 'messaging'
   | 'new'
@@ -42,6 +45,7 @@ export const APP_ROUTES = [
   { id: 'settings', path: SETTINGS_ROUTE, view: 'settings' },
   { id: 'command-center', path: COMMAND_CENTER_ROUTE, view: 'command-center' },
   { id: 'skills', path: SKILLS_ROUTE, view: 'skills' },
+  { id: 'connections', path: CONNECTIONS_ROUTE, view: 'connections' },
   { id: 'messaging', path: MESSAGING_ROUTE, view: 'messaging' },
   { id: 'artifacts', path: ARTIFACTS_ROUTE, view: 'artifacts' },
   { id: 'cron', path: CRON_ROUTE, view: 'cron' },

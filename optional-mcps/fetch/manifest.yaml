@@ -1,0 +1,24 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: fetch
+description: Fetch web pages and convert HTML to markdown — read any URL's content directly.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-fetch"
+
+auth:
+  type: none
+
+post_install: |
+  The Fetch MCP lets the AI retrieve any web page and read its content as
+  markdown. Useful for reading documentation, articles, and API responses.
+  No API key needed. Tools include fetch (with configurable max_length and
+  start_index for pagination).
+
+  Start a new Hermes session to load the fetch tools.

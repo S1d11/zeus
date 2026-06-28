@@ -24,6 +24,7 @@ from hermes_cli.config import (
     load_config, save_config, get_env_value, save_env_value,
 )
 from hermes_cli.colors import Colors, color
+from hermes_cli._subprocess_compat import windows_hide_flags
 from hermes_cli.nous_subscription import (
     apply_nous_managed_defaults,
     get_nous_subscription_features,
@@ -641,6 +642,7 @@ def _pip_install(
                 [uv_bin, "pip", "install", *args],
                 capture_output=capture_output, text=True, timeout=timeout,
                 env=uv_env,
+                creationflags=windows_hide_flags(),
             )
             if result.returncode == 0:
                 return result
@@ -655,6 +657,7 @@ def _pip_install(
         probe = subprocess.run(
             pip_cmd + ["--version"],
             capture_output=True, text=True, timeout=15,
+            creationflags=windows_hide_flags(),
         )
         if probe.returncode != 0:
             raise FileNotFoundError("pip not in venv")
@@ -663,6 +666,7 @@ def _pip_install(
             subprocess.run(
                 [sys.executable, "-m", "ensurepip", "--upgrade", "--default-pip"],
                 capture_output=True, text=True, timeout=120, check=True,
+                creationflags=windows_hide_flags(),
             )
         except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
             # Synthesize a result so callers see a clean failure path.
@@ -674,6 +678,7 @@ def _pip_install(
     return subprocess.run(
         pip_cmd + ["install", *args],
         capture_output=capture_output, text=True, timeout=timeout,
+        creationflags=windows_hide_flags(),
     )
 
 
@@ -1735,32 +1740,6 @@ def _save_platform_tools(config: dict, platform: str, enabled_toolset_keys: Set[
     if plugin_keys:
         config.setdefault("known_plugin_toolsets", {})
         config["known_plugin_toolsets"][platform] = sorted(plugin_keys)
-
-    # Reconcile with agent.disabled_toolsets. _get_platform_tools() applies
-    # that list as a final override AFTER reading platform_toolsets.<platform>,
-    # so a toolset listed there stays permanently OFF no matter what this
-    # function writes — the toggle "saves" but silently can't ever take
-    # effect. Blank Slate installs pre-populate this list with ~27 toolsets,
-    # making most of the desktop Toolsets UI unusable for re-enabling
-    # anything (issue #49995).
-    #
-    # Only toolsets the user just explicitly enabled FOR THIS PLATFORM are
-    # cleared from the global disabled list — toolsets the user did not
-    # touch (still unchecked) or that remain disabled on other platforms
-    # are left alone, so agent.disabled_toolsets keeps working as a
-    # cross-platform suppression list for anything not actively re-enabled.
-    agent_cfg = config.get("agent")
-    if isinstance(agent_cfg, dict):
-        disabled_toolsets = agent_cfg.get("disabled_toolsets")
-        if isinstance(disabled_toolsets, list) and disabled_toolsets:
-            newly_enabled = enabled_toolset_keys - preserved_entries
-            if newly_enabled:
-                remaining = [
-                    ts for ts in disabled_toolsets
-                    if str(ts) not in newly_enabled
-                ]
-                if remaining != disabled_toolsets:
-                    agent_cfg["disabled_toolsets"] = remaining
 
     save_config(config)
 

@@ -1,0 +1,30 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: supabase
+description: Query and manage Supabase databases — run SQL, list tables, manage rows, and inspect schemas.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-supabase"
+
+auth:
+  type: api_key
+  env:
+    - name: SUPABASE_URL
+      prompt: "Supabase project URL (supabase.com > Project > Settings > API)"
+      required: true
+      secret: false
+    - name: SUPABASE_KEY
+      prompt: "Supabase service role key (supabase.com > Project > Settings > API > service_role)"
+      required: true
+      secret: true
+
+post_install: |
+  Find your project URL and service role key at https://supabase.com under
+  Project > Settings > API. Use the service_role key for full access (bypasses
+  RLS). Start a new Hermes session to load the Supabase tools.

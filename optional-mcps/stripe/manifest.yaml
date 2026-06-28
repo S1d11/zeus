@@ -1,0 +1,28 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: stripe
+description: Create charges, manage customers, handle subscriptions, and query payment data via Stripe.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-stripe"
+
+auth:
+  type: api_key
+  env:
+    - name: STRIPE_SECRET_KEY
+      prompt: "Stripe secret key (dashboard.stripe.com > Developers > API keys)"
+      required: true
+      secret: true
+
+post_install: |
+  Get your Stripe secret key at https://dashboard.stripe.com/apikeys.
+  Use the test key (sk_test_...) for development. The Stripe MCP provides
+  tools for customers, charges, refunds, subscriptions, invoices, and more.
+
+  Start a new Hermes session to load the Stripe tools.

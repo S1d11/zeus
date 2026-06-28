@@ -32,6 +32,7 @@ import {
   Package,
   Palette,
   PawPrint,
+  Plug,
   Plus,
   RefreshCw,
   Settings,
@@ -62,6 +63,7 @@ import {
   AGENTS_ROUTE,
   ARTIFACTS_ROUTE,
   COMMAND_CENTER_ROUTE,
+  CONNECTIONS_ROUTE,
   CRON_ROUTE,
   MESSAGING_ROUTE,
   NEW_CHAT_ROUTE,
@@ -366,6 +368,14 @@ export function CommandPalette() {
             id: 'nav-messaging',
             label: cc.nav.messaging.title,
             run: go(MESSAGING_ROUTE)
+          },
+          {
+            action: 'nav.connections',
+            icon: Plug,
+            id: 'nav-connections',
+            keywords: ['mcp', 'integrations', 'apps'],
+            label: cc.nav.connections.title,
+            run: go(CONNECTIONS_ROUTE)
           },
           {
             action: 'nav.artifacts',

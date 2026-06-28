@@ -1,0 +1,31 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: contentful
+description: Manage Contentful CMS — read, create, update, and publish content entries and assets.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-contentful"
+
+auth:
+  type: api_key
+  env:
+    - name: CONTENTFUL_SPACE_ID
+      prompt: "Contentful space ID (app.contentful.com > Space Settings)"
+      required: true
+      secret: false
+    - name: CONTENTFUL_ACCESS_TOKEN
+      prompt: "Contentful management API token (app.contentful.com > Settings > API Keys)"
+      required: true
+      secret: true
+
+post_install: |
+  Find your Space ID in Contentful under Space Settings. Create a management
+  token under Settings > API Keys > Content Management API.
+
+  Start a new Hermes session to load the Contentful tools.

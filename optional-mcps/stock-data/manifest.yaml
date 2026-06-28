@@ -1,0 +1,34 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: stock-data
+description: Get real-time stock quotes, historical prices, company fundamentals, and market news.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-stock-data"
+
+auth:
+  type: api_key
+  env:
+    - name: ALPHA_VANTAGE_API_KEY
+      prompt: "Alpha Vantage API key (alphavantage.co/support/#api-key)"
+      required: true
+      secret: true
+
+post_install: |
+  Get a free Alpha Vantage API key at https://www.alphavantage.co/support/#api-key
+  (free tier: 25 requests/day, premium tiers available for higher limits).
+
+  The stock-data MCP provides tools for:
+    - Real-time quotes (global, forex, crypto)
+    - Historical daily/intraday prices
+    - Company fundamentals (income, balance sheet, cash flow, overview)
+    - Technical indicators (SMA, EMA, RSI, MACD, Bollinger Bands)
+    - Market news and sentiment
+
+  Start a new Hermes session to load the stock-data tools.

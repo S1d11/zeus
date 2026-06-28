@@ -1,0 +1,33 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: google-search
+description: Web search via Google Custom Search Engine — get results from Google's index.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-google-search"
+
+auth:
+  type: api_key
+  env:
+    - name: GOOGLE_API_KEY
+      prompt: "Google API key (console.cloud.google.com > APIs & Services > Credentials)"
+      required: true
+      secret: true
+    - name: GOOGLE_CSE_ID
+      prompt: "Custom Search Engine ID (programmablesearchengine.google.com)"
+      required: true
+      secret: false
+
+post_install: |
+  1. Create a Custom Search Engine at https://programmablesearchengine.google.com
+     and enable "Search the entire web".
+  2. Enable the Custom Search API in Google Cloud Console.
+  3. Create an API key under APIs & Services > Credentials.
+
+  Start a new Hermes session to load the Google Search tools.

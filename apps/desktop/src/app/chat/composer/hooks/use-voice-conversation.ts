@@ -8,6 +8,12 @@ import { useMicRecorder } from './use-mic-recorder'
 
 export type ConversationStatus = 'idle' | 'listening' | 'transcribing' | 'thinking' | 'speaking'
 
+// Barge-in: mic monitoring threshold during AI speech. Higher than the normal
+// listening threshold (0.075) to avoid picking up TTS audio from speakers.
+// Echo cancellation in getUserMedia helps, but a higher threshold adds safety.
+const BARGE_IN_THRESHOLD = 0.15
+const BARGE_IN_SILENCE_MS = 400
+
 interface PendingVoiceResponse {
   id: string
   pending: boolean
@@ -50,6 +56,11 @@ export function useVoiceConversation({
   const busyRef = useRef(busy)
   const statusRef = useRef<ConversationStatus>('idle')
   const wasEnabledRef = useRef(enabled)
+  // Barge-in: mic stream + analyser for detecting user speech during TTS playback
+  const bargeInStreamRef = useRef<MediaStream | null>(null)
+  const bargeInContextRef = useRef<AudioContext | null>(null)
+  const bargeInAnimRef = useRef<number | null>(null)
+  const bargeInTriggeredRef = useRef(false)
 
   useEffect(() => {
     enabledRef.current = enabled
@@ -73,6 +84,89 @@ export function useVoiceConversation({
       turnTimeoutRef.current = null
     }
   }
+
+  // ─── Barge-in: detect user speech during TTS playback ────────────────────
+  const stopBargeInMonitor = useCallback(() => {
+    if (bargeInAnimRef.current) {
+      window.cancelAnimationFrame(bargeInAnimRef.current)
+      bargeInAnimRef.current = null
+    }
+
+    void bargeInContextRef.current?.close()
+    bargeInContextRef.current = null
+    bargeInStreamRef.current?.getTracks().forEach(track => track.stop())
+    bargeInStreamRef.current = null
+    bargeInTriggeredRef.current = false
+  }, [])
+
+  const startBargeInMonitor = useCallback(async () => {
+    if (bargeInStreamRef.current) {return} // already monitoring
+    bargeInTriggeredRef.current = false
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+      })
+
+      const AudioContextCtor = window.AudioContext || (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+
+      if (!AudioContextCtor) {
+        stream.getTracks().forEach(t => t.stop())
+
+        return
+      }
+
+      const ctx = new AudioContextCtor()
+      const analyser = ctx.createAnalyser()
+      const source = ctx.createMediaStreamSource(stream)
+      analyser.fftSize = 256
+      source.connect(analyser)
+      bargeInStreamRef.current = stream
+      bargeInContextRef.current = ctx
+
+      const data = new Uint8Array(analyser.fftSize)
+      let speechStartedAt: number | null = null
+
+      const tick = () => {
+        if (bargeInTriggeredRef.current) {return}
+
+        analyser.getByteTimeDomainData(data)
+        let sum = 0
+
+        for (const value of data) {
+          const centered = value - 128
+          sum += centered * centered
+        }
+
+        const rms = Math.sqrt(sum / data.length)
+        const normalized = Math.min(1, rms / 42)
+        const now = Date.now()
+
+        if (normalized >= BARGE_IN_THRESHOLD) {
+          speechStartedAt = now
+        } else if (speechStartedAt !== null && now - speechStartedAt >= BARGE_IN_SILENCE_MS) {
+          // User spoke — interrupt TTS
+          bargeInTriggeredRef.current = true
+          stopBargeInMonitor()
+          stopVoicePlayback()
+          // Cancel any pending response and restart listening
+          awaitingSpokenResponseRef.current = false
+          resetSpeechBuffer()
+          consumePendingResponse()
+          pendingStartRef.current = true
+          setStatus('idle')
+
+          return
+        }
+
+        bargeInAnimRef.current = window.requestAnimationFrame(tick)
+      }
+
+      tick()
+    } catch {
+      // Mic access failed during barge-in — silently skip, TTS continues normally
+    }
+  }, [consumePendingResponse, stopBargeInMonitor])
 
   const resetSpeechBuffer = () => {
     responseIdRef.current = null
@@ -223,12 +317,16 @@ export function useVoiceConversation({
   const speak = useCallback(
     async (text: string) => {
       setStatus('speaking')
+      // Start barge-in monitor so user can interrupt TTS by speaking
+      void startBargeInMonitor()
 
       try {
         await playSpeechText(text, { source: 'voice-conversation' })
       } catch (error) {
         notifyError(error, voiceCopy.playbackFailed)
       } finally {
+        stopBargeInMonitor()
+
         if (enabledRef.current) {
           pendingStartRef.current = true
           setStatus('idle')
@@ -237,7 +335,7 @@ export function useVoiceConversation({
         }
       }
     },
-    [voiceCopy.playbackFailed]
+    [startBargeInMonitor, stopBargeInMonitor, voiceCopy.playbackFailed]
   )
 
   const start = useCallback(async () => {
@@ -270,6 +368,7 @@ export function useVoiceConversation({
   const end = useCallback(async () => {
     pendingStartRef.current = false
     clearTurnTimeout()
+    stopBargeInMonitor()
     stopVoicePlayback()
     handle.cancel()
     turnClosingRef.current = false
@@ -278,7 +377,7 @@ export function useVoiceConversation({
     consumePendingResponse()
     setMuted(false)
     setStatus('idle')
-  }, [consumePendingResponse, handle])
+  }, [consumePendingResponse, handle, stopBargeInMonitor])
 
   const stopTurn = useCallback(() => {
     if (statusRef.current === 'listening') {
@@ -309,6 +408,20 @@ export function useVoiceConversation({
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.code !== 'Space' || event.repeat || event.metaKey || event.ctrlKey || event.altKey) {
+        return
+      }
+
+      // Space interrupts TTS playback (barge-in via keyboard)
+      if (statusRef.current === 'speaking') {
+        event.preventDefault()
+        stopBargeInMonitor()
+        stopVoicePlayback()
+        awaitingSpokenResponseRef.current = false
+        resetSpeechBuffer()
+        consumePendingResponse()
+        pendingStartRef.current = true
+        setStatus('idle')
+
         return
       }
 
@@ -395,6 +508,11 @@ export function useVoiceConversation({
 
     wasEnabledRef.current = enabled
   }, [enabled, end, start])
+
+  // Cleanup barge-in monitor on unmount
+  useEffect(() => {
+    return () => stopBargeInMonitor()
+  }, [stopBargeInMonitor])
 
   return { end, level, muted, start, status, stopTurn, toggleMute }
 }

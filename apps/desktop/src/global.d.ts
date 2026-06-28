@@ -195,6 +195,22 @@ declare global {
         // returns the most-installed themes.
         searchMarketplace: (query: string) => Promise<DesktopMarketplaceSearchItem[]>
       }
+      // Zeus: wake word, tray, and binary auto-updater controls
+      zeus: {
+        toggleWakeWord: () => Promise<{ enabled: boolean; error?: string }>
+        getWakeWordStatus: () => Promise<{ listening: boolean }>
+        showFromTray: () => Promise<{ shown: boolean }>
+        checkForUpdates: () => Promise<{ ok: boolean; error?: string; status?: any }>
+        downloadUpdate: () => Promise<{ ok: boolean; error?: string }>
+        installUpdate: () => Promise<{ ok: boolean; error?: string }>
+        getUpdateStatus: () => Promise<any>
+        onUpdateEvent: (callback: (event: any) => void) => () => void
+        onUpdateNotificationClicked: (callback: (payload: any) => void) => () => void
+        // General settings
+        setGeneralPref: (key: string, value: boolean) => Promise<{ ok: boolean; error?: string }>
+        getGeneralPref: (key: string) => Promise<boolean | null>
+        getAllGeneralPrefs: () => Promise<Record<string, boolean>>
+      }
     }
   }
 }

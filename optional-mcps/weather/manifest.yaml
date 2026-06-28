@@ -1,0 +1,34 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: weather
+description: Get current weather, forecasts, alerts, and historical data for any location worldwide.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-weather"
+
+auth:
+  type: api_key
+  env:
+    - name: OPENWEATHER_API_KEY
+      prompt: "OpenWeatherMap API key (openweathermap.org/api)"
+      required: true
+      secret: true
+
+post_install: |
+  Get a free OpenWeatherMap API key at https://home.openweathermap.org/api_keys
+  (free tier: 60 calls/min, 1,000 calls/day).
+
+  The weather MCP provides tools for:
+    - Current weather conditions
+    - 5-day / 3-hour forecast
+    - Air pollution data
+    - Weather alerts for severe conditions
+    - Geocoding (city name to coordinates)
+
+  Start a new Hermes session to load the weather tools.

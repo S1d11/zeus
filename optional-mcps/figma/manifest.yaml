@@ -1,0 +1,29 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: figma
+description: Read Figma files — get design data, components, styles, and export design assets.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-figma"
+
+auth:
+  type: api_key
+  env:
+    - name: FIGMA_ACCESS_TOKEN
+      prompt: "Figma personal access token (figma.com > Settings > Account > Personal access tokens)"
+      required: true
+      secret: true
+
+post_install: |
+  Generate a personal access token at https://www.figma.com under
+  Settings > Account > Personal access tokens. The Figma MCP provides
+  tools for reading file structures, getting component data, exporting
+  images, and reading design styles.
+
+  Start a new Hermes session to load the Figma tools.

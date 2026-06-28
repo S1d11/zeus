@@ -1,0 +1,35 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: jira
+description: Create, update, search, and transition Jira issues, sprints, and projects.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-jira"
+
+auth:
+  type: api_key
+  env:
+    - name: JIRA_BASE_URL
+      prompt: "Jira base URL (e.g. https://yourcompany.atlassian.net)"
+      required: true
+      secret: false
+    - name: JIRA_API_TOKEN
+      prompt: "Jira API token (atlassian.com > Security > API tokens)"
+      required: true
+      secret: true
+    - name: JIRA_EMAIL
+      prompt: "Email associated with your Jira account"
+      required: true
+      secret: false
+
+post_install: |
+  Create an API token at https://id.atlassian.com/manage-profile/security/api-tokens
+  and use the email associated with your Atlassian account for authentication.
+
+  Start a new Hermes session to load the Jira tools.

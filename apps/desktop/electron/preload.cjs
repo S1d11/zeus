@@ -214,5 +214,30 @@ contextBridge.exposeInMainWorld('hermesDesktop', {
   themes: {
     fetchMarketplace: id => ipcRenderer.invoke('hermes:vscode-theme:fetch', id),
     searchMarketplace: query => ipcRenderer.invoke('hermes:vscode-theme:search', query)
+  },
+  // Zeus: wake word + tray controls
+  zeus: {
+    toggleWakeWord: () => ipcRenderer.invoke('zeus:wake-word:toggle'),
+    getWakeWordStatus: () => ipcRenderer.invoke('zeus:wake-word:status'),
+    showFromTray: () => ipcRenderer.invoke('zeus:tray:show'),
+    // Auto-updater
+    checkForUpdates: () => ipcRenderer.invoke('zeus:auto-updater:check'),
+    downloadUpdate: () => ipcRenderer.invoke('zeus:auto-updater:download'),
+    installUpdate: () => ipcRenderer.invoke('zeus:auto-updater:install'),
+    getUpdateStatus: () => ipcRenderer.invoke('zeus:auto-updater:status'),
+    onUpdateEvent: callback => {
+      const listener = (_event, payload) => callback(payload)
+      ipcRenderer.on('zeus:auto-updater:event', listener)
+      return () => ipcRenderer.removeListener('zeus:auto-updater:event', listener)
+    },
+    onUpdateNotificationClicked: callback => {
+      const listener = (_event, payload) => callback(payload)
+      ipcRenderer.on('zeus:auto-updater:notification-clicked', listener)
+      return () => ipcRenderer.removeListener('zeus:auto-updater:notification-clicked', listener)
+    },
+    // General settings
+    setGeneralPref: (key, value) => ipcRenderer.invoke('zeus:general:set-pref', key, value),
+    getGeneralPref: key => ipcRenderer.invoke('zeus:general:get-pref', key),
+    getAllGeneralPrefs: () => ipcRenderer.invoke('zeus:general:get-all-prefs')
   }
 })

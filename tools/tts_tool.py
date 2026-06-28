@@ -52,8 +52,8 @@ from pathlib import Path
 from typing import Callable, Dict, Any, Optional
 from urllib.parse import urljoin
 
-from hermes_cli._subprocess_compat import windows_hide_flags
 from hermes_constants import display_hermes_home
+from hermes_cli._subprocess_compat import windows_hide_flags
 
 logger = logging.getLogger(__name__)
 def get_env_value(name, default=None):
@@ -721,6 +721,7 @@ def _terminate_command_tts_process_tree(proc: subprocess.Popen) -> None:
                 stderr=subprocess.DEVNULL,
                 timeout=5,
                 stdin=subprocess.DEVNULL,
+                creationflags=windows_hide_flags(),
             )
         except Exception:
             proc.kill()
@@ -769,7 +770,7 @@ def _run_command_tts(command: str, timeout: float) -> subprocess.CompletedProces
         "text": True,
     }
     if os.name == "nt":
-        popen_kwargs["creationflags"] = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
+        popen_kwargs["creationflags"] = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0) | windows_hide_flags()
     else:
         popen_kwargs["start_new_session"] = True
 
@@ -1861,7 +1862,7 @@ def _generate_neutts(text: str, output_path: str, tts_config: Dict[str, Any]) ->
         "--device", device,
     ]
 
-    result = subprocess.run(cmd, capture_output=True, text=True, timeout=120, stdin=subprocess.DEVNULL)
+    result = subprocess.run(cmd, capture_output=True, text=True, timeout=120, stdin=subprocess.DEVNULL, creationflags=windows_hide_flags())
     if result.returncode != 0:
         stderr = result.stderr.strip()
         # Filter out the "OK:" line from stderr
@@ -1945,6 +1946,7 @@ def _resolve_piper_voice_path(voice: str, download_dir: Path) -> str:
              "--download-dir", str(download_dir)],
             capture_output=True, text=True, timeout=300,
             stdin=subprocess.DEVNULL,
+            creationflags=windows_hide_flags(),
         )
     except subprocess.TimeoutExpired as exc:
         raise RuntimeError(

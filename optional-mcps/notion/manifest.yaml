@@ -1,0 +1,28 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: notion
+description: Search, read, create, and update Notion pages, databases, and blocks.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-notion"
+
+auth:
+  type: api_key
+  env:
+    - name: NOTION_API_KEY
+      prompt: "Notion integration token (notion.so > Settings > Connections > Develop integration)"
+      required: true
+      secret: true
+
+post_install: |
+  Create an internal integration at https://www.notion.so/my-integrations,
+  copy the integration token, and share the relevant Notion pages/databases
+  with the integration (Page > ... > Add connections > your integration).
+
+  Start a new Hermes session to load the Notion tools.

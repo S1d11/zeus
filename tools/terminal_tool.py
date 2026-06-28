@@ -46,6 +46,7 @@ from pathlib import Path
 from typing import Optional, Dict, Any, List
 
 from utils import env_var_enabled
+from hermes_cli._subprocess_compat import windows_hide_flags
 
 logger = logging.getLogger(__name__)
 
@@ -927,6 +928,7 @@ from tools.environments.ssh import SSHEnvironment as _SSHEnvironment
 from tools.environments.docker import DockerEnvironment as _DockerEnvironment
 from tools.environments.modal import ModalEnvironment as _ModalEnvironment
 from tools.environments.managed_modal import ManagedModalEnvironment as _ManagedModalEnvironment
+from tools.environments.powershell import PowerShellEnvironment as _PowerShellEnvironment
 from tools.managed_tool_gateway import is_managed_tool_gateway_ready
 import sys
 
@@ -1253,6 +1255,8 @@ def _get_env_config() -> Dict[str, Any]:
     # root-like cwd.
     if env_type == "local":
         default_cwd = _safe_getcwd()
+    elif env_type == "powershell":
+        default_cwd = _safe_getcwd()
     elif env_type == "ssh":
         default_cwd = "~"
     else:
@@ -1381,6 +1385,9 @@ def _create_environment(env_type: str, image: str, cwd: str, timeout: int,
 
     if env_type == "local":
         return _LocalEnvironment(cwd=cwd, timeout=timeout)
+
+    elif env_type == "powershell":
+        return _PowerShellEnvironment(cwd=cwd, timeout=timeout)
     
     elif env_type == "docker":
         # One-shot orphan reaper: clean up labeled containers left behind by
@@ -1492,7 +1499,7 @@ def _create_environment(env_type: str, image: str, cwd: str, timeout: int,
 
     else:
         raise ValueError(
-            f"Unknown environment type: {env_type}. Use 'local', 'docker', "
+            f"Unknown environment type: {env_type}. Use 'local', 'powershell', 'docker', "
             f"'singularity', 'modal', 'daytona', or 'ssh'"
         )
 
@@ -2656,17 +2663,9 @@ def terminal_tool(
             from tools.ansi_strip import strip_ansi
             output = strip_ansi(output)
 
-            # Redact secrets from command output. For source/config dumps
-            # (MAX_TOKENS=100, "apiKey": "x" fixtures, postgresql:// f-string
-            # templates) the ENV/JSON/template passes are skipped to avoid
-            # false positives (code_file=True). But for env-dump commands
-            # (env/printenv/set/export/declare) the output IS a KEY=value
-            # credential dump, so redact_terminal_output runs the ENV pass
-            # (code_file=False) to mask opaque tokens with no vendor prefix.
-            # Real prefixes, auth headers, JWTs, private keys are masked in
-            # both modes. See issue #43025.
-            from agent.redact import redact_terminal_output
-            output = redact_terminal_output(output.strip(), command) if output else ""
+            # Redact secrets from command output (catches env/printenv leaking keys)
+            from agent.redact import redact_sensitive_text
+            output = redact_sensitive_text(output.strip()) if output else ""
 
             # Interpret non-zero exit codes that aren't real errors
             # (e.g. grep=1 means "no matches", diff=1 means "files differ")
@@ -2729,19 +2728,28 @@ def check_terminal_requirements() -> bool:
         if env_type == "local":
             return True
 
+        elif env_type == "powershell":
+            try:
+                from tools.environments.powershell import _find_powershell
+                _find_powershell()
+                return True
+            except RuntimeError as e:
+                logger.error("%s", e)
+                return False
+
         elif env_type == "docker":
             from tools.environments.docker import find_docker
             docker = find_docker()
             if not docker:
                 logger.error("Docker executable not found in PATH or common install locations")
                 return False
-            result = subprocess.run([docker, "version"], capture_output=True, timeout=5, stdin=subprocess.DEVNULL)
+            result = subprocess.run([docker, "version"], capture_output=True, timeout=5, stdin=subprocess.DEVNULL, creationflags=windows_hide_flags())
             return result.returncode == 0
 
         elif env_type == "singularity":
             executable = shutil.which("apptainer") or shutil.which("singularity")
             if executable:
-                result = subprocess.run([executable, "--version"], capture_output=True, timeout=5, stdin=subprocess.DEVNULL)
+                result = subprocess.run([executable, "--version"], capture_output=True, timeout=5, stdin=subprocess.DEVNULL, creationflags=windows_hide_flags())
                 return result.returncode == 0
             return False
 
@@ -2820,7 +2828,7 @@ def check_terminal_requirements() -> bool:
 
         else:
             logger.error(
-                "Unknown TERMINAL_ENV '%s'. Use one of: local, docker, singularity, "
+                "Unknown TERMINAL_ENV '%s'. Use one of: local, powershell, docker, singularity, "
                 "modal, daytona, ssh.",
                 env_type,
             )

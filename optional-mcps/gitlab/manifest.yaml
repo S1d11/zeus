@@ -1,0 +1,30 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: gitlab
+description: Manage GitLab projects — issues, merge requests, pipelines, branches, and commits.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-gitlab"
+
+auth:
+  type: api_key
+  env:
+    - name: GITLAB_PERSONAL_ACCESS_TOKEN
+      prompt: "GitLab personal access token (User Settings > Access Tokens)"
+      required: true
+      secret: true
+    - name: GITLAB_API_URL
+      prompt: "GitLab API URL (self-hosted? use https://gitlab.com/api/v4)"
+      default: "https://gitlab.com/api/v4"
+      required: false
+      secret: false
+
+post_install: |
+  Create a personal access token in GitLab under User Settings > Access Tokens
+  with api scope. Start a new Hermes session to load the GitLab tools.

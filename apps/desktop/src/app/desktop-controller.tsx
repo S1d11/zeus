@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef } from 'react'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 
+import { AutoUpdateToast } from '@/components/auto-update-toast'
 import { BootFailureOverlay } from '@/components/boot-failure-overlay'
 import { DesktopInstallOverlay } from '@/components/desktop-install-overlay'
 import { DesktopOnboardingOverlay } from '@/components/desktop-onboarding-overlay'
@@ -25,6 +26,7 @@ import {
 } from '../lib/session-source'
 import { latestSessionTodos } from '../lib/todos'
 import { setCronFocusJobId, setCronJobs } from '../store/cron'
+import { syncAllPrefsToMain } from '../store/general-settings'
 import {
   $fileBrowserOpen,
   $panesFlipped,
@@ -152,6 +154,7 @@ import { UpdatesOverlay } from './updates-overlay'
 
 const AgentsView = lazy(async () => ({ default: (await import('./agents')).AgentsView }))
 const ArtifactsView = lazy(async () => ({ default: (await import('./artifacts')).ArtifactsView }))
+const ConnectionsView = lazy(async () => ({ default: (await import('./connections')).ConnectionsView }))
 const CommandCenterView = lazy(async () => ({ default: (await import('./command-center')).CommandCenterView }))
 const CronView = lazy(async () => ({ default: (await import('./cron')).CronView }))
 const MessagingView = lazy(async () => ({ default: (await import('./messaging')).MessagingView }))
@@ -299,6 +302,14 @@ export function DesktopController() {
       unsubscribe?.()
       stopUpdatePoller()
     }
+  }, [])
+
+  // Sync the renderer's persisted general prefs (localStorage) to the main
+  // process on launch. The main process has its own copy (persisted to disk)
+  // but this ensures they stay in sync if the user clears the disk file or
+  // runs multiple profiles.
+  useEffect(() => {
+    void syncAllPrefsToMain()
   }, [])
 
   // Remember the open chat so a relaunch reopens it instead of an empty new-chat.
@@ -1121,6 +1132,7 @@ export function DesktopController() {
       <SessionPickerOverlay onResume={resumeSession} />
       <ModelVisibilityOverlay gateway={gatewayRef.current || undefined} onOpenProviders={openProviderSettings} />
       <UpdatesOverlay />
+      <AutoUpdateToast />
       <GatewayConnectingOverlay />
       <BootFailureOverlay />
       <CommandPalette />
@@ -1372,6 +1384,14 @@ export function DesktopController() {
               </Suspense>
             }
             path="skills"
+          />
+          <Route
+            element={
+              <Suspense fallback={null}>
+                <ConnectionsView setStatusbarItemGroup={setStatusbarItemGroup} />
+              </Suspense>
+            }
+            path="connections"
           />
           <Route
             element={

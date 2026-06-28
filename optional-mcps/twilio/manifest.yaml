@@ -1,0 +1,29 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: twilio
+description: Send SMS messages, make calls, and manage Twilio phone numbers and messages.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-twilio"
+
+auth:
+  type: api_key
+  env:
+    - name: TWILIO_ACCOUNT_SID
+      prompt: "Twilio Account SID (Console > Account Info)"
+      required: true
+      secret: false
+    - name: TWILIO_AUTH_TOKEN
+      prompt: "Twilio Auth Token (Console > Account Info)"
+      required: true
+      secret: true
+
+post_install: |
+  Find your Account SID and Auth Token at https://console.twilio.com under
+  Account Info. Start a new Hermes session to load the Twilio tools.

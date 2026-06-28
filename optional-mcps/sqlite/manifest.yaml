@@ -1,0 +1,25 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: sqlite
+description: Query, create tables, insert rows, and analyze data in a local SQLite database.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-sqlite"
+    - "--db-path"
+    - "${HERMES_HOME}/data/mcp-sqlite.db"
+
+auth:
+  type: none
+
+post_install: |
+  The SQLite MCP creates and manages a local SQLite database file. No API key
+  needed. The database is stored in your Hermes data directory. Tools include
+  read_query, write_query, create_table, list_tables, and describe_table.
+
+  Start a new Hermes session to load the SQLite tools.
