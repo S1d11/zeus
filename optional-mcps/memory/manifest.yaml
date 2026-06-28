@@ -1,0 +1,26 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: memory
+description: Persistent knowledge graph — store entities, relations, and observations across sessions.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-memory"
+
+auth:
+  type: none
+
+post_install: |
+  The Memory MCP provides a persistent knowledge graph that the AI can use to
+  remember facts, entities, and relationships across conversations. Data is
+  stored in a local JSON file. No API key needed.
+
+  Tools include create_entities, create_relations, add_observations,
+  delete_entities, read_graph, and search_nodes.
+
+  Start a new Hermes session to load the memory tools.

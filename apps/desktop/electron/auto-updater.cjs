@@ -160,16 +160,31 @@ function initAutoUpdater(mainWindowRefArg) {
 
   // Schedule first check after a delay
   initTime = Date.now();
+  startPeriodicChecks();
+
+  return true;
+}
+
+function startPeriodicChecks() {
+  if (!autoUpdater) return;
+  // First check after a delay
   setTimeout(() => {
     checkForUpdatesNow().catch(() => {});
   }, INITIAL_CHECK_DELAY_MS);
-
-  // Schedule periodic checks
+  // Periodic checks
+  if (periodicCheckTimer) {
+    clearInterval(periodicCheckTimer);
+  }
   periodicCheckTimer = setInterval(() => {
     checkForUpdatesNow().catch(() => {});
   }, PERIODIC_CHECK_INTERVAL_MS);
+}
 
-  return true;
+function stopPeriodicChecks() {
+  if (periodicCheckTimer) {
+    clearInterval(periodicCheckTimer);
+    periodicCheckTimer = null;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -283,4 +298,6 @@ module.exports = {
   getUpdateStatus,
   onUpdateEvent,
   destroyAutoUpdater,
+  startPeriodicChecks,
+  stopPeriodicChecks,
 };

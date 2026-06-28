@@ -1,0 +1,31 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: gmail
+description: Send, read, search, and manage Gmail messages and labels.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-gmail"
+
+auth:
+  type: oauth
+  provider: google
+  scopes:
+    - "https://www.googleapis.com/auth/gmail.send"
+    - "https://www.googleapis.com/auth/gmail.readonly"
+    - "https://www.googleapis.com/auth/gmail.modify"
+    - "https://www.googleapis.com/auth/gmail.labels"
+  env_var: GMAIL_OAUTH_TOKEN
+
+post_install: |
+  On first connection, Hermes will open a browser to authenticate with Google
+  and request Gmail permissions. After auth, restart your Hermes session so
+  the Gmail tools are loaded.
+
+  Requires a Google OAuth client ID configured in Hermes settings under
+  Providers > OAuth.

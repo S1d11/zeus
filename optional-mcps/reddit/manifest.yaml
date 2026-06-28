@@ -1,0 +1,37 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: reddit
+description: Search Reddit, read posts and comments, get subreddit info, and track trending topics.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-reddit"
+
+auth:
+  type: api_key
+  env:
+    - name: REDDIT_CLIENT_ID
+      prompt: "Reddit app client ID (reddit.com/prefs/apps > create app)"
+      required: true
+      secret: false
+    - name: REDDIT_CLIENT_SECRET
+      prompt: "Reddit app client secret"
+      required: true
+      secret: true
+    - name: REDDIT_USER_AGENT
+      prompt: "User agent string (e.g. 'Zeus/1.0 by your_username')"
+      default: "Zeus/1.0"
+      required: true
+      secret: false
+
+post_install: |
+  Create a script-type app at https://www.reddit.com/prefs/apps. The Reddit
+  MCP provides tools for searching posts, reading comments, getting
+  subreddit info, and listing trending subreddits.
+
+  Start a new Hermes session to load the Reddit tools.

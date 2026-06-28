@@ -1,0 +1,32 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: shopify
+description: Manage Shopify stores — products, orders, customers, inventory, and fulfillments.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-shopify"
+
+auth:
+  type: api_key
+  env:
+    - name: SHOPIFY_SHOP_DOMAIN
+      prompt: "Shopify shop domain (e.g. your-store.myshopify.com)"
+      required: true
+      secret: false
+    - name: SHOPIFY_ACCESS_TOKEN
+      prompt: "Shopify Admin API access token (admin > Apps > Develop apps > API tokens)"
+      required: true
+      secret: true
+
+post_install: |
+  Create a custom app in your Shopify admin under Apps > Develop apps,
+  configure Admin API scopes (read/write products, orders, customers),
+  and install to get an access token.
+
+  Start a new Hermes session to load the Shopify tools.

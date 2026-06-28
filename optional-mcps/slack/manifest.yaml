@@ -1,0 +1,32 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: slack
+description: Send messages, search history, list channels, and manage threads in Slack workspaces.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-slack"
+
+auth:
+  type: api_key
+  env:
+    - name: SLACK_BOT_TOKEN
+      prompt: "Slack Bot User OAuth Token (xoxb-...)"
+      required: true
+      secret: true
+    - name: SLACK_TEAM_ID
+      prompt: "Slack team ID (find in Slack > About > More)"
+      required: true
+      secret: false
+
+post_install: |
+  Create a Slack app at https://api.slack.com/apps, add bot token scopes
+  (chat:write, channels:read, channels:history, groups:read, groups:history),
+  install it to your workspace, and copy the Bot User OAuth Token.
+
+  Start a new Hermes session to load the Slack tools.

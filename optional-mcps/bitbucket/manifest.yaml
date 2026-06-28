@@ -1,0 +1,29 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: bitbucket
+description: Manage Bitbucket repos — pull requests, branches, commits, issues, and pipelines.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-bitbucket"
+
+auth:
+  type: api_key
+  env:
+    - name: BITBUCKET_USERNAME
+      prompt: "Bitbucket username"
+      required: true
+      secret: false
+    - name: BITBUCKET_APP_PASSWORD
+      prompt: "Bitbucket app password (Account Settings > App passwords)"
+      required: true
+      secret: true
+
+post_install: |
+  Create an app password in Bitbucket under Account Settings > App passwords
+  with repository and pull request read/write scopes.

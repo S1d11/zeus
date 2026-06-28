@@ -1,0 +1,30 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: maps
+description: Geocode addresses, get directions, search places, and calculate distances via Google Maps.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-google-maps"
+
+auth:
+  type: api_key
+  env:
+    - name: GOOGLE_MAPS_API_KEY
+      prompt: "Google Maps API key (console.cloud.google.com > enable Maps API)"
+      required: true
+      secret: true
+
+post_install: |
+  Enable the Maps JavaScript API, Geocoding API, and Directions API in
+  Google Cloud Console, then create an API key under Credentials.
+
+  The Maps MCP provides tools for geocoding, reverse geocoding, directions,
+  distance matrix, and place search.
+
+  Start a new Hermes session to load the Maps tools.

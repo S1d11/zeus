@@ -1,0 +1,24 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: time
+description: Get current time and convert between timezones — useful for scheduling across regions.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-time"
+
+auth:
+  type: none
+
+post_install: |
+  The Time MCP provides tools for getting the current time in any IANA
+  timezone and converting between timezones. No API key needed.
+
+  Tools include get_current_time and convert_time.
+
+  Start a new Hermes session to load the time tools.

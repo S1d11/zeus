@@ -1,0 +1,35 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: sentry
+description: View and manage Sentry issues, releases, and events — track errors and performance data.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-sentry"
+
+auth:
+  type: api_key
+  env:
+    - name: SENTRY_AUTH_TOKEN
+      prompt: "Sentry auth token (sentry.io > Settings > Auth Tokens)"
+      required: true
+      secret: true
+    - name: SENTRY_ORG_SLUG
+      prompt: "Sentry organization slug (sentry.io > Settings > General)"
+      required: true
+      secret: false
+
+post_install: |
+  Create an auth token at https://sentry.io/settings/auth-tokens/ with
+  project:read, project:write, and org:read scopes. Find your org slug
+  in Settings > General.
+
+  The Sentry MCP provides tools for listing/viewing/resolve issues,
+  listing projects, getting event details, and creating releases.
+
+  Start a new Hermes session to load the Sentry tools.

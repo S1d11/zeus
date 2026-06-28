@@ -784,7 +784,7 @@ export interface Translations {
     archivedChats: string
     sections: Record<'sessions' | 'system' | 'usage', string>
     sectionDescriptions: Record<'sessions' | 'system' | 'usage', string>
-    nav: Record<'newChat' | 'settings' | 'skills' | 'messaging' | 'artifacts', { title: string; detail: string }>
+    nav: Record<'newChat' | 'settings' | 'skills' | 'connections' | 'messaging' | 'artifacts', { title: string; detail: string }>
     sectionEntries: Record<'sessions' | 'system' | 'usage', { title: string; detail: string }>
     providerNavigate: string
     providerSessions: string
@@ -1014,6 +1014,45 @@ export interface Translations {
     promptScheduleRequired: string
     saveChanges: string
     createAction: string
+  }
+
+  connections: {
+    search: string
+    loading: string
+    refresh: string
+    installedSection: string
+    catalogSection: string
+    noServers: string
+    noCatalogEntries: string
+    install: string
+    reinstall: string
+    installing: string
+    installed: (name: string) => string
+    installingInBackground: (name: string) => string
+    installBackgroundDetail: string
+    installFailed: (name: string) => string
+    restartToActivate: string
+    restartToApply: string
+    serverEnabled: (name: string) => string
+    serverDisabled: (name: string) => string
+    serverRemoved: (name: string) => string
+    failedToggle: (name: string) => string
+    failedRemove: (name: string) => string
+    remove: string
+    source: string
+    needsInstall: string
+    installedBadge: string
+    toolsCount: (count: number) => string
+    authType: {
+      api_key: string
+      oauth: string
+      none: string
+    }
+    requiredCredentials: string
+    optionalCredentials: string
+    oauthHint: string
+    cancel: string
+    loadFailed: string
   }
 
   artifacts: {

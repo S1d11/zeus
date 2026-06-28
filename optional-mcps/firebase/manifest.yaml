@@ -1,0 +1,35 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: firebase
+description: Manage Firebase projects — Firestore CRUD, Authentication, and Realtime Database operations.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-firebase"
+
+auth:
+  type: api_key
+  env:
+    - name: FIREBASE_PROJECT_ID
+      prompt: "Firebase project ID (console.firebase.google.com)"
+      required: true
+      secret: false
+    - name: FIREBASE_SERVICE_ACCOUNT_KEY
+      prompt: "Path to Firebase service account JSON key file"
+      required: true
+      secret: false
+
+post_install: |
+  1. Go to https://console.firebase.google.com, select your project.
+  2. Project Settings > Service Accounts > Generate new private key.
+  3. Save the JSON file and provide its path here.
+
+  The Firebase MCP provides tools for Firestore (get, set, update, delete,
+  query), Authentication (list, create, delete users), and Realtime Database.
+
+  Start a new Hermes session to load the Firebase tools.

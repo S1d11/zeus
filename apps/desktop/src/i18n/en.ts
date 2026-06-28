@@ -896,6 +896,7 @@ export const en: Translations = {
       newChat: { title: 'New session', detail: 'Start a fresh session' },
       settings: { title: 'Settings', detail: 'Configure Zeus desktop' },
       skills: { title: 'Skills & Tools', detail: 'Enable skills, toolsets, and providers' },
+      connections: { title: 'Connections', detail: 'Connect the AI to apps and services' },
       messaging: { title: 'Messaging', detail: 'Set up Telegram, Slack, Discord, and more' },
       artifacts: { title: 'Artifacts', detail: 'Browse generated outputs' }
     },
@@ -1265,6 +1266,45 @@ export const en: Translations = {
     createAction: 'Create cron'
   },
 
+  connections: {
+    search: 'Search connections...',
+    loading: 'Loading connections...',
+    refresh: 'Refresh connections',
+    installedSection: 'Connected',
+    catalogSection: 'Browse apps',
+    noServers: 'No connections yet. Browse the catalog below to connect an app.',
+    noCatalogEntries: 'No catalog entries found.',
+    install: 'Connect',
+    reinstall: 'Reinstall',
+    installing: 'Installing...',
+    installed: name => `${name} connected`,
+    installingInBackground: name => `Installing ${name} in the background...`,
+    installBackgroundDetail: 'This server needs a local install step. Check the action log for progress.',
+    installFailed: name => `Failed to install ${name}`,
+    restartToActivate: 'Restart your session to activate the new tools.',
+    restartToApply: 'Restart your session to apply changes.',
+    serverEnabled: name => `${name} enabled`,
+    serverDisabled: name => `${name} disabled`,
+    serverRemoved: name => `${name} removed`,
+    failedToggle: name => `Failed to toggle ${name}`,
+    failedRemove: name => `Failed to remove ${name}`,
+    remove: 'Remove',
+    source: 'Source',
+    needsInstall: 'Needs install',
+    installedBadge: 'Installed',
+    toolsCount: count => `${count} tool${count === 1 ? '' : 's'}`,
+    authType: {
+      api_key: 'API key',
+      oauth: 'OAuth',
+      none: 'No auth'
+    },
+    requiredCredentials: 'Required credentials',
+    optionalCredentials: 'Optional credentials',
+    oauthHint: 'A browser window will open on first connection to authenticate.',
+    cancel: 'Cancel',
+    loadFailed: 'Failed to load connections'
+  },
+
   artifacts: {
     search: 'Search artifacts...',
     refresh: 'Refresh artifacts',
@@ -1304,6 +1344,7 @@ export const en: Translations = {
     nav: {
       'new-session': 'New session',
       skills: 'Skills & Tools',
+      connections: 'Connections',
       messaging: 'Messaging',
       artifacts: 'Artifacts'
     },

@@ -982,6 +982,7 @@ export const zhHant = defineLocale({
       newChat: { title: '新工作階段', detail: '開始新的工作階段' },
       settings: { title: '設定', detail: '設定 Zeus 桌面端' },
       skills: { title: '技能與工具', detail: '啟用技能、工具集和提供方' },
+      connections: { title: '連線', detail: '將 AI 連線到應用程式和服務' },
       messaging: { title: '訊息平台', detail: '設定 Telegram、Slack、Discord 等' },
       artifacts: { title: '成品', detail: '瀏覽產生的輸出' }
     },
@@ -1341,6 +1342,45 @@ export const zhHant = defineLocale({
     createAction: '建立排程工作'
   },
 
+  connections: {
+    search: '搜尋連線…',
+    loading: '正在載入連線…',
+    refresh: '重新整理連線',
+    installedSection: '已連線',
+    catalogSection: '瀏覽應用程式',
+    noServers: '尚無連線。在下方目錄中瀏覽並連線應用程式。',
+    noCatalogEntries: '未找到目錄項目。',
+    install: '連線',
+    reinstall: '重新安裝',
+    installing: '安裝中…',
+    installed: name => `${name} 已連線`,
+    installingInBackground: name => `正在背景安裝 ${name}…`,
+    installBackgroundDetail: '此伺服器需要本機安裝步驟。請查看動作記錄了解進度。',
+    installFailed: name => `安裝 ${name} 失敗`,
+    restartToActivate: '重啟工作階段以啟用新工具。',
+    restartToApply: '重啟工作階段以套用變更。',
+    serverEnabled: name => `${name} 已啟用`,
+    serverDisabled: name => `${name} 已停用`,
+    serverRemoved: name => `${name} 已移除`,
+    failedToggle: name => `切換 ${name} 失敗`,
+    failedRemove: name => `移除 ${name} 失敗`,
+    remove: '移除',
+    source: '來源',
+    needsInstall: '需要安裝',
+    installedBadge: '已安裝',
+    toolsCount: count => `${count} 個工具`,
+    authType: {
+      api_key: 'API 金鑰',
+      oauth: 'OAuth',
+      none: '無需驗證'
+    },
+    requiredCredentials: '必要憑證',
+    optionalCredentials: '選填憑證',
+    oauthHint: '首次連線時將開啟瀏覽器視窗進行驗證。',
+    cancel: '取消',
+    loadFailed: '載入連線失敗'
+  },
+
   artifacts: {
     search: '搜尋成品…',
     refresh: '重新整理成品',
@@ -1380,6 +1420,7 @@ export const zhHant = defineLocale({
     nav: {
       'new-session': '新工作階段',
       skills: '技能與工具',
+      connections: '連線',
       messaging: '訊息平台',
       artifacts: '成品'
     },

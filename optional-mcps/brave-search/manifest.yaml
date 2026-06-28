@@ -1,0 +1,26 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: brave-search
+description: Web and local search via the Brave Search API — get real-time results from the web.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-brave-search"
+
+auth:
+  type: api_key
+  env:
+    - name: BRAVE_API_KEY
+      prompt: "Brave Search API key (brave.com/search/api)"
+      required: true
+      secret: true
+
+post_install: |
+  Get a Brave Search API key at https://brave.com/search/api (free tier
+  available — 2,000 queries/month). Start a new Hermes session to load the
+  Brave Search tools.

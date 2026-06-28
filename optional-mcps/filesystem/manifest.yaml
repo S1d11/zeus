@@ -1,0 +1,27 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: filesystem
+description: Read, write, search, and manage files and directories on the local filesystem.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-filesystem"
+    - "${HOME}"
+
+auth:
+  type: none
+
+post_install: |
+  The Filesystem MCP provides structured file operations: read_file,
+  read_multiple_files, write_file, create_directory, list_directory,
+  move_file, search_files, get_file_info, and list_allowed_directories.
+
+  By default it has access to your home directory. To restrict access,
+  edit the args in mcp_servers.filesystem after install.
+
+  Start a new Hermes session to load the filesystem tools.

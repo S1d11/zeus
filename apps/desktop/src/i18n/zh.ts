@@ -1082,6 +1082,7 @@ export const zh: Translations = {
       newChat: { title: '新建会话', detail: '开始一个新会话' },
       settings: { title: '设置', detail: '配置 Zeus 桌面端' },
       skills: { title: '技能与工具', detail: '启用技能、工具集与提供方' },
+      connections: { title: '连接', detail: '将 AI 连接到应用和服务' },
       messaging: { title: '消息平台', detail: '配置 Telegram、Slack、Discord 等' },
       artifacts: { title: '产物', detail: '浏览生成的输出' }
     },
@@ -1448,6 +1449,45 @@ export const zh: Translations = {
     createAction: '创建定时任务'
   },
 
+  connections: {
+    search: '搜索连接…',
+    loading: '正在加载连接…',
+    refresh: '刷新连接',
+    installedSection: '已连接',
+    catalogSection: '浏览应用',
+    noServers: '尚无连接。在下方目录中浏览并连接应用。',
+    noCatalogEntries: '未找到目录条目。',
+    install: '连接',
+    reinstall: '重新安装',
+    installing: '安装中…',
+    installed: name => `${name} 已连接`,
+    installingInBackground: name => `正在后台安装 ${name}…`,
+    installBackgroundDetail: '此服务器需要本地安装步骤。请查看操作日志了解进度。',
+    installFailed: name => `安装 ${name} 失败`,
+    restartToActivate: '重启会话以激活新工具。',
+    restartToApply: '重启会话以应用更改。',
+    serverEnabled: name => `${name} 已启用`,
+    serverDisabled: name => `${name} 已禁用`,
+    serverRemoved: name => `${name} 已移除`,
+    failedToggle: name => `切换 ${name} 失败`,
+    failedRemove: name => `移除 ${name} 失败`,
+    remove: '移除',
+    source: '来源',
+    needsInstall: '需要安装',
+    installedBadge: '已安装',
+    toolsCount: count => `${count} 个工具`,
+    authType: {
+      api_key: 'API 密钥',
+      oauth: 'OAuth',
+      none: '无需认证'
+    },
+    requiredCredentials: '必需凭据',
+    optionalCredentials: '可选凭据',
+    oauthHint: '首次连接时将打开浏览器窗口进行认证。',
+    cancel: '取消',
+    loadFailed: '加载连接失败'
+  },
+
   artifacts: {
     search: '搜索产物…',
     refresh: '刷新产物',
@@ -1487,6 +1527,7 @@ export const zh: Translations = {
     nav: {
       'new-session': '新建会话',
       skills: '技能与工具',
+      connections: '连接',
       messaging: '消息平台',
       artifacts: '产物'
     },

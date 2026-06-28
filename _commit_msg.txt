@@ -1,0 +1,33 @@
+feat: Connections tab with 40+ MCP app integrations + auto-update fixes
+
+Add a new "Connections" sidebar tab (plug icon, above Messaging) that lets
+the AI connect to hundreds of apps via MCP servers. The tab surfaces:
+- Browse: catalog of 44 pre-approved MCP servers as cards with descriptions,
+  transport/auth badges, and one-click install with credential prompts
+- Installed: list of connected servers with enable/disable toggles, tool
+  counts, and remove buttons
+- Search, auto-refresh, and gateway restart prompts
+
+New MCP catalog entries (40 added, 44 total):
+- Developer: github, gitlab, bitbucket
+- Communication: slack, discord, gmail, twilio
+- Productivity: notion, asana, trello, jira
+- Data/Search: brave-search, google-search, stock-data, weather, news-api
+- Cloud/Storage: google-drive, dropbox, supabase, firebase
+- Databases: sqlite, postgres
+- Utilities: fetch, memory, time, sequential-thinking, filesystem
+- Creative/Media: puppeteer, everart, spotify, youtube
+- Business: stripe, shopify, airtable, contentful, figma, sentry
+- Location/Social: calendar, maps, reddit
+
+Auto-update fixes:
+- Persist general prefs to disk (general-prefs.json) so they survive restarts
+- Auto-updater now respects checkForUpdatesAutomatically toggle
+- syncAllPrefsToMain called on app launch to sync renderer prefs to main
+- Added start/stop periodic checks to auto-updater module
+
+Version bumped to 0.18.0.
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

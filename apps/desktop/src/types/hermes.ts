@@ -833,3 +833,62 @@ export interface ModelAssignmentResponse {
   stale_aux?: StaleAuxAssignment[]
   tasks?: string[]
 }
+
+// ─── MCP catalog & server management ────────────────────────────────────────
+
+export interface McpCatalogEnvVar {
+  name: string
+  prompt: string
+  required: boolean
+}
+
+export interface McpCatalogEntry {
+  name: string
+  description: string
+  source: string
+  transport: 'http' | 'stdio'
+  auth_type: 'api_key' | 'oauth' | 'none'
+  required_env: McpCatalogEnvVar[]
+  command: string | null
+  args: string[]
+  url: string | null
+  install_type: string | null
+  install_url: string | null
+  install_ref: string | null
+  bootstrap: string[]
+  default_enabled: string[] | null
+  post_install: string
+  needs_install: boolean
+  installed: boolean
+  enabled: boolean
+}
+
+export interface McpCatalogDiagnostic {
+  name: string
+  kind: string
+  message: string
+}
+
+export interface McpCatalogResponse {
+  entries: McpCatalogEntry[]
+  diagnostics: McpCatalogDiagnostic[]
+}
+
+export interface McpInstallResponse {
+  ok: boolean
+  name: string
+  background: boolean
+  action?: string
+}
+
+export interface McpServerInfo {
+  name: string
+  transport: 'http' | 'stdio' | 'unknown'
+  url: string | null
+  command: string | null
+  args: string[]
+  env: Record<string, string>
+  auth: string | null
+  enabled: boolean
+  tools: string[] | null
+}

@@ -15823,15 +15823,28 @@ var require_auto_updater = __commonJS({
         showUpdateDownloadedNotification(updateDownloaded);
       });
       initTime = Date.now();
+      startPeriodicChecks();
+      return true;
+    }
+    function startPeriodicChecks() {
+      if (!autoUpdater) return;
       setTimeout(() => {
         checkForUpdatesNow().catch(() => {
         });
       }, INITIAL_CHECK_DELAY_MS);
+      if (periodicCheckTimer) {
+        clearInterval(periodicCheckTimer);
+      }
       periodicCheckTimer = setInterval(() => {
         checkForUpdatesNow().catch(() => {
         });
       }, PERIODIC_CHECK_INTERVAL_MS);
-      return true;
+    }
+    function stopPeriodicChecks() {
+      if (periodicCheckTimer) {
+        clearInterval(periodicCheckTimer);
+        periodicCheckTimer = null;
+      }
     }
     async function checkForUpdatesNow() {
       if (!autoUpdater) {
@@ -15921,7 +15934,9 @@ var require_auto_updater = __commonJS({
       installUpdateAndRestart,
       getUpdateStatus,
       onUpdateEvent,
-      destroyAutoUpdater
+      destroyAutoUpdater,
+      startPeriodicChecks,
+      stopPeriodicChecks
     };
   }
 });
@@ -30907,17 +30922,46 @@ ipcMain.handle("zeus:auto-updater:status", () => {
   if (!autoUpdaterModule) return { initialized: false };
   return autoUpdaterModule.getUpdateStatus();
 });
-var zeusGeneralPrefs = {
+var zeusGeneralPrefsDefaults = {
   closeToTray: true,
   minimizeToTray: false,
   startMinimized: false,
   checkForUpdatesAutomatically: true
 };
+var zeusGeneralPrefs = { ...zeusGeneralPrefsDefaults };
+var zeusPrefsFile = null;
+try {
+  zeusPrefsFile = path.join(app.getPath("userData"), "general-prefs.json");
+} catch {
+}
+function loadZeusPrefsFromDisk() {
+  if (!zeusPrefsFile) return;
+  try {
+    const fs2 = require("fs");
+    const raw = fs2.readFileSync(zeusPrefsFile, "utf-8");
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object") {
+      zeusGeneralPrefs = { ...zeusGeneralPrefsDefaults, ...parsed };
+    }
+  } catch {
+  }
+}
+function saveZeusPrefsToDisk() {
+  if (!zeusPrefsFile) return;
+  try {
+    const fs2 = require("fs");
+    fs2.writeFileSync(zeusPrefsFile, JSON.stringify(zeusGeneralPrefs), "utf-8");
+  } catch (e) {
+    console.error("[zeus] Failed to save general prefs:", e.message);
+  }
+}
+loadZeusPrefsFromDisk();
 ipcMain.handle("zeus:general:set-pref", async (_event, key, value) => {
   if (typeof key !== "string" || typeof value !== "boolean") {
     return { ok: false, error: "invalid arguments" };
   }
   zeusGeneralPrefs[key] = value;
+  saveZeusPrefsToDisk();
   if (key === "autoLaunchOnStartup") {
     try {
       app.setLoginItemSettings({
@@ -30936,6 +30980,13 @@ ipcMain.handle("zeus:general:set-pref", async (_event, key, value) => {
       });
     } catch (e) {
       console.error("[zeus] Failed to update login item args:", e.message);
+    }
+  }
+  if (key === "checkForUpdatesAutomatically") {
+    if (value) {
+      autoUpdaterModule?.startPeriodicChecks?.();
+    } else {
+      autoUpdaterModule?.stopPeriodicChecks?.();
     }
   }
   return { ok: true };
@@ -31023,6 +31074,9 @@ app.whenReady().then(() => {
   }
   if (autoUpdaterModule) {
     autoUpdaterModule.initAutoUpdater({ get: () => mainWindow });
+    if (!zeusGeneralPrefs.checkForUpdatesAutomatically) {
+      autoUpdaterModule.stopPeriodicChecks?.();
+    }
   }
   const _coldStartLink = _extractDeepLink(process.argv);
   if (_coldStartLink) handleDeepLink(_coldStartLink);

@@ -1,0 +1,26 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: dropbox
+description: List, read, upload, and manage files and folders in Dropbox.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-dropbox"
+
+auth:
+  type: api_key
+  env:
+    - name: DROPBOX_ACCESS_TOKEN
+      prompt: "Dropbox access token (dropbox.com/developers/apps)"
+      required: true
+      secret: true
+
+post_install: |
+  Create an app at https://www.dropbox.com/developers/apps, grant it
+  files.content.read and files.content.write permissions, and generate an
+  access token. Start a new Hermes session to load the Dropbox tools.

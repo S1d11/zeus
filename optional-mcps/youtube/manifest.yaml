@@ -1,0 +1,28 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: youtube
+description: Search videos, get channel info, read transcripts, and manage YouTube playlists.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-youtube"
+
+auth:
+  type: api_key
+  env:
+    - name: YOUTUBE_API_KEY
+      prompt: "YouTube Data API key (console.cloud.google.com > enable YouTube Data API v3)"
+      required: true
+      secret: true
+
+post_install: |
+  Enable the YouTube Data API v3 in Google Cloud Console and create an API
+  key. The YouTube MCP provides tools for video search, channel details,
+  video transcripts, playlist management, and comment retrieval.
+
+  Start a new Hermes session to load the YouTube tools.

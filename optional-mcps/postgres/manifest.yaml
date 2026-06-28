@@ -1,0 +1,28 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: postgres
+description: Query and manage PostgreSQL databases — run SQL, inspect schemas, list tables, and analyze data.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-postgres"
+
+auth:
+  type: api_key
+  env:
+    - name: POSTGRES_CONNECTION_STRING
+      prompt: "PostgreSQL connection string (postgresql://user:pass@host:5432/dbname)"
+      required: true
+      secret: true
+
+post_install: |
+  Provide a standard PostgreSQL connection string. The server connects
+  read-only by default (queries only, no writes). Tools include query,
+  list_tables, describe_table, and list_schemas.
+
+  Start a new Hermes session to load the PostgreSQL tools.

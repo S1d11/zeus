@@ -1,0 +1,32 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: airtable
+description: Search, read, create, and update records in Airtable bases and tables.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-airtable"
+
+auth:
+  type: api_key
+  env:
+    - name: AIRTABLE_API_KEY
+      prompt: "Airtable personal access token (airtable.com/create/tokens)"
+      required: true
+      secret: true
+    - name: AIRTABLE_BASE_ID
+      prompt: "Airtable base ID (airtable.com > base > API docs)"
+      required: true
+      secret: false
+
+post_install: |
+  Create a personal access token at https://airtable.com/create/tokens with
+  data.records:read and data.records:write scopes. Find your base ID in the
+  base's API documentation page.
+
+  Start a new Hermes session to load the Airtable tools.

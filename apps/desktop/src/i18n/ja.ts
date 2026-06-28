@@ -1011,6 +1011,7 @@ export const ja = defineLocale({
       newChat: { title: '新しいセッション', detail: '新しいセッションを開始' },
       settings: { title: '設定', detail: 'Zeus デスクトップを設定' },
       skills: { title: 'スキルとツール', detail: 'スキル、ツールセット、プロバイダーを有効化' },
+      connections: { title: '接続', detail: 'AI をアプリやサービスに接続' },
       messaging: { title: 'メッセージング', detail: 'Telegram、Slack、Discord などを設定' },
       artifacts: { title: 'アーティファクト', detail: '生成された出力を閲覧' }
     },
@@ -1389,6 +1390,45 @@ export const ja = defineLocale({
     createAction: 'Cron を作成'
   },
 
+  connections: {
+    search: '接続を検索...',
+    loading: '接続を読み込み中...',
+    refresh: '接続を更新',
+    installedSection: '接続済み',
+    catalogSection: 'アプリを参照',
+    noServers: 'まだ接続がありません。下のカタログからアプリを接続してください。',
+    noCatalogEntries: 'カタログエントリが見つかりません。',
+    install: '接続',
+    reinstall: '再インストール',
+    installing: 'インストール中...',
+    installed: name => `${name} を接続しました`,
+    installingInBackground: name => `${name} をバックグラウンドでインストール中...`,
+    installBackgroundDetail: 'このサーバーはローカルインストール手順が必要です。進捗はアクションログを確認してください。',
+    installFailed: name => `${name} のインストールに失敗しました`,
+    restartToActivate: '新しいツールを有効化するにはセッションを再起動してください。',
+    restartToApply: '変更を適用するにはセッションを再起動してください。',
+    serverEnabled: name => `${name} を有効にしました`,
+    serverDisabled: name => `${name} を無効にしました`,
+    serverRemoved: name => `${name} を削除しました`,
+    failedToggle: name => `${name} の切り替えに失敗しました`,
+    failedRemove: name => `${name} の削除に失敗しました`,
+    remove: '削除',
+    source: 'ソース',
+    needsInstall: 'インストールが必要',
+    installedBadge: 'インストール済み',
+    toolsCount: count => `${count} 個のツール`,
+    authType: {
+      api_key: 'API キー',
+      oauth: 'OAuth',
+      none: '認証不要'
+    },
+    requiredCredentials: '必須認証情報',
+    optionalCredentials: '任意の認証情報',
+    oauthHint: '初回接続時に認証用のブラウザウィンドウが開きます。',
+    cancel: 'キャンセル',
+    loadFailed: '接続の読み込みに失敗しました'
+  },
+
   artifacts: {
     search: 'アーティファクトを検索...',
     refresh: 'アーティファクトを更新',
@@ -1428,6 +1468,7 @@ export const ja = defineLocale({
     nav: {
       'new-session': '新しいセッション',
       skills: 'スキルとツール',
+      connections: '接続',
       messaging: 'メッセージング',
       artifacts: 'アーティファクト'
     },

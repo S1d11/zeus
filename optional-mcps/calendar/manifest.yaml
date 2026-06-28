@@ -1,0 +1,29 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: calendar
+description: View, create, update, and delete Google Calendar events. Check availability and schedule meetings.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-google-calendar"
+
+auth:
+  type: oauth
+  provider: google
+  scopes:
+    - "https://www.googleapis.com/auth/calendar"
+    - "https://www.googleapis.com/auth/calendar.events"
+  env_var: GOOGLE_CALENDAR_OAUTH_TOKEN
+
+post_install: |
+  On first connection, Hermes will open a browser to authenticate with Google
+  and request Calendar permissions. After auth, restart your Hermes session
+  so the Calendar tools are loaded.
+
+  Requires a Google OAuth client ID configured in Hermes settings under
+  Providers > OAuth.

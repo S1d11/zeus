@@ -1,0 +1,21 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: puppeteer
+description: Browser automation — navigate, click, screenshot, fill forms, and extract content from any web page.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-puppeteer"
+
+auth:
+  type: none
+
+post_install: |
+  The Puppeteer MCP launches a headless Chromium browser for web automation.
+  No API key needed. Tools include navigate, screenshot, click, fill, evaluate,
+  and hover. Start a new Hermes session to load the Puppeteer tools.

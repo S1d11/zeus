@@ -1,0 +1,28 @@
+# Nous-approved MCP catalog entry.
+manifest_version: 1
+
+name: everart
+description: Generate images from text prompts using AI models — create art, illustrations, and designs.
+source: https://github.com/modelcontextprotocol/servers
+
+transport:
+  type: stdio
+  command: npx
+  args:
+    - "-y"
+    - "@modelcontextprotocol/server-everart"
+
+auth:
+  type: api_key
+  env:
+    - name: EVERART_API_KEY
+      prompt: "EverArt API key (everart.ai > API)"
+      required: true
+      secret: true
+
+post_install: |
+  Get an API key at https://everart.ai/api. The EverArt MCP provides tools
+  for generating images from text prompts using various AI models (FLUX,
+  SDXL, etc.). Generated images are returned as URLs.
+
+  Start a new Hermes session to load the EverArt tools.
