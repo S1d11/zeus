@@ -5,25 +5,6 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __esm = (fn, res, err) => function __init() {
-  if (err) throw err[0];
-  try {
-    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-  } catch (e) {
-    throw err = [e], e;
-  }
-};
-var __commonJS = (cb, mod) => function __require() {
-  try {
-    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
-  } catch (e) {
-    throw mod = 0, e;
-  }
-};
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
 var __copyProps = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
     for (let key of __getOwnPropNames(from))
@@ -40,9 +21,50 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// ../../node_modules/electron-updater/node_modules/universalify/index.js
+// electron/main.cjs
+var __create2 = Object.create;
+var __defProp2 = Object.defineProperty;
+var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames2 = Object.getOwnPropertyNames;
+var __getProtoOf2 = Object.getPrototypeOf;
+var __hasOwnProp2 = Object.prototype.hasOwnProperty;
+var __esm = (fn, res, err) => function __init() {
+  if (err) throw err[0];
+  try {
+    return fn && (res = (0, fn[__getOwnPropNames2(fn)[0]])(fn = 0)), res;
+  } catch (e) {
+    throw err = [e], e;
+  }
+};
+var __commonJS = (cb, mod) => function __require() {
+  try {
+    return mod || (0, cb[__getOwnPropNames2(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+  } catch (e) {
+    throw mod = 0, e;
+  }
+};
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp2(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps2 = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames2(from))
+      if (!__hasOwnProp2.call(to, key) && key !== except)
+        __defProp2(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc2(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM2 = (mod, isNodeMode, target) => (target = mod != null ? __create2(__getProtoOf2(mod)) : {}, __copyProps2(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
+  isNodeMode || !mod || !mod.__esModule ? __defProp2(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps2(__defProp2({}, "__esModule", { value: true }), mod);
 var require_universalify = __commonJS({
   "../../node_modules/electron-updater/node_modules/universalify/index.js"(exports2) {
     "use strict";
@@ -69,8 +91,6 @@ var require_universalify = __commonJS({
     };
   }
 });
-
-// ../../node_modules/graceful-fs/polyfills.js
 var require_polyfills = __commonJS({
   "../../node_modules/graceful-fs/polyfills.js"(exports2, module2) {
     var constants = require("constants");
@@ -357,8 +377,6 @@ var require_polyfills = __commonJS({
     }
   }
 });
-
-// ../../node_modules/graceful-fs/legacy-streams.js
 var require_legacy_streams = __commonJS({
   "../../node_modules/graceful-fs/legacy-streams.js"(exports2, module2) {
     var Stream = require("stream").Stream;
@@ -453,8 +471,6 @@ var require_legacy_streams = __commonJS({
     }
   }
 });
-
-// ../../node_modules/graceful-fs/clone.js
 var require_clone = __commonJS({
   "../../node_modules/graceful-fs/clone.js"(exports2, module2) {
     "use strict";
@@ -476,8 +492,6 @@ var require_clone = __commonJS({
     }
   }
 });
-
-// ../../node_modules/graceful-fs/graceful-fs.js
 var require_graceful_fs = __commonJS({
   "../../node_modules/graceful-fs/graceful-fs.js"(exports2, module2) {
     var fs2 = require("fs");
@@ -846,8 +860,6 @@ var require_graceful_fs = __commonJS({
     }
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/fs/index.js
 var require_fs = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/fs/index.js"(exports2) {
     "use strict";
@@ -949,8 +961,6 @@ var require_fs = __commonJS({
     }
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/mkdirs/utils.js
 var require_utils = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/mkdirs/utils.js"(exports2, module2) {
     "use strict";
@@ -967,8 +977,6 @@ var require_utils = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/mkdirs/make-dir.js
 var require_make_dir = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/mkdirs/make-dir.js"(exports2, module2) {
     "use strict";
@@ -995,8 +1003,6 @@ var require_make_dir = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/mkdirs/index.js
 var require_mkdirs = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/mkdirs/index.js"(exports2, module2) {
     "use strict";
@@ -1014,8 +1020,6 @@ var require_mkdirs = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/path-exists/index.js
 var require_path_exists = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/path-exists/index.js"(exports2, module2) {
     "use strict";
@@ -1030,8 +1034,6 @@ var require_path_exists = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/util/utimes.js
 var require_utimes = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/util/utimes.js"(exports2, module2) {
     "use strict";
@@ -1057,8 +1059,6 @@ var require_utimes = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/util/stat.js
 var require_stat = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/util/stat.js"(exports2, module2) {
     "use strict";
@@ -1188,8 +1188,6 @@ var require_stat = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/copy/copy.js
 var require_copy = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/copy/copy.js"(exports2, module2) {
     "use strict";
@@ -1385,8 +1383,6 @@ var require_copy = __commonJS({
     module2.exports = copy;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/copy/copy-sync.js
 var require_copy_sync = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/copy/copy-sync.js"(exports2, module2) {
     "use strict";
@@ -1519,8 +1515,6 @@ var require_copy_sync = __commonJS({
     module2.exports = copySync;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/copy/index.js
 var require_copy2 = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/copy/index.js"(exports2, module2) {
     "use strict";
@@ -1531,8 +1525,6 @@ var require_copy2 = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/remove/rimraf.js
 var require_rimraf = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/remove/rimraf.js"(exports2, module2) {
     "use strict";
@@ -1766,8 +1758,6 @@ var require_rimraf = __commonJS({
     rimraf.sync = rimrafSync;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/remove/index.js
 var require_remove = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/remove/index.js"(exports2, module2) {
     "use strict";
@@ -1788,8 +1778,6 @@ var require_remove = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/empty/index.js
 var require_empty = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/empty/index.js"(exports2, module2) {
     "use strict";
@@ -1827,8 +1815,6 @@ var require_empty = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/ensure/file.js
 var require_file = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/ensure/file.js"(exports2, module2) {
     "use strict";
@@ -1889,8 +1875,6 @@ var require_file = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/ensure/link.js
 var require_link = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/ensure/link.js"(exports2, module2) {
     "use strict";
@@ -1951,8 +1935,6 @@ var require_link = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/ensure/symlink-paths.js
 var require_symlink_paths = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/ensure/symlink-paths.js"(exports2, module2) {
     "use strict";
@@ -2030,8 +2012,6 @@ var require_symlink_paths = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/ensure/symlink-type.js
 var require_symlink_type = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/ensure/symlink-type.js"(exports2, module2) {
     "use strict";
@@ -2062,8 +2042,6 @@ var require_symlink_type = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/ensure/symlink.js
 var require_symlink = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/ensure/symlink.js"(exports2, module2) {
     "use strict";
@@ -2140,8 +2118,6 @@ var require_symlink = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/ensure/index.js
 var require_ensure = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/ensure/index.js"(exports2, module2) {
     "use strict";
@@ -2167,8 +2143,6 @@ var require_ensure = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/jsonfile/utils.js
 var require_utils2 = __commonJS({
   "../../node_modules/electron-updater/node_modules/jsonfile/utils.js"(exports2, module2) {
     function stringify(obj, { EOL = "\n", finalEOL = true, replacer = null, spaces } = {}) {
@@ -2186,8 +2160,6 @@ var require_utils2 = __commonJS({
     module2.exports = { stringify, stripBom };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/jsonfile/index.js
 var require_jsonfile = __commonJS({
   "../../node_modules/electron-updater/node_modules/jsonfile/index.js"(exports2, module2) {
     var _fs;
@@ -2258,8 +2230,6 @@ var require_jsonfile = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/json/jsonfile.js
 var require_jsonfile2 = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/json/jsonfile.js"(exports2, module2) {
     "use strict";
@@ -2273,8 +2243,6 @@ var require_jsonfile2 = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/output-file/index.js
 var require_output_file = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/output-file/index.js"(exports2, module2) {
     "use strict";
@@ -2312,8 +2280,6 @@ var require_output_file = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/json/output-json.js
 var require_output_json = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/json/output-json.js"(exports2, module2) {
     "use strict";
@@ -2326,8 +2292,6 @@ var require_output_json = __commonJS({
     module2.exports = outputJson;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/json/output-json-sync.js
 var require_output_json_sync = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/json/output-json-sync.js"(exports2, module2) {
     "use strict";
@@ -2340,8 +2304,6 @@ var require_output_json_sync = __commonJS({
     module2.exports = outputJsonSync;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/json/index.js
 var require_json = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/json/index.js"(exports2, module2) {
     "use strict";
@@ -2358,8 +2320,6 @@ var require_json = __commonJS({
     module2.exports = jsonFile;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/move/move.js
 var require_move = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/move/move.js"(exports2, module2) {
     "use strict";
@@ -2429,8 +2389,6 @@ var require_move = __commonJS({
     module2.exports = move;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/move/move-sync.js
 var require_move_sync = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/move/move-sync.js"(exports2, module2) {
     "use strict";
@@ -2481,8 +2439,6 @@ var require_move_sync = __commonJS({
     module2.exports = moveSync;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/move/index.js
 var require_move2 = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/move/index.js"(exports2, module2) {
     "use strict";
@@ -2493,8 +2449,6 @@ var require_move2 = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/fs-extra/lib/index.js
 var require_lib = __commonJS({
   "../../node_modules/electron-updater/node_modules/fs-extra/lib/index.js"(exports2, module2) {
     "use strict";
@@ -2514,8 +2468,6 @@ var require_lib = __commonJS({
     };
   }
 });
-
-// ../../node_modules/builder-util-runtime/out/CancellationToken.js
 var require_CancellationToken = __commonJS({
   "../../node_modules/builder-util-runtime/out/CancellationToken.js"(exports2) {
     "use strict";
@@ -2620,8 +2572,6 @@ var require_CancellationToken = __commonJS({
     exports2.CancellationError = CancellationError;
   }
 });
-
-// ../../node_modules/builder-util-runtime/out/error.js
 var require_error = __commonJS({
   "../../node_modules/builder-util-runtime/out/error.js"(exports2) {
     "use strict";
@@ -2634,8 +2584,6 @@ var require_error = __commonJS({
     }
   }
 });
-
-// ../../node_modules/ms/index.js
 var require_ms = __commonJS({
   "../../node_modules/ms/index.js"(exports2, module2) {
     var s = 1e3;
@@ -2750,8 +2698,6 @@ var require_ms = __commonJS({
     }
   }
 });
-
-// ../../node_modules/debug/src/common.js
 var require_common = __commonJS({
   "../../node_modules/debug/src/common.js"(exports2, module2) {
     function setup(env3) {
@@ -2927,8 +2873,6 @@ var require_common = __commonJS({
     module2.exports = setup;
   }
 });
-
-// ../../node_modules/debug/src/browser.js
 var require_browser = __commonJS({
   "../../node_modules/debug/src/browser.js"(exports2, module2) {
     exports2.formatArgs = formatArgs;
@@ -3097,8 +3041,6 @@ var require_browser = __commonJS({
     };
   }
 });
-
-// ../../node_modules/supports-color/index.js
 var supports_color_exports = {};
 __export(supports_color_exports, {
   createSupportsColor: () => createSupportsColor,
@@ -3227,12 +3169,18 @@ function createSupportsColor(stream, options = {}) {
   });
   return translateLevel(level);
 }
-var import_node_process, import_node_os, import_node_tty, env, flagForceColor, supportsColor, supports_color_default;
+var import_node_process;
+var import_node_os;
+var import_node_tty;
+var env;
+var flagForceColor;
+var supportsColor;
+var supports_color_default;
 var init_supports_color = __esm({
   "../../node_modules/supports-color/index.js"() {
-    import_node_process = __toESM(require("node:process"), 1);
-    import_node_os = __toESM(require("node:os"), 1);
-    import_node_tty = __toESM(require("node:tty"), 1);
+    import_node_process = __toESM2(require("node:process"), 1);
+    import_node_os = __toESM2(require("node:os"), 1);
+    import_node_tty = __toESM2(require("node:tty"), 1);
     ({ env } = import_node_process.default);
     if (hasFlag("no-color") || hasFlag("no-colors") || hasFlag("color=false") || hasFlag("color=never")) {
       flagForceColor = 0;
@@ -3246,8 +3194,6 @@ var init_supports_color = __esm({
     supports_color_default = supportsColor;
   }
 });
-
-// ../../node_modules/debug/src/node.js
 var require_node = __commonJS({
   "../../node_modules/debug/src/node.js"(exports2, module2) {
     var tty2 = require("tty");
@@ -3420,8 +3366,6 @@ var require_node = __commonJS({
     };
   }
 });
-
-// ../../node_modules/debug/src/index.js
 var require_src = __commonJS({
   "../../node_modules/debug/src/index.js"(exports2, module2) {
     if (typeof process === "undefined" || process.type === "renderer" || process.browser === true || process.__nwjs) {
@@ -3431,8 +3375,6 @@ var require_src = __commonJS({
     }
   }
 });
-
-// ../../node_modules/builder-util-runtime/out/ProgressCallbackTransform.js
 var require_ProgressCallbackTransform = __commonJS({
   "../../node_modules/builder-util-runtime/out/ProgressCallbackTransform.js"(exports2) {
     "use strict";
@@ -3490,8 +3432,6 @@ var require_ProgressCallbackTransform = __commonJS({
     exports2.ProgressCallbackTransform = ProgressCallbackTransform;
   }
 });
-
-// ../../node_modules/builder-util-runtime/out/httpExecutor.js
 var require_httpExecutor = __commonJS({
   "../../node_modules/builder-util-runtime/out/httpExecutor.js"(exports2) {
     "use strict";
@@ -3964,8 +3904,6 @@ Please double check that your authentication token is correct. Due to security r
     }
   }
 });
-
-// ../../node_modules/builder-util-runtime/out/MemoLazy.js
 var require_MemoLazy = __commonJS({
   "../../node_modules/builder-util-runtime/out/MemoLazy.js"(exports2) {
     "use strict";
@@ -4008,8 +3946,6 @@ var require_MemoLazy = __commonJS({
     }
   }
 });
-
-// ../../node_modules/builder-util-runtime/out/publishOptions.js
 var require_publishOptions = __commonJS({
   "../../node_modules/builder-util-runtime/out/publishOptions.js"(exports2) {
     "use strict";
@@ -4082,8 +4018,6 @@ var require_publishOptions = __commonJS({
     }
   }
 });
-
-// ../../node_modules/builder-util-runtime/out/retry.js
 var require_retry = __commonJS({
   "../../node_modules/builder-util-runtime/out/retry.js"(exports2) {
     "use strict";
@@ -4106,8 +4040,6 @@ var require_retry = __commonJS({
     }
   }
 });
-
-// ../../node_modules/builder-util-runtime/out/rfc2253Parser.js
 var require_rfc2253Parser = __commonJS({
   "../../node_modules/builder-util-runtime/out/rfc2253Parser.js"(exports2) {
     "use strict";
@@ -4185,8 +4117,6 @@ var require_rfc2253Parser = __commonJS({
     }
   }
 });
-
-// ../../node_modules/builder-util-runtime/out/uuid.js
 var require_uuid = __commonJS({
   "../../node_modules/builder-util-runtime/out/uuid.js"(exports2) {
     "use strict";
@@ -4336,8 +4266,6 @@ var require_uuid = __commonJS({
     exports2.nil = new UUID("00000000-0000-0000-0000-000000000000");
   }
 });
-
-// ../../node_modules/sax/lib/sax.js
 var require_sax = __commonJS({
   "../../node_modules/sax/lib/sax.js"(exports2) {
     (function(sax) {
@@ -5927,8 +5855,6 @@ var require_sax = __commonJS({
     })(typeof exports2 === "undefined" ? exports2.sax = {} : exports2);
   }
 });
-
-// ../../node_modules/builder-util-runtime/out/xml.js
 var require_xml = __commonJS({
   "../../node_modules/builder-util-runtime/out/xml.js"(exports2) {
     "use strict";
@@ -6040,8 +5966,6 @@ var require_xml = __commonJS({
     }
   }
 });
-
-// ../../node_modules/builder-util-runtime/out/objects.js
 var require_objects = __commonJS({
   "../../node_modules/builder-util-runtime/out/objects.js"(exports2) {
     "use strict";
@@ -6141,8 +6065,6 @@ var require_objects = __commonJS({
     }
   }
 });
-
-// ../../node_modules/builder-util-runtime/out/index.js
 var require_out = __commonJS({
   "../../node_modules/builder-util-runtime/out/index.js"(exports2) {
     "use strict";
@@ -6253,8 +6175,6 @@ var require_out = __commonJS({
     exports2.CURRENT_APP_PACKAGE_FILE_NAME = "package.7z";
   }
 });
-
-// ../../node_modules/js-yaml/lib/common.js
 var require_common2 = __commonJS({
   "../../node_modules/js-yaml/lib/common.js"(exports2, module2) {
     "use strict";
@@ -6297,8 +6217,6 @@ var require_common2 = __commonJS({
     module2.exports.extend = extend;
   }
 });
-
-// ../../node_modules/js-yaml/lib/exception.js
 var require_exception = __commonJS({
   "../../node_modules/js-yaml/lib/exception.js"(exports2, module2) {
     "use strict";
@@ -6335,8 +6253,6 @@ var require_exception = __commonJS({
     module2.exports = YAMLException;
   }
 });
-
-// ../../node_modules/js-yaml/lib/snippet.js
 var require_snippet = __commonJS({
   "../../node_modules/js-yaml/lib/snippet.js"(exports2, module2) {
     "use strict";
@@ -6415,8 +6331,6 @@ var require_snippet = __commonJS({
     module2.exports = makeSnippet;
   }
 });
-
-// ../../node_modules/js-yaml/lib/type.js
 var require_type = __commonJS({
   "../../node_modules/js-yaml/lib/type.js"(exports2, module2) {
     "use strict";
@@ -6479,8 +6393,6 @@ var require_type = __commonJS({
     module2.exports = Type;
   }
 });
-
-// ../../node_modules/js-yaml/lib/schema.js
 var require_schema = __commonJS({
   "../../node_modules/js-yaml/lib/schema.js"(exports2, module2) {
     "use strict";
@@ -6568,8 +6480,6 @@ var require_schema = __commonJS({
     module2.exports = Schema;
   }
 });
-
-// ../../node_modules/js-yaml/lib/type/str.js
 var require_str = __commonJS({
   "../../node_modules/js-yaml/lib/type/str.js"(exports2, module2) {
     "use strict";
@@ -6582,8 +6492,6 @@ var require_str = __commonJS({
     });
   }
 });
-
-// ../../node_modules/js-yaml/lib/type/seq.js
 var require_seq = __commonJS({
   "../../node_modules/js-yaml/lib/type/seq.js"(exports2, module2) {
     "use strict";
@@ -6596,8 +6504,6 @@ var require_seq = __commonJS({
     });
   }
 });
-
-// ../../node_modules/js-yaml/lib/type/map.js
 var require_map = __commonJS({
   "../../node_modules/js-yaml/lib/type/map.js"(exports2, module2) {
     "use strict";
@@ -6610,8 +6516,6 @@ var require_map = __commonJS({
     });
   }
 });
-
-// ../../node_modules/js-yaml/lib/schema/failsafe.js
 var require_failsafe = __commonJS({
   "../../node_modules/js-yaml/lib/schema/failsafe.js"(exports2, module2) {
     "use strict";
@@ -6625,8 +6529,6 @@ var require_failsafe = __commonJS({
     });
   }
 });
-
-// ../../node_modules/js-yaml/lib/type/null.js
 var require_null = __commonJS({
   "../../node_modules/js-yaml/lib/type/null.js"(exports2, module2) {
     "use strict";
@@ -6668,8 +6570,6 @@ var require_null = __commonJS({
     });
   }
 });
-
-// ../../node_modules/js-yaml/lib/type/bool.js
 var require_bool = __commonJS({
   "../../node_modules/js-yaml/lib/type/bool.js"(exports2, module2) {
     "use strict";
@@ -6705,8 +6605,6 @@ var require_bool = __commonJS({
     });
   }
 });
-
-// ../../node_modules/js-yaml/lib/type/int.js
 var require_int = __commonJS({
   "../../node_modules/js-yaml/lib/type/int.js"(exports2, module2) {
     "use strict";
@@ -6821,8 +6719,6 @@ var require_int = __commonJS({
     });
   }
 });
-
-// ../../node_modules/js-yaml/lib/type/float.js
 var require_float = __commonJS({
   "../../node_modules/js-yaml/lib/type/float.js"(exports2, module2) {
     "use strict";
@@ -6906,8 +6802,6 @@ var require_float = __commonJS({
     });
   }
 });
-
-// ../../node_modules/js-yaml/lib/schema/json.js
 var require_json2 = __commonJS({
   "../../node_modules/js-yaml/lib/schema/json.js"(exports2, module2) {
     "use strict";
@@ -6921,16 +6815,12 @@ var require_json2 = __commonJS({
     });
   }
 });
-
-// ../../node_modules/js-yaml/lib/schema/core.js
 var require_core = __commonJS({
   "../../node_modules/js-yaml/lib/schema/core.js"(exports2, module2) {
     "use strict";
     module2.exports = require_json2();
   }
 });
-
-// ../../node_modules/js-yaml/lib/type/timestamp.js
 var require_timestamp = __commonJS({
   "../../node_modules/js-yaml/lib/type/timestamp.js"(exports2, module2) {
     "use strict";
@@ -6991,8 +6881,6 @@ var require_timestamp = __commonJS({
     });
   }
 });
-
-// ../../node_modules/js-yaml/lib/type/merge.js
 var require_merge = __commonJS({
   "../../node_modules/js-yaml/lib/type/merge.js"(exports2, module2) {
     "use strict";
@@ -7006,8 +6894,6 @@ var require_merge = __commonJS({
     });
   }
 });
-
-// ../../node_modules/js-yaml/lib/type/binary.js
 var require_binary = __commonJS({
   "../../node_modules/js-yaml/lib/type/binary.js"(exports2, module2) {
     "use strict";
@@ -7098,8 +6984,6 @@ var require_binary = __commonJS({
     });
   }
 });
-
-// ../../node_modules/js-yaml/lib/type/omap.js
 var require_omap = __commonJS({
   "../../node_modules/js-yaml/lib/type/omap.js"(exports2, module2) {
     "use strict";
@@ -7137,8 +7021,6 @@ var require_omap = __commonJS({
     });
   }
 });
-
-// ../../node_modules/js-yaml/lib/type/pairs.js
 var require_pairs = __commonJS({
   "../../node_modules/js-yaml/lib/type/pairs.js"(exports2, module2) {
     "use strict";
@@ -7175,8 +7057,6 @@ var require_pairs = __commonJS({
     });
   }
 });
-
-// ../../node_modules/js-yaml/lib/type/set.js
 var require_set = __commonJS({
   "../../node_modules/js-yaml/lib/type/set.js"(exports2, module2) {
     "use strict";
@@ -7202,8 +7082,6 @@ var require_set = __commonJS({
     });
   }
 });
-
-// ../../node_modules/js-yaml/lib/schema/default.js
 var require_default = __commonJS({
   "../../node_modules/js-yaml/lib/schema/default.js"(exports2, module2) {
     "use strict";
@@ -7221,8 +7099,6 @@ var require_default = __commonJS({
     });
   }
 });
-
-// ../../node_modules/js-yaml/lib/loader.js
 var require_loader = __commonJS({
   "../../node_modules/js-yaml/lib/loader.js"(exports2, module2) {
     "use strict";
@@ -8596,8 +8472,6 @@ var require_loader = __commonJS({
     module2.exports.load = load;
   }
 });
-
-// ../../node_modules/js-yaml/lib/dumper.js
 var require_dumper = __commonJS({
   "../../node_modules/js-yaml/lib/dumper.js"(exports2, module2) {
     "use strict";
@@ -9249,8 +9123,6 @@ var require_dumper = __commonJS({
     module2.exports.dump = dump;
   }
 });
-
-// ../../node_modules/js-yaml/index.js
 var require_js_yaml = __commonJS({
   "../../node_modules/js-yaml/index.js"(exports2, module2) {
     "use strict";
@@ -9291,8 +9163,6 @@ var require_js_yaml = __commonJS({
     module2.exports.safeDump = renamed("safeDump", "dump");
   }
 });
-
-// ../../node_modules/lazy-val/out/main.js
 var require_main = __commonJS({
   "../../node_modules/lazy-val/out/main.js"(exports2) {
     "use strict";
@@ -9322,8 +9192,6 @@ var require_main = __commonJS({
     exports2.Lazy = Lazy;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/internal/constants.js
 var require_constants = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/internal/constants.js"(exports2, module2) {
     "use strict";
@@ -9354,8 +9222,6 @@ var require_constants = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/internal/debug.js
 var require_debug = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/internal/debug.js"(exports2, module2) {
     "use strict";
@@ -9364,8 +9230,6 @@ var require_debug = __commonJS({
     module2.exports = debug;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/internal/re.js
 var require_re = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/internal/re.js"(exports2, module2) {
     "use strict";
@@ -9452,8 +9316,6 @@ var require_re = __commonJS({
     createToken("GTE0PRE", "^\\s*>=\\s*0\\.0\\.0-0\\s*$");
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/internal/parse-options.js
 var require_parse_options = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/internal/parse-options.js"(exports2, module2) {
     "use strict";
@@ -9471,8 +9333,6 @@ var require_parse_options = __commonJS({
     module2.exports = parseOptions;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/internal/identifiers.js
 var require_identifiers = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/internal/identifiers.js"(exports2, module2) {
     "use strict";
@@ -9496,8 +9356,6 @@ var require_identifiers = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/classes/semver.js
 var require_semver = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/classes/semver.js"(exports2, module2) {
     "use strict";
@@ -9775,8 +9633,6 @@ var require_semver = __commonJS({
     module2.exports = SemVer;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/parse.js
 var require_parse = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/parse.js"(exports2, module2) {
     "use strict";
@@ -9797,8 +9653,6 @@ var require_parse = __commonJS({
     module2.exports = parse;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/valid.js
 var require_valid = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/valid.js"(exports2, module2) {
     "use strict";
@@ -9810,8 +9664,6 @@ var require_valid = __commonJS({
     module2.exports = valid;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/clean.js
 var require_clean = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/clean.js"(exports2, module2) {
     "use strict";
@@ -9823,8 +9675,6 @@ var require_clean = __commonJS({
     module2.exports = clean;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/inc.js
 var require_inc = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/inc.js"(exports2, module2) {
     "use strict";
@@ -9847,8 +9697,6 @@ var require_inc = __commonJS({
     module2.exports = inc;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/diff.js
 var require_diff = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/diff.js"(exports2, module2) {
     "use strict";
@@ -9891,8 +9739,6 @@ var require_diff = __commonJS({
     module2.exports = diff;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/major.js
 var require_major = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/major.js"(exports2, module2) {
     "use strict";
@@ -9901,8 +9747,6 @@ var require_major = __commonJS({
     module2.exports = major;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/minor.js
 var require_minor = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/minor.js"(exports2, module2) {
     "use strict";
@@ -9911,8 +9755,6 @@ var require_minor = __commonJS({
     module2.exports = minor;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/patch.js
 var require_patch = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/patch.js"(exports2, module2) {
     "use strict";
@@ -9921,8 +9763,6 @@ var require_patch = __commonJS({
     module2.exports = patch;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/prerelease.js
 var require_prerelease = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/prerelease.js"(exports2, module2) {
     "use strict";
@@ -9934,8 +9774,6 @@ var require_prerelease = __commonJS({
     module2.exports = prerelease;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/compare.js
 var require_compare = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/compare.js"(exports2, module2) {
     "use strict";
@@ -9944,8 +9782,6 @@ var require_compare = __commonJS({
     module2.exports = compare;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/rcompare.js
 var require_rcompare = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/rcompare.js"(exports2, module2) {
     "use strict";
@@ -9954,8 +9790,6 @@ var require_rcompare = __commonJS({
     module2.exports = rcompare;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/compare-loose.js
 var require_compare_loose = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/compare-loose.js"(exports2, module2) {
     "use strict";
@@ -9964,8 +9798,6 @@ var require_compare_loose = __commonJS({
     module2.exports = compareLoose;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/compare-build.js
 var require_compare_build = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/compare-build.js"(exports2, module2) {
     "use strict";
@@ -9978,8 +9810,6 @@ var require_compare_build = __commonJS({
     module2.exports = compareBuild;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/sort.js
 var require_sort = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/sort.js"(exports2, module2) {
     "use strict";
@@ -9988,8 +9818,6 @@ var require_sort = __commonJS({
     module2.exports = sort;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/rsort.js
 var require_rsort = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/rsort.js"(exports2, module2) {
     "use strict";
@@ -9998,8 +9826,6 @@ var require_rsort = __commonJS({
     module2.exports = rsort;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/gt.js
 var require_gt = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/gt.js"(exports2, module2) {
     "use strict";
@@ -10008,8 +9834,6 @@ var require_gt = __commonJS({
     module2.exports = gt;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/lt.js
 var require_lt = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/lt.js"(exports2, module2) {
     "use strict";
@@ -10018,8 +9842,6 @@ var require_lt = __commonJS({
     module2.exports = lt;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/eq.js
 var require_eq = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/eq.js"(exports2, module2) {
     "use strict";
@@ -10028,8 +9850,6 @@ var require_eq = __commonJS({
     module2.exports = eq;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/neq.js
 var require_neq = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/neq.js"(exports2, module2) {
     "use strict";
@@ -10038,8 +9858,6 @@ var require_neq = __commonJS({
     module2.exports = neq;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/gte.js
 var require_gte = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/gte.js"(exports2, module2) {
     "use strict";
@@ -10048,8 +9866,6 @@ var require_gte = __commonJS({
     module2.exports = gte;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/lte.js
 var require_lte = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/lte.js"(exports2, module2) {
     "use strict";
@@ -10058,8 +9874,6 @@ var require_lte = __commonJS({
     module2.exports = lte;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/cmp.js
 var require_cmp = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/cmp.js"(exports2, module2) {
     "use strict";
@@ -10108,8 +9922,6 @@ var require_cmp = __commonJS({
     module2.exports = cmp;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/coerce.js
 var require_coerce = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/coerce.js"(exports2, module2) {
     "use strict";
@@ -10154,8 +9966,6 @@ var require_coerce = __commonJS({
     module2.exports = coerce;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/internal/lrucache.js
 var require_lrucache = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/internal/lrucache.js"(exports2, module2) {
     "use strict";
@@ -10192,8 +10002,6 @@ var require_lrucache = __commonJS({
     module2.exports = LRUCache;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/classes/range.js
 var require_range = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/classes/range.js"(exports2, module2) {
     "use strict";
@@ -10569,8 +10377,6 @@ var require_range = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/classes/comparator.js
 var require_comparator = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/classes/comparator.js"(exports2, module2) {
     "use strict";
@@ -10682,8 +10488,6 @@ var require_comparator = __commonJS({
     var Range = require_range();
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/functions/satisfies.js
 var require_satisfies = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/functions/satisfies.js"(exports2, module2) {
     "use strict";
@@ -10699,8 +10503,6 @@ var require_satisfies = __commonJS({
     module2.exports = satisfies;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/ranges/to-comparators.js
 var require_to_comparators = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/ranges/to-comparators.js"(exports2, module2) {
     "use strict";
@@ -10709,8 +10511,6 @@ var require_to_comparators = __commonJS({
     module2.exports = toComparators;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/ranges/max-satisfying.js
 var require_max_satisfying = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/ranges/max-satisfying.js"(exports2, module2) {
     "use strict";
@@ -10738,8 +10538,6 @@ var require_max_satisfying = __commonJS({
     module2.exports = maxSatisfying;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/ranges/min-satisfying.js
 var require_min_satisfying = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/ranges/min-satisfying.js"(exports2, module2) {
     "use strict";
@@ -10767,8 +10565,6 @@ var require_min_satisfying = __commonJS({
     module2.exports = minSatisfying;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/ranges/min-version.js
 var require_min_version = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/ranges/min-version.js"(exports2, module2) {
     "use strict";
@@ -10826,8 +10622,6 @@ var require_min_version = __commonJS({
     module2.exports = minVersion;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/ranges/valid.js
 var require_valid2 = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/ranges/valid.js"(exports2, module2) {
     "use strict";
@@ -10842,8 +10636,6 @@ var require_valid2 = __commonJS({
     module2.exports = validRange;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/ranges/outside.js
 var require_outside = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/ranges/outside.js"(exports2, module2) {
     "use strict";
@@ -10911,8 +10703,6 @@ var require_outside = __commonJS({
     module2.exports = outside;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/ranges/gtr.js
 var require_gtr = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/ranges/gtr.js"(exports2, module2) {
     "use strict";
@@ -10921,8 +10711,6 @@ var require_gtr = __commonJS({
     module2.exports = gtr;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/ranges/ltr.js
 var require_ltr = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/ranges/ltr.js"(exports2, module2) {
     "use strict";
@@ -10931,8 +10719,6 @@ var require_ltr = __commonJS({
     module2.exports = ltr;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/ranges/intersects.js
 var require_intersects = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/ranges/intersects.js"(exports2, module2) {
     "use strict";
@@ -10945,8 +10731,6 @@ var require_intersects = __commonJS({
     module2.exports = intersects;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/ranges/simplify.js
 var require_simplify = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/ranges/simplify.js"(exports2, module2) {
     "use strict";
@@ -10995,8 +10779,6 @@ var require_simplify = __commonJS({
     };
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/ranges/subset.js
 var require_subset = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/ranges/subset.js"(exports2, module2) {
     "use strict";
@@ -11157,8 +10939,6 @@ var require_subset = __commonJS({
     module2.exports = subset;
   }
 });
-
-// ../../node_modules/electron-updater/node_modules/semver/index.js
 var require_semver2 = __commonJS({
   "../../node_modules/electron-updater/node_modules/semver/index.js"(exports2, module2) {
     "use strict";
@@ -11252,8 +11032,6 @@ var require_semver2 = __commonJS({
     };
   }
 });
-
-// ../../node_modules/lodash.isequal/index.js
 var require_lodash = __commonJS({
   "../../node_modules/lodash.isequal/index.js"(exports2, module2) {
     var LARGE_ARRAY_SIZE = 200;
@@ -11953,8 +11731,6 @@ var require_lodash = __commonJS({
     module2.exports = isEqual;
   }
 });
-
-// ../../node_modules/electron-updater/out/DownloadedUpdateHelper.js
 var require_DownloadedUpdateHelper = __commonJS({
   "../../node_modules/electron-updater/out/DownloadedUpdateHelper.js"(exports2) {
     "use strict";
@@ -12116,8 +11892,6 @@ var require_DownloadedUpdateHelper = __commonJS({
     }
   }
 });
-
-// ../../node_modules/electron-updater/out/AppAdapter.js
 var require_AppAdapter = __commonJS({
   "../../node_modules/electron-updater/out/AppAdapter.js"(exports2) {
     "use strict";
@@ -12139,8 +11913,6 @@ var require_AppAdapter = __commonJS({
     }
   }
 });
-
-// ../../node_modules/electron-updater/out/ElectronAppAdapter.js
 var require_ElectronAppAdapter = __commonJS({
   "../../node_modules/electron-updater/out/ElectronAppAdapter.js"(exports2) {
     "use strict";
@@ -12186,8 +11958,6 @@ var require_ElectronAppAdapter = __commonJS({
     exports2.ElectronAppAdapter = ElectronAppAdapter;
   }
 });
-
-// ../../node_modules/electron-updater/out/electronHttpExecutor.js
 var require_electronHttpExecutor = __commonJS({
   "../../node_modules/electron-updater/out/electronHttpExecutor.js"(exports2) {
     "use strict";
@@ -12262,8 +12032,6 @@ var require_electronHttpExecutor = __commonJS({
     exports2.ElectronHttpExecutor = ElectronHttpExecutor;
   }
 });
-
-// ../../node_modules/electron-updater/out/util.js
 var require_util = __commonJS({
   "../../node_modules/electron-updater/out/util.js"(exports2) {
     "use strict";
@@ -12294,8 +12062,6 @@ var require_util = __commonJS({
     }
   }
 });
-
-// ../../node_modules/lodash.escaperegexp/index.js
 var require_lodash2 = __commonJS({
   "../../node_modules/lodash.escaperegexp/index.js"(exports2, module2) {
     var INFINITY = 1 / 0;
@@ -12336,8 +12102,6 @@ var require_lodash2 = __commonJS({
     module2.exports = escapeRegExp;
   }
 });
-
-// ../../node_modules/electron-updater/out/providers/Provider.js
 var require_Provider = __commonJS({
   "../../node_modules/electron-updater/out/providers/Provider.js"(exports2) {
     "use strict";
@@ -12478,8 +12242,6 @@ var require_Provider = __commonJS({
     }
   }
 });
-
-// ../../node_modules/electron-updater/out/providers/GenericProvider.js
 var require_GenericProvider = __commonJS({
   "../../node_modules/electron-updater/out/providers/GenericProvider.js"(exports2) {
     "use strict";
@@ -12531,8 +12293,6 @@ var require_GenericProvider = __commonJS({
     exports2.GenericProvider = GenericProvider;
   }
 });
-
-// ../../node_modules/electron-updater/out/providers/BitbucketProvider.js
 var require_BitbucketProvider = __commonJS({
   "../../node_modules/electron-updater/out/providers/BitbucketProvider.js"(exports2) {
     "use strict";
@@ -12577,8 +12337,6 @@ var require_BitbucketProvider = __commonJS({
     exports2.BitbucketProvider = BitbucketProvider;
   }
 });
-
-// ../../node_modules/electron-updater/out/providers/GitHubProvider.js
 var require_GitHubProvider = __commonJS({
   "../../node_modules/electron-updater/out/providers/GitHubProvider.js"(exports2) {
     "use strict";
@@ -12793,8 +12551,6 @@ ${feedXml}`, "ERR_UPDATER_INVALID_RELEASE_FEED");
     }
   }
 });
-
-// ../../node_modules/electron-updater/out/providers/GitLabProvider.js
 var require_GitLabProvider = __commonJS({
   "../../node_modules/electron-updater/out/providers/GitLabProvider.js"(exports2) {
     "use strict";
@@ -13047,8 +12803,6 @@ var require_GitLabProvider = __commonJS({
     exports2.GitLabProvider = GitLabProvider;
   }
 });
-
-// ../../node_modules/electron-updater/out/providers/KeygenProvider.js
 var require_KeygenProvider = __commonJS({
   "../../node_modules/electron-updater/out/providers/KeygenProvider.js"(exports2) {
     "use strict";
@@ -13097,8 +12851,6 @@ var require_KeygenProvider = __commonJS({
     exports2.KeygenProvider = KeygenProvider;
   }
 });
-
-// ../../node_modules/electron-updater/out/providers/PrivateGitHubProvider.js
 var require_PrivateGitHubProvider = __commonJS({
   "../../node_modules/electron-updater/out/providers/PrivateGitHubProvider.js"(exports2) {
     "use strict";
@@ -13192,8 +12944,6 @@ var require_PrivateGitHubProvider = __commonJS({
     exports2.PrivateGitHubProvider = PrivateGitHubProvider;
   }
 });
-
-// ../../node_modules/electron-updater/out/providerFactory.js
 var require_providerFactory = __commonJS({
   "../../node_modules/electron-updater/out/providerFactory.js"(exports2) {
     "use strict";
@@ -13263,8 +13013,6 @@ var require_providerFactory = __commonJS({
     }
   }
 });
-
-// ../../node_modules/electron-updater/out/differentialDownloader/downloadPlanBuilder.js
 var require_downloadPlanBuilder = __commonJS({
   "../../node_modules/electron-updater/out/differentialDownloader/downloadPlanBuilder.js"(exports2) {
     "use strict";
@@ -13372,8 +13120,6 @@ rel: ${lastOperation.start - min} until ${lastOperation.end - min} and ${operati
     }
   }
 });
-
-// ../../node_modules/electron-updater/out/differentialDownloader/DataSplitter.js
 var require_DataSplitter = __commonJS({
   "../../node_modules/electron-updater/out/differentialDownloader/DataSplitter.js"(exports2) {
     "use strict";
@@ -13594,8 +13340,6 @@ var require_DataSplitter = __commonJS({
     exports2.DataSplitter = DataSplitter;
   }
 });
-
-// ../../node_modules/electron-updater/out/differentialDownloader/multipleRangeDownloader.js
 var require_multipleRangeDownloader = __commonJS({
   "../../node_modules/electron-updater/out/differentialDownloader/multipleRangeDownloader.js"(exports2) {
     "use strict";
@@ -13710,8 +13454,6 @@ var require_multipleRangeDownloader = __commonJS({
     }
   }
 });
-
-// ../../node_modules/electron-updater/out/differentialDownloader/ProgressDifferentialDownloadCallbackTransform.js
 var require_ProgressDifferentialDownloadCallbackTransform = __commonJS({
   "../../node_modules/electron-updater/out/differentialDownloader/ProgressDifferentialDownloadCallbackTransform.js"(exports2) {
     "use strict";
@@ -13801,8 +13543,6 @@ var require_ProgressDifferentialDownloadCallbackTransform = __commonJS({
     exports2.ProgressDifferentialDownloadCallbackTransform = ProgressDifferentialDownloadCallbackTransform;
   }
 });
-
-// ../../node_modules/electron-updater/out/differentialDownloader/DifferentialDownloader.js
 var require_DifferentialDownloader = __commonJS({
   "../../node_modules/electron-updater/out/differentialDownloader/DifferentialDownloader.js"(exports2) {
     "use strict";
@@ -14050,8 +13790,6 @@ var require_DifferentialDownloader = __commonJS({
     }
   }
 });
-
-// ../../node_modules/electron-updater/out/differentialDownloader/GenericDifferentialDownloader.js
 var require_GenericDifferentialDownloader = __commonJS({
   "../../node_modules/electron-updater/out/differentialDownloader/GenericDifferentialDownloader.js"(exports2) {
     "use strict";
@@ -14066,8 +13804,6 @@ var require_GenericDifferentialDownloader = __commonJS({
     exports2.GenericDifferentialDownloader = GenericDifferentialDownloader;
   }
 });
-
-// ../../node_modules/electron-updater/out/types.js
 var require_types = __commonJS({
   "../../node_modules/electron-updater/out/types.js"(exports2) {
     "use strict";
@@ -14114,8 +13850,6 @@ var require_types = __commonJS({
     }
   }
 });
-
-// ../../node_modules/electron-updater/out/AppUpdater.js
 var require_AppUpdater = __commonJS({
   "../../node_modules/electron-updater/out/AppUpdater.js"(exports2) {
     "use strict";
@@ -14741,8 +14475,6 @@ var require_AppUpdater = __commonJS({
     exports2.NoOpLogger = NoOpLogger;
   }
 });
-
-// ../../node_modules/electron-updater/out/BaseUpdater.js
 var require_BaseUpdater = __commonJS({
   "../../node_modules/electron-updater/out/BaseUpdater.js"(exports2) {
     "use strict";
@@ -14886,8 +14618,6 @@ var require_BaseUpdater = __commonJS({
     exports2.BaseUpdater = BaseUpdater;
   }
 });
-
-// ../../node_modules/electron-updater/out/differentialDownloader/FileWithEmbeddedBlockMapDifferentialDownloader.js
 var require_FileWithEmbeddedBlockMapDifferentialDownloader = __commonJS({
   "../../node_modules/electron-updater/out/differentialDownloader/FileWithEmbeddedBlockMapDifferentialDownloader.js"(exports2) {
     "use strict";
@@ -14927,8 +14657,6 @@ var require_FileWithEmbeddedBlockMapDifferentialDownloader = __commonJS({
     }
   }
 });
-
-// ../../node_modules/electron-updater/out/AppImageUpdater.js
 var require_AppImageUpdater = __commonJS({
   "../../node_modules/electron-updater/out/AppImageUpdater.js"(exports2) {
     "use strict";
@@ -15040,8 +14768,6 @@ var require_AppImageUpdater = __commonJS({
     exports2.AppImageUpdater = AppImageUpdater;
   }
 });
-
-// ../../node_modules/electron-updater/out/LinuxUpdater.js
 var require_LinuxUpdater = __commonJS({
   "../../node_modules/electron-updater/out/LinuxUpdater.js"(exports2) {
     "use strict";
@@ -15151,8 +14877,6 @@ var require_LinuxUpdater = __commonJS({
     exports2.LinuxUpdater = LinuxUpdater;
   }
 });
-
-// ../../node_modules/electron-updater/out/DebUpdater.js
 var require_DebUpdater = __commonJS({
   "../../node_modules/electron-updater/out/DebUpdater.js"(exports2) {
     "use strict";
@@ -15235,8 +14959,6 @@ var require_DebUpdater = __commonJS({
     exports2.DebUpdater = DebUpdater;
   }
 });
-
-// ../../node_modules/electron-updater/out/PacmanUpdater.js
 var require_PacmanUpdater = __commonJS({
   "../../node_modules/electron-updater/out/PacmanUpdater.js"(exports2) {
     "use strict";
@@ -15302,8 +15024,6 @@ var require_PacmanUpdater = __commonJS({
     exports2.PacmanUpdater = PacmanUpdater;
   }
 });
-
-// ../../node_modules/electron-updater/out/RpmUpdater.js
 var require_RpmUpdater = __commonJS({
   "../../node_modules/electron-updater/out/RpmUpdater.js"(exports2) {
     "use strict";
@@ -15371,8 +15091,6 @@ var require_RpmUpdater = __commonJS({
     exports2.RpmUpdater = RpmUpdater;
   }
 });
-
-// ../../node_modules/electron-updater/out/MacUpdater.js
 var require_MacUpdater = __commonJS({
   "../../node_modules/electron-updater/out/MacUpdater.js"(exports2) {
     "use strict";
@@ -15617,8 +15335,6 @@ var require_MacUpdater = __commonJS({
     exports2.MacUpdater = MacUpdater;
   }
 });
-
-// ../../node_modules/electron-updater/out/windowsExecutableCodeSignatureVerifier.js
 var require_windowsExecutableCodeSignatureVerifier = __commonJS({
   "../../node_modules/electron-updater/out/windowsExecutableCodeSignatureVerifier.js"(exports2) {
     "use strict";
@@ -15732,8 +15448,6 @@ var require_windowsExecutableCodeSignatureVerifier = __commonJS({
     }
   }
 });
-
-// ../../node_modules/electron-updater/out/NsisUpdater.js
 var require_NsisUpdater = __commonJS({
   "../../node_modules/electron-updater/out/NsisUpdater.js"(exports2) {
     "use strict";
@@ -15897,8 +15611,6 @@ var require_NsisUpdater = __commonJS({
     exports2.NsisUpdater = NsisUpdater;
   }
 });
-
-// ../../node_modules/electron-updater/out/main.js
 var require_main2 = __commonJS({
   "../../node_modules/electron-updater/out/main.js"(exports2) {
     "use strict";
@@ -16003,8 +15715,6 @@ var require_main2 = __commonJS({
     });
   }
 });
-
-// electron/auto-updater.cjs
 var require_auto_updater = __commonJS({
   "electron/auto-updater.cjs"(exports2, module2) {
     "use strict";
@@ -16215,12 +15925,10 @@ var require_auto_updater = __commonJS({
     };
   }
 });
-
-// electron/main.cjs
-var __getOwnPropNames2 = Object.getOwnPropertyNames;
+var __getOwnPropNames22 = Object.getOwnPropertyNames;
 var __commonJS2 = (cb, mod) => function __require() {
   try {
-    return mod || (0, cb[__getOwnPropNames2(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+    return mod || (0, cb[__getOwnPropNames22(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   } catch (e) {
     throw mod = 0, e;
   }
@@ -16501,48 +16209,48 @@ var require_wake_word = __commonJS2({
     };
   }
 });
-var __create2 = Object.create;
-var __defProp2 = Object.defineProperty;
-var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames22 = Object.getOwnPropertyNames;
-var __getProtoOf2 = Object.getPrototypeOf;
-var __hasOwnProp2 = Object.prototype.hasOwnProperty;
+var __create22 = Object.create;
+var __defProp22 = Object.defineProperty;
+var __getOwnPropDesc22 = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames222 = Object.getOwnPropertyNames;
+var __getProtoOf22 = Object.getPrototypeOf;
+var __hasOwnProp22 = Object.prototype.hasOwnProperty;
 var __esm2 = (fn, res, err) => function __init() {
   if (err) throw err[0];
   try {
-    return fn && (res = (0, fn[__getOwnPropNames22(fn)[0]])(fn = 0)), res;
+    return fn && (res = (0, fn[__getOwnPropNames222(fn)[0]])(fn = 0)), res;
   } catch (e) {
     throw err = [e], e;
   }
 };
 var __commonJS22 = (cb, mod) => function __require() {
   try {
-    return mod || (0, cb[__getOwnPropNames22(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+    return mod || (0, cb[__getOwnPropNames222(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   } catch (e) {
     throw mod = 0, e;
   }
 };
 var __export2 = (target, all) => {
   for (var name in all)
-    __defProp2(target, name, { get: all[name], enumerable: true });
+    __defProp22(target, name, { get: all[name], enumerable: true });
 };
-var __copyProps2 = (to, from, except, desc) => {
+var __copyProps22 = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames22(from))
-      if (!__hasOwnProp2.call(to, key) && key !== except)
-        __defProp2(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc2(from, key)) || desc.enumerable });
+    for (let key of __getOwnPropNames222(from))
+      if (!__hasOwnProp22.call(to, key) && key !== except)
+        __defProp22(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc22(from, key)) || desc.enumerable });
   }
   return to;
 };
-var __toESM2 = (mod, isNodeMode, target) => (target = mod != null ? __create2(__getProtoOf2(mod)) : {}, __copyProps2(
+var __toESM22 = (mod, isNodeMode, target) => (target = mod != null ? __create22(__getProtoOf22(mod)) : {}, __copyProps22(
   // If the importer is in node compatibility mode or this is not an ESM
   // file that has been converted to a CommonJS file using a Babel-
   // compatible transform (i.e. "__esModule" has not been set), then set
   // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp2(target, "default", { value: mod, enumerable: true }) : target,
+  isNodeMode || !mod || !mod.__esModule ? __defProp22(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
-var __toCommonJS2 = (mod) => __copyProps2(__defProp2({}, "__esModule", { value: true }), mod);
+var __toCommonJS2 = (mod) => __copyProps22(__defProp22({}, "__esModule", { value: true }), mod);
 var require_embed_referer = __commonJS22({
   "electron/embed-referer.cjs"(exports2, module2) {
     "use strict";
@@ -19491,9 +19199,9 @@ var supportsColor2;
 var supports_color_default2;
 var init_supports_color2 = __esm2({
   "../../node_modules/supports-color/index.js"() {
-    import_node_process2 = __toESM2(require("node:process"), 1);
-    import_node_os2 = __toESM2(require("node:os"), 1);
-    import_node_tty2 = __toESM2(require("node:tty"), 1);
+    import_node_process2 = __toESM22(require("node:process"), 1);
+    import_node_os2 = __toESM22(require("node:os"), 1);
+    import_node_tty2 = __toESM22(require("node:tty"), 1);
     ({ env: env2 } = import_node_process2.default);
     if (hasFlag2("no-color") || hasFlag2("no-colors") || hasFlag2("color=false") || hasFlag2("color=never")) {
       flagForceColor2 = 0;
@@ -20030,39 +19738,39 @@ var require_dist4 = __commonJS22({
 var require_cjs = __commonJS22({
   "../../node_modules/simple-git/dist/cjs/index.js"(exports2, module2) {
     "use strict";
-    var __create22 = Object.create;
-    var __defProp22 = Object.defineProperty;
-    var __getOwnPropDesc22 = Object.getOwnPropertyDescriptor;
-    var __getOwnPropNames222 = Object.getOwnPropertyNames;
-    var __getProtoOf22 = Object.getPrototypeOf;
-    var __hasOwnProp22 = Object.prototype.hasOwnProperty;
+    var __create222 = Object.create;
+    var __defProp222 = Object.defineProperty;
+    var __getOwnPropDesc222 = Object.getOwnPropertyDescriptor;
+    var __getOwnPropNames2222 = Object.getOwnPropertyNames;
+    var __getProtoOf222 = Object.getPrototypeOf;
+    var __hasOwnProp222 = Object.prototype.hasOwnProperty;
     var __esm22 = (fn, res) => function __init() {
-      return fn && (res = (0, fn[__getOwnPropNames222(fn)[0]])(fn = 0)), res;
+      return fn && (res = (0, fn[__getOwnPropNames2222(fn)[0]])(fn = 0)), res;
     };
     var __commonJS222 = (cb, mod) => function __require() {
-      return mod || (0, cb[__getOwnPropNames222(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+      return mod || (0, cb[__getOwnPropNames2222(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
     };
     var __export22 = (target, all) => {
       for (var name in all)
-        __defProp22(target, name, { get: all[name], enumerable: true });
+        __defProp222(target, name, { get: all[name], enumerable: true });
     };
-    var __copyProps22 = (to, from, except, desc) => {
+    var __copyProps222 = (to, from, except, desc) => {
       if (from && typeof from === "object" || typeof from === "function") {
-        for (let key of __getOwnPropNames222(from))
-          if (!__hasOwnProp22.call(to, key) && key !== except)
-            __defProp22(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc22(from, key)) || desc.enumerable });
+        for (let key of __getOwnPropNames2222(from))
+          if (!__hasOwnProp222.call(to, key) && key !== except)
+            __defProp222(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc222(from, key)) || desc.enumerable });
       }
       return to;
     };
-    var __toESM22 = (mod, isNodeMode, target) => (target = mod != null ? __create22(__getProtoOf22(mod)) : {}, __copyProps22(
+    var __toESM222 = (mod, isNodeMode, target) => (target = mod != null ? __create222(__getProtoOf222(mod)) : {}, __copyProps222(
       // If the importer is in node compatibility mode or this is not an ESM
       // file that has been converted to a CommonJS file using a Babel-
       // compatible transform (i.e. "__esModule" has not been set), then set
       // "default" to the CommonJS "module.exports" for node compatibility.
-      isNodeMode || !mod || !mod.__esModule ? __defProp22(target, "default", { value: mod, enumerable: true }) : target,
+      isNodeMode || !mod || !mod.__esModule ? __defProp222(target, "default", { value: mod, enumerable: true }) : target,
       mod
     ));
-    var __toCommonJS22 = (mod) => __copyProps22(__defProp22({}, "__esModule", { value: true }), mod);
+    var __toCommonJS22 = (mod) => __copyProps222(__defProp222({}, "__esModule", { value: true }), mod);
     var GitError;
     var init_git_error = __esm22({
       "src/lib/errors/git-error.ts"() {
@@ -21636,7 +21344,7 @@ var require_cjs = __commonJS22({
     var init_git_logger = __esm22({
       "src/lib/git-logger.ts"() {
         "use strict";
-        import_debug = __toESM22(require_src2());
+        import_debug = __toESM222(require_src2());
         init_utils();
         import_debug.default.formatters.L = (value) => String(filterHasLength(value) ? value.length : "-");
         import_debug.default.formatters.B = (value) => {
