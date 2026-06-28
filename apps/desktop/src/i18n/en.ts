@@ -293,6 +293,7 @@ export const en: Translations = {
     exportFailed: 'Export failed',
     resetFailed: 'Reset failed',
     nav: {
+      general: 'General',
       providers: 'Providers',
       providerAccounts: 'Accounts',
       providerApiKeys: 'API keys',
@@ -304,6 +305,26 @@ export const en: Translations = {
       archivedChats: 'Archived Chats',
       about: 'About',
       notifications: 'Notifications'
+    },
+    general: {
+      title: 'General',
+      intro: 'App-wide preferences for startup, window behavior, voice, and updates.',
+      startupSection: 'Startup',
+      autoLaunch: 'Launch Zeus on startup',
+      autoLaunchDesc: 'Automatically start Zeus when you log in to your computer.',
+      startMinimized: 'Start minimized to tray',
+      startMinimizedDesc: 'When auto-launching, start Zeus hidden in the system tray instead of showing the window.',
+      windowSection: 'Window',
+      closeToTray: 'Close to tray',
+      closeToTrayDesc: 'When enabled, closing the window hides Zeus to the system tray instead of quitting. The app stays running in the background.',
+      minimizeToTray: 'Minimize to tray',
+      minimizeToTrayDesc: 'When enabled, minimizing the window hides Zeus to the system tray instead of the taskbar.',
+      voiceSection: 'Voice',
+      wakeWord: 'Enable "Hey Zeus" wake word',
+      wakeWordDesc: 'Continuously listen for "Zeus" or "Hey Zeus" and bring the app to the foreground when detected. Requires a microphone and Python with SpeechRecognition installed.',
+      updatesSection: 'Updates',
+      autoUpdates: 'Check for updates automatically',
+      autoUpdatesDesc: 'Zeus checks for new versions on launch and every 4 hours. When an update is found, you\'ll be prompted to download and install it.'
     },
     notifications: {
       title: 'Notifications',

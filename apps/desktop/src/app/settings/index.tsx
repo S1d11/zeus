@@ -18,6 +18,7 @@ import { AppearanceSettings } from './appearance-settings'
 import { ConfigSettings } from './config-settings'
 import { SECTIONS } from './constants'
 import { GatewaySettings } from './gateway-settings'
+import { GeneralSettings } from './general-settings'
 import { KEYS_VIEWS, KeysSettings, type KeysView } from './keys-settings'
 import { McpSettings } from './mcp-settings'
 import { NotificationsSettings } from './notifications-settings'
@@ -26,6 +27,7 @@ import { SessionsSettings } from './sessions-settings'
 import type { SettingsPageProps, SettingsView as SettingsViewId } from './types'
 
 const SETTINGS_VIEWS: readonly SettingsViewId[] = [
+  'general',
   ...SECTIONS.map(s => `config:${s.id}` as SettingsViewId),
   'providers',
   'gateway',
@@ -38,7 +40,7 @@ const SETTINGS_VIEWS: readonly SettingsViewId[] = [
 
 export function SettingsView({ gateway, onClose, onConfigSaved, onMainModelChanged }: SettingsPageProps) {
   const { t } = useI18n()
-  const [activeView, setActiveView] = useRouteEnumParam('tab', SETTINGS_VIEWS, 'config:model' as SettingsViewId)
+  const [activeView, setActiveView] = useRouteEnumParam('tab', SETTINGS_VIEWS, 'general' as SettingsViewId)
   // Providers subnav (Accounts vs API keys) lives in its own param so each
   // sub-view is deep-linkable and survives a refresh.
   const [providerView, setProviderView] = useRouteEnumParam<ProviderView>('pview', PROVIDER_VIEWS, 'accounts')
@@ -90,6 +92,13 @@ export function SettingsView({ gateway, onClose, onConfigSaved, onMainModelChang
     <OverlayView closeLabel={t.settings.closeSettings} onClose={onClose}>
       <OverlaySplitLayout>
         <OverlaySidebar>
+          <OverlayNavItem
+            active={activeView === 'general'}
+            icon={Settings2}
+            key="general"
+            label={t.settings.nav.general}
+            onClick={() => setActiveView('general')}
+          />
           {SECTIONS.map(s => {
             const view = `config:${s.id}` as SettingsViewId
 
@@ -214,7 +223,9 @@ export function SettingsView({ gateway, onClose, onConfigSaved, onMainModelChang
         </OverlaySidebar>
 
         <OverlayMain className="px-0 pb-0 pt-[calc(var(--titlebar-height)+1rem)]">
-          {activeView === 'config:appearance' ? (
+          {activeView === 'general' ? (
+            <GeneralSettings />
+          ) : activeView === 'config:appearance' ? (
             <AppearanceSettings />
           ) : activeView === 'about' ? (
             <AboutSettings />

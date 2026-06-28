@@ -258,6 +258,7 @@ export interface Translations {
     exportFailed: string
     resetFailed: string
     nav: {
+      general: string
       providers: string
       providerAccounts: string
       providerApiKeys: string
@@ -269,6 +270,26 @@ export interface Translations {
       archivedChats: string
       about: string
       notifications: string
+    }
+    general: {
+      title: string
+      intro: string
+      startupSection: string
+      autoLaunch: string
+      autoLaunchDesc: string
+      startMinimized: string
+      startMinimizedDesc: string
+      windowSection: string
+      closeToTray: string
+      closeToTrayDesc: string
+      minimizeToTray: string
+      minimizeToTrayDesc: string
+      voiceSection: string
+      wakeWord: string
+      wakeWordDesc: string
+      updatesSection: string
+      autoUpdates: string
+      autoUpdatesDesc: string
     }
     notifications: {
       title: string

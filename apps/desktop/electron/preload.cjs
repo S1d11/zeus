@@ -234,6 +234,10 @@ contextBridge.exposeInMainWorld('hermesDesktop', {
       const listener = (_event, payload) => callback(payload)
       ipcRenderer.on('zeus:auto-updater:notification-clicked', listener)
       return () => ipcRenderer.removeListener('zeus:auto-updater:notification-clicked', listener)
-    }
+    },
+    // General settings
+    setGeneralPref: (key, value) => ipcRenderer.invoke('zeus:general:set-pref', key, value),
+    getGeneralPref: key => ipcRenderer.invoke('zeus:general:get-pref', key),
+    getAllGeneralPrefs: () => ipcRenderer.invoke('zeus:general:get-all-prefs')
   }
 })

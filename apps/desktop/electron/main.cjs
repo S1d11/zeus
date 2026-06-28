@@ -29731,7 +29731,7 @@ function createWindow() {
   mainWindow.on("unmaximize", schedulePersistWindowState);
   mainWindow.on("close", (e) => {
     schedulePersistWindowState.flush();
-    if (trayModule && !app.isQuitting) {
+    if (trayModule && !app.isQuitting && zeusGeneralPrefs.closeToTray) {
       e.preventDefault();
       mainWindow.hide();
     }
@@ -30907,6 +30907,59 @@ ipcMain.handle("zeus:auto-updater:status", () => {
   if (!autoUpdaterModule) return { initialized: false };
   return autoUpdaterModule.getUpdateStatus();
 });
+var zeusGeneralPrefs = {
+  closeToTray: true,
+  minimizeToTray: false,
+  startMinimized: false,
+  checkForUpdatesAutomatically: true
+};
+ipcMain.handle("zeus:general:set-pref", async (_event, key, value) => {
+  if (typeof key !== "string" || typeof value !== "boolean") {
+    return { ok: false, error: "invalid arguments" };
+  }
+  zeusGeneralPrefs[key] = value;
+  if (key === "autoLaunchOnStartup") {
+    try {
+      app.setLoginItemSettings({
+        openAtLogin: value,
+        args: value && zeusGeneralPrefs.startMinimized ? ["--hidden"] : []
+      });
+    } catch (e) {
+      console.error("[zeus] Failed to set login item:", e.message);
+    }
+  }
+  if (key === "startMinimized" && zeusGeneralPrefs.autoLaunchOnStartup) {
+    try {
+      app.setLoginItemSettings({
+        openAtLogin: true,
+        args: value ? ["--hidden"] : []
+      });
+    } catch (e) {
+      console.error("[zeus] Failed to update login item args:", e.message);
+    }
+  }
+  return { ok: true };
+});
+ipcMain.handle("zeus:general:get-pref", (_event, key) => {
+  if (typeof key !== "string") return null;
+  if (key === "autoLaunchOnStartup") {
+    try {
+      const settings = app.getLoginItemSettings();
+      return settings.openAtLogin;
+    } catch {
+      return false;
+    }
+  }
+  return zeusGeneralPrefs[key] ?? null;
+});
+ipcMain.handle("zeus:general:get-all-prefs", () => {
+  let autoLaunch = false;
+  try {
+    autoLaunch = app.getLoginItemSettings().openAtLogin;
+  } catch {
+  }
+  return { ...zeusGeneralPrefs, autoLaunchOnStartup: autoLaunch };
+});
 app.on("open-url", (event, url) => {
   event.preventDefault();
   handleDeepLink(url);
@@ -31024,7 +31077,7 @@ app.on("before-quit", () => {
 });
 app.on("window-all-closed", () => {
   if (process.platform === "darwin") return;
-  if (trayModule) {
+  if (trayModule && zeusGeneralPrefs.closeToTray) {
   } else {
     app.quit();
   }

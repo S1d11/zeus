@@ -206,6 +206,10 @@ declare global {
         getUpdateStatus: () => Promise<any>
         onUpdateEvent: (callback: (event: any) => void) => () => void
         onUpdateNotificationClicked: (callback: (payload: any) => void) => () => void
+        // General settings
+        setGeneralPref: (key: string, value: boolean) => Promise<{ ok: boolean; error?: string }>
+        getGeneralPref: (key: string) => Promise<boolean | null>
+        getAllGeneralPrefs: () => Promise<Record<string, boolean>>
       }
     }
   }
