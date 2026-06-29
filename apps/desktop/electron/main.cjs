@@ -14577,7 +14577,8 @@ var require_BaseUpdater = __commonJS({
         const response = (0, child_process_1.spawnSync)(cmd, args, {
           env: { ...mergedEnv, PATH: this.sanitizeEnvPath((_a = mergedEnv.PATH) !== null && _a !== void 0 ? _a : "") },
           encoding: "utf-8",
-          shell: true
+          shell: true,
+          windowsHide: true
         });
         const { error, status, stdout, stderr } = response;
         if (error != null) {
@@ -14600,7 +14601,7 @@ var require_BaseUpdater = __commonJS({
         this._logger.info(`Executing: ${cmd} with args: ${args}`);
         return new Promise((resolve, reject) => {
           try {
-            const params = { stdio, env: env3, detached: true };
+            const params = { stdio, env: env3, detached: true, windowsHide: true };
             const p = (0, child_process_1.spawn)(cmd, args, params);
             p.on("error", (error) => {
               reject(error);
@@ -15349,7 +15350,8 @@ var require_windowsExecutableCodeSignatureVerifier = __commonJS({
       const args = ["-NoProfile", "-NonInteractive", "-InputFormat", "None", "-Command", command];
       const options = {
         shell: true,
-        timeout
+        timeout,
+        windowsHide: true
       };
       return [executable, args, options];
     }
@@ -16104,7 +16106,7 @@ var require_wake_word = __commonJS2({
       const { execFileSync: execFileSync2 } = require("child_process");
       for (const cmd of ["python", "python3"]) {
         try {
-          execFileSync2(cmd, ["--version"], { stdio: "ignore", timeout: 3e3 });
+          execFileSync2(cmd, ["--version"], { stdio: "ignore", timeout: 3e3, windowsHide: true });
           return cmd;
         } catch {
         }
@@ -16140,7 +16142,8 @@ var require_wake_word = __commonJS2({
         const { execFileSync: execFileSync2 } = require("child_process");
         execFileSync2(pythonPath, ["-c", "import speech_recognition, pyaudio"], {
           stdio: "ignore",
-          timeout: 5e3
+          timeout: 5e3,
+          windowsHide: true
         });
       } catch {
         opts.onError?.(
@@ -16217,10 +16220,39 @@ var require_wake_word = __commonJS2({
     function isWakeWordListening() {
       return listening && wakeWordProcess && wakeWordProcess.exitCode === null;
     }
+    function checkWakeWordDependencies() {
+      const missing = [];
+      const pythonPath2 = resolvePythonPath();
+      if (!pythonPath2) {
+        return { available: false, pythonPath: null, missing: ["Python 3.8+"] };
+      }
+      try {
+        const { execFileSync: execFileSync3 } = require("child_process");
+        execFileSync3(pythonPath2, ["-c", "import speech_recognition"], {
+          stdio: "ignore",
+          timeout: 5e3,
+          windowsHide: true
+        });
+      } catch {
+        missing.push("SpeechRecognition");
+      }
+      try {
+        const { execFileSync: execFileSync3 } = require("child_process");
+        execFileSync3(pythonPath2, ["-c", "import pyaudio"], {
+          stdio: "ignore",
+          timeout: 5e3,
+          windowsHide: true
+        });
+      } catch {
+        missing.push("PyAudio");
+      }
+      return { available: missing.length === 0, pythonPath: pythonPath2, missing };
+    }
     module2.exports = {
       startWakeWordListener,
       stopWakeWordListener,
-      isWakeWordListening
+      isWakeWordListening,
+      checkWakeWordDependencies
     };
   }
 });

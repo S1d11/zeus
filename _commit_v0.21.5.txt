@@ -1,0 +1,20 @@
+v0.21.5: Fix cmd window popups — add windowsHide to all child process spawns
+
+The desktop app was flashing cmd.exe console windows on Windows when
+spawning child processes for:
+- Python version check in wake-word resolvePythonPath (execFileSync)
+- Python dependency check for speech_recognition/pyaudio (execFileSync)
+- electron-updater's spawnLog (spawn with detached:true)
+- electron-updater's spawnSync for signature verification (shell:true)
+- electron-updater's preparePowerShellExec (execFile with shell:true)
+
+All of these were missing windowsHide: true, which on Windows causes
+a visible cmd.exe window to flash briefly.
+
+Also added checkWakeWordDependencies() to the bundled wake-word module
+exports so the IPC handler can check deps before the user toggles the
+wake word on.
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>
