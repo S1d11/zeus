@@ -1,6 +1,9 @@
 import './styles.css'
 // Side-effect: applies the persisted window translucency on load.
 import './store/translucency'
+// Side-effect: fetches geolocation and sends it to the main process so the
+// agent's system prompt can include the user's approximate location.
+import './store/geolocation'
 
 import { QueryClientProvider } from '@tanstack/react-query'
 import { StrictMode } from 'react'

@@ -892,3 +892,10 @@ export interface McpServerInfo {
   enabled: boolean
   tools: string[] | null
 }
+
+export interface McpServerAuthStatus {
+  name: string
+  auth_type: string
+  is_oauth: boolean
+  authenticated: boolean
+}

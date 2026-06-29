@@ -21,6 +21,7 @@ import type {
   McpCatalogResponse,
   McpInstallResponse,
   McpServerInfo,
+  McpServerAuthStatus,
   MemoryProviderConfig,
   MemoryProviderOAuthStatus,
   MessagingPlatformsResponse,
@@ -87,6 +88,7 @@ export type {
   McpCatalogResponse,
   McpInstallResponse,
   McpServerInfo,
+  McpServerAuthStatus,
   MemoryProviderConfig,
   MemoryProviderOAuthStatus,
   MessagingEnvVarInfo,
@@ -889,5 +891,40 @@ export function deleteMcpServer(name: string): Promise<{ ok: boolean; name: stri
     ...profileScoped(),
     path: `/api/mcp/servers/${encodeURIComponent(name)}`,
     method: 'DELETE'
+  })
+}
+
+export function mcpServerLogin(name: string): Promise<{ ok: boolean; name: string; error?: string }> {
+  return window.hermesDesktop.api<{ ok: boolean; name: string; error?: string }>({
+    ...profileScoped(),
+    path: `/api/mcp/servers/${encodeURIComponent(name)}/login`,
+    method: 'POST'
+  })
+}
+
+export function mcpServerLogout(name: string): Promise<{ ok: boolean; name: string; error?: string }> {
+  return window.hermesDesktop.api<{ ok: boolean; name: string; error?: string }>({
+    ...profileScoped(),
+    path: `/api/mcp/servers/${encodeURIComponent(name)}/tokens`,
+    method: 'DELETE'
+  })
+}
+
+export function getMcpServerAuthStatus(
+  name: string
+): Promise<McpServerAuthStatus> {
+  return window.hermesDesktop.api<McpServerAuthStatus>({
+    ...profileScoped(),
+    path: `/api/mcp/servers/${encodeURIComponent(name)}/auth-status`
+  })
+}
+
+export function resetMcpCircuitBreaker(
+  name: string
+): Promise<{ ok: boolean; name: string; had_state: boolean }> {
+  return window.hermesDesktop.api<{ ok: boolean; name: string; had_state: boolean }>({
+    ...profileScoped(),
+    path: `/api/mcp/servers/${encodeURIComponent(name)}/reset-breaker`,
+    method: 'POST'
   })
 }

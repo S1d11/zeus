@@ -25796,6 +25796,12 @@ function resolveHermesHome() {
   return path.join(app.getPath("home"), ".hermes");
 }
 var HERMES_HOME = resolveHermesHome();
+var _systemTimezone = "";
+try {
+  _systemTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+} catch {
+  _systemTimezone = "";
+}
 function hermesManagedNodePathEntries() {
   const root = path.join(HERMES_HOME, "node");
   const bin = path.join(root, "bin");
@@ -27557,7 +27563,7 @@ function resolveHermesBackend(dashboardArgs) {
   }
   return {
     kind: "bootstrap-needed",
-    label: "Hermes Agent not installed yet; bootstrap required",
+    label: "Zeus not installed yet; bootstrap required",
     command: null,
     args: dashboardArgs,
     bootstrap: true,
@@ -29408,6 +29414,12 @@ async function startHermes() {
           // directories. install.ps1 sets HERMES_HOME via setx; the desktop
           // can't reliably do that, so we set it inline for every spawn.
           HERMES_HOME,
+          // Auto-detect the system IANA timezone so the agent's hermes_time
+          // module uses the user's real timezone instead of server-local.
+          // Intl.DateTimeFormat().resolvedOptions().timeZone returns the IANA
+          // name (e.g. "America/Chicago") on all platforms — no native module
+          // needed. HERMES_TIMEZONE is already the env var hermes_time.py reads.
+          ..._systemTimezone ? { HERMES_TIMEZONE: _systemTimezone } : {},
           ...backend.env,
           TERMINAL_CWD: hermesCwd,
           HERMES_DASHBOARD_SESSION_TOKEN: token,
@@ -30010,6 +30022,28 @@ ipcMain.handle("hermes:profile:set", async (_event, name) => {
 });
 ipcMain.on("hermes:previewShortcutActive", (_event, active) => {
   previewShortcutActive = Boolean(active);
+});
+ipcMain.handle("hermes:location:update", async (_event, payload) => {
+  try {
+    if (!payload || typeof payload !== "object") return { ok: false };
+    const { latitude, longitude, accuracy } = payload;
+    if (typeof latitude !== "number" || typeof longitude !== "number") {
+      return { ok: false };
+    }
+    const fs2 = require("fs");
+    const locPath = path.join(HERMES_HOME, "location.json");
+    const data = {
+      latitude,
+      longitude,
+      accuracy: typeof accuracy === "number" ? accuracy : null,
+      updated_at: (/* @__PURE__ */ new Date()).toISOString()
+    };
+    fs2.writeFileSync(locPath, JSON.stringify(data, null, 2), "utf8");
+    return { ok: true };
+  } catch (e) {
+    rememberLog(`location:update failed: ${e?.message || e}`);
+    return { ok: false };
+  }
 });
 ipcMain.handle("hermes:requestMicrophoneAccess", async () => {
   if (!IS_MAC || typeof systemPreferences.askForMediaAccess !== "function") {
@@ -30634,6 +30668,9 @@ ipcMain.handle("hermes:updates:branch:set", async (_event, name) => {
   return { branch };
 });
 function resolveHermesVersion() {
+  if (IS_PACKAGED) {
+    return app.getVersion();
+  }
   try {
     const root = resolveUpdateRoot();
     const initPath = path.join(root, "hermes_cli", "__init__.py");
@@ -30735,7 +30772,7 @@ async function runDesktopUninstall(mode) {
     return {
       ok: false,
       error: "agent-missing",
-      message: `Can't run the uninstaller: no Hermes agent venv at ${VENV_ROOT}.`
+      message: `Can't run the uninstaller: no Zeus venv at ${VENV_ROOT}.`
     };
   }
   let py = venvPy;

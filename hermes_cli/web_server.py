@@ -1,5 +1,5 @@
 """
-Hermes Agent — Web UI server.
+Zeus — Web UI server.
 
 Provides a FastAPI backend serving the Vite/React frontend and REST API
 endpoints for managing configuration, environment variables, and sessions.
@@ -246,7 +246,7 @@ def _get_pty_active_session_files(app: "FastAPI") -> dict[str, Path]:
         return app.state.pty_active_session_files
 
 
-app = FastAPI(title="Hermes Agent", version=__version__, lifespan=_lifespan)
+app = FastAPI(title="Zeus", version=__version__, lifespan=_lifespan)
 
 # Memory-provider OAuth connect routes live in the memory layer, not here.
 from hermes_cli.memory_oauth import router as _memory_oauth_router  # noqa: E402
@@ -5551,7 +5551,7 @@ async def _telegram_onboarding_request(
 
 @app.post("/api/messaging/telegram/onboarding/start")
 async def start_telegram_onboarding(body: TelegramOnboardingStart):
-    bot_name = (body.bot_name or "Hermes Agent").strip() or "Hermes Agent"
+    bot_name = (body.bot_name or "Zeus").strip() or "Zeus"
     payload = await _telegram_onboarding_request(
         "POST",
         "/v1/telegram/pairings",
@@ -8743,6 +8743,108 @@ async def set_mcp_server_enabled(
         servers[name]["enabled"] = bool(body.enabled)
         save_config(cfg)
     return {"ok": True, "name": name, "enabled": bool(body.enabled)}
+
+
+@app.post("/api/mcp/servers/{name}/login")
+async def login_mcp_server(name: str, profile: Optional[str] = None):
+    """Trigger an OAuth login flow for an MCP server.
+
+    Wipes cached OAuth state and re-probes to force a fresh browser-based
+    OAuth flow.  This is the web API equivalent of ``hermes mcp login <name>``.
+    The desktop app calls this to let users authenticate OAuth-based MCP
+    servers (e.g. GitHub, Google Drive) without dropping to the CLI.
+    """
+    from hermes_cli.mcp_config import _get_mcp_servers, _reauth_oauth_server
+
+    with _profile_scope(profile):
+        servers = _get_mcp_servers()
+    if name not in servers:
+        raise HTTPException(status_code=404, detail=f"Server '{name}' not found")
+
+    server_config = servers[name]
+    if server_config.get("auth") != "oauth":
+        raise HTTPException(
+            status_code=400,
+            detail=f"Server '{name}' is not configured for OAuth (auth={server_config.get('auth')})",
+        )
+
+    def _login_scoped():
+        with _profile_scope(profile):
+            return _reauth_oauth_server(name, server_config)
+
+    try:
+        success = await asyncio.to_thread(_login_scoped)
+    except Exception as exc:
+        _log.exception("POST /api/mcp/servers/%s/login failed", name)
+        return {"ok": False, "name": name, "error": str(exc)}
+
+    return {"ok": success, "name": name}
+
+
+@app.delete("/api/mcp/servers/{name}/tokens")
+async def logout_mcp_server(name: str, profile: Optional[str] = None):
+    """Remove stored OAuth tokens for an MCP server.
+
+    Clears the on-disk token file and the in-process MCPOAuthManager cache.
+    The server stays configured but will require re-authentication before
+    its tools can be used again.
+    """
+    from tools.mcp_oauth import remove_oauth_tokens
+    from tools.mcp_oauth_manager import get_manager
+
+    with _profile_scope(profile):
+        try:
+            get_manager().remove(name)
+        except Exception:
+            pass
+        try:
+            remove_oauth_tokens(name)
+        except Exception as exc:
+            _log.exception("DELETE /api/mcp/servers/%s/tokens failed", name)
+            return {"ok": False, "name": name, "error": str(exc)}
+
+    return {"ok": True, "name": name}
+
+
+@app.get("/api/mcp/servers/{name}/auth-status")
+async def mcp_server_auth_status(name: str, profile: Optional[str] = None):
+    """Check whether an MCP server has valid OAuth tokens on disk."""
+    from hermes_cli.mcp_config import _get_mcp_servers, _oauth_tokens_present
+
+    with _profile_scope(profile):
+        servers = _get_mcp_servers()
+    if name not in servers:
+        raise HTTPException(status_code=404, detail=f"Server '{name}' not found")
+
+    server_config = servers[name]
+    is_oauth = server_config.get("auth") == "oauth"
+    has_tokens = False
+    if is_oauth:
+        with _profile_scope(profile):
+            has_tokens = _oauth_tokens_present(name)
+
+    return {
+        "name": name,
+        "auth_type": server_config.get("auth", "none"),
+        "is_oauth": is_oauth,
+        "authenticated": has_tokens,
+    }
+
+
+@app.post("/api/mcp/servers/{name}/reset-breaker")
+async def reset_mcp_circuit_breaker(name: str, profile: Optional[str] = None):
+    """Manually reset the circuit breaker for a failed MCP server.
+
+    Clears the consecutive-failure count so the next tool call attempts a
+    fresh connection instead of short-circuiting. Use this when a server
+    was temporarily down (e.g. network issue, OAuth token expired) and is
+    now expected to be reachable again.
+    """
+    from tools.mcp_tool import reset_circuit_breaker
+
+    with _profile_scope(profile):
+        had_state = reset_circuit_breaker(name)
+    return {"ok": True, "name": name, "had_state": had_state}
 
 
 @app.get("/api/mcp/catalog")
@@ -13611,7 +13713,7 @@ def start_server(
         if not list_providers():
             # Surface the *specific* reason any bundled provider declined
             # to register (e.g. missing HERMES_DASHBOARD_OAUTH_CLIENT_ID).
-            # Each provider plugin that ships with Hermes Agent exposes a
+            # Each provider plugin that ships with Zeus exposes a
             # module-level ``LAST_SKIP_REASON`` string for this purpose;
             # without it the operator would only see "no providers" which
             # is misleading when the provider IS installed but unconfigured.

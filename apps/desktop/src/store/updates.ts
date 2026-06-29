@@ -406,6 +406,9 @@ export async function applyUpdates(opts: DesktopUpdateApplyOptions = {}): Promis
         // rather than stranding them on an un-closeable spinner.
         setUpdateOverlayOpen(false)
         resetUpdateApplyState()
+        // Re-read the version from the updated backend so the status bar
+        // reflects the new version immediately, not just on next focus.
+        void refreshDesktopVersion()
         notify({
           durationMs: 8000,
           id: UPDATE_TOAST_ID,
@@ -457,6 +460,9 @@ function finishBackendApply(returned: boolean): DesktopUpdateApplyResult {
     $backendUpdateApply.set(IDLE)
     setUpdateOverlayOpen(false)
     void checkBackendUpdates()
+    // Re-read the version from the freshly-updated backend so the status
+    // bar shows the new version without requiring a window focus event.
+    void refreshDesktopVersion()
 
     return { ok: true, message: 'Backend update applied.' }
   }

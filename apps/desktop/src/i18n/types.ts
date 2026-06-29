@@ -1051,6 +1051,15 @@ export interface Translations {
     requiredCredentials: string
     optionalCredentials: string
     oauthHint: string
+    oauthConnect: string
+    oauthReconnect: string
+    oauthDisconnect: string
+    oauthAuthenticated: string
+    oauthNotAuthenticated: string
+    oauthLoginSuccess: string
+    oauthLoginFailed: string
+    oauthLogoutSuccess: string
+    oauthLogoutFailed: string
     cancel: string
     loadFailed: string
   }

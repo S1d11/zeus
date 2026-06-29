@@ -11,15 +11,19 @@ import { Switch } from '@/components/ui/switch'
 import {
   deleteMcpServer,
   getMcpCatalog,
+  getMcpServerAuthStatus,
   getMcpServers,
   installMcpCatalogEntry,
   type McpCatalogEntry,
   type McpServerInfo,
+  mcpServerLogin,
+  mcpServerLogout,
   setMcpServerEnabled
 } from '@/hermes'
+import type { McpServerAuthStatus } from '@/types/hermes'
 import { type Translations, useI18n } from '@/i18n'
 import { openExternalLink } from '@/lib/external-link'
-import { ExternalLink, Plug, Trash2 } from '@/lib/icons'
+import { ExternalLink, LogIn, LogOut, Plug, Trash2 } from '@/lib/icons'
 import { notify, notifyError } from '@/store/notifications'
 import { runGatewayRestart } from '@/store/system-actions'
 
@@ -357,6 +361,62 @@ function InstalledServerRow({
 }) {
   const tone = TRANSPORT_TONE[server.transport] ?? 'muted'
   const toolCount = server.tools?.length ?? 0
+  const isOAuth = server.auth === 'oauth'
+  const [authStatus, setAuthStatus] = useState<McpServerAuthStatus | null>(null)
+  const [loginInProgress, setLoginInProgress] = useState(false)
+  const [logoutInProgress, setLogoutInProgress] = useState(false)
+
+  useEffect(() => {
+    if (!isOAuth) {
+      return
+    }
+    let cancelled = false
+    void getMcpServerAuthStatus(server.name)
+      .then(status => {
+        if (!cancelled) {
+          setAuthStatus(status)
+        }
+      })
+      .catch(() => {
+        // Silent — auth status is best-effort
+      })
+    return () => void (cancelled = true)
+  }, [isOAuth, server.name])
+
+  const handleLogin = useCallback(async () => {
+    setLoginInProgress(true)
+    try {
+      const result = await mcpServerLogin(server.name)
+      if (result.ok) {
+        notify({ kind: 'success', title: labels.oauthLoginSuccess, message: server.name })
+        const status = await getMcpServerAuthStatus(server.name).catch(() => null)
+        setAuthStatus(status)
+      } else {
+        notify({ kind: 'error', title: labels.oauthLoginFailed, message: result.error ?? server.name })
+      }
+    } catch (err) {
+      notifyError(err, labels.oauthLoginFailed)
+    } finally {
+      setLoginInProgress(false)
+    }
+  }, [server.name, labels])
+
+  const handleLogout = useCallback(async () => {
+    setLogoutInProgress(true)
+    try {
+      const result = await mcpServerLogout(server.name)
+      if (result.ok) {
+        notify({ kind: 'success', title: labels.oauthLogoutSuccess, message: server.name })
+        setAuthStatus((prev: McpServerAuthStatus | null) => prev ? { ...prev, authenticated: false } : null)
+      } else {
+        notify({ kind: 'error', title: labels.oauthLogoutFailed, message: result.error ?? server.name })
+      }
+    } catch (err) {
+      notifyError(err, labels.oauthLogoutFailed)
+    } finally {
+      setLogoutInProgress(false)
+    }
+  }, [server.name, labels])
 
   return (
     <li className="flex items-center gap-3 rounded-lg border border-(--ui-stroke-secondary) bg-(--ui-chat-surface-background) px-3 py-2.5">
@@ -366,6 +426,11 @@ function InstalledServerRow({
           <div className="flex items-center gap-2">
             <span className="truncate text-sm font-medium text-foreground">{server.name}</span>
             <Badge variant="muted">{server.transport}</Badge>
+            {isOAuth && (
+              <Badge variant={authStatus?.authenticated ? 'default' : 'warn'}>
+                {authStatus?.authenticated ? labels.oauthAuthenticated : labels.oauthNotAuthenticated}
+              </Badge>
+            )}
             {toolCount > 0 && <Badge variant="outline">{labels.toolsCount(toolCount)}</Badge>}
           </div>
           {server.url && (
@@ -381,6 +446,60 @@ function InstalledServerRow({
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
+        {isOAuth && (
+          <>
+            {authStatus?.authenticated ? (
+              <Button
+                aria-label={labels.oauthReconnect}
+                className="size-7 p-0 text-(--ui-text-tertiary) hover:text-foreground"
+                disabled={loginInProgress}
+                onClick={() => void handleLogin()}
+                size="icon"
+                variant="ghost"
+                title={labels.oauthReconnect}
+              >
+                {loginInProgress ? (
+                  <Codicon name="loading" size="0.875rem" spinning />
+                ) : (
+                  <LogIn className="size-3.5" />
+                )}
+              </Button>
+            ) : (
+              <Button
+                aria-label={labels.oauthConnect}
+                className="size-7 p-0 text-primary hover:text-primary"
+                disabled={loginInProgress}
+                onClick={() => void handleLogin()}
+                size="icon"
+                variant="ghost"
+                title={labels.oauthConnect}
+              >
+                {loginInProgress ? (
+                  <Codicon name="loading" size="0.875rem" spinning />
+                ) : (
+                  <LogIn className="size-3.5" />
+                )}
+              </Button>
+            )}
+            {authStatus?.authenticated && (
+              <Button
+                aria-label={labels.oauthDisconnect}
+                className="size-7 p-0 text-(--ui-text-tertiary) hover:text-destructive"
+                disabled={logoutInProgress}
+                onClick={() => void handleLogout()}
+                size="icon"
+                variant="ghost"
+                title={labels.oauthDisconnect}
+              >
+                {logoutInProgress ? (
+                  <Codicon name="loading" size="0.875rem" spinning />
+                ) : (
+                  <LogOut className="size-3.5" />
+                )}
+              </Button>
+            )}
+          </>
+        )}
         <Switch checked={server.enabled} disabled={toggling} onCheckedChange={onToggle} />
         <Button
           aria-label={labels.remove}

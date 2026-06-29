@@ -2585,6 +2585,22 @@ def _reset_server_error(server_name: str) -> None:
     _server_breaker_opened_at.pop(server_name, None)
 
 
+def reset_circuit_breaker(server_name: str) -> bool:
+    """Public API: manually reset the circuit breaker for a server.
+
+    Clears the failure count and breaker-open timestamp so the next tool
+    call attempts a fresh connection instead of short-circuiting. Returns
+    True if state was cleared, False if the server name was unknown.
+    """
+    had_state = (
+        server_name in _server_error_counts
+        or server_name in _server_breaker_opened_at
+    )
+    _server_error_counts.pop(server_name, None)
+    _server_breaker_opened_at.pop(server_name, None)
+    return had_state
+
+
 def _signal_reconnect(server: Any) -> bool:
     """Ask a server task to rebuild its transport, thread-safely.
 

@@ -95,6 +95,24 @@ def get_timezone() -> Optional[ZoneInfo]:
     return _cached_tz
 
 
+def get_timezone_name() -> str:
+    """Return a human-readable timezone name for display in the system prompt.
+
+    Returns the configured IANA name (e.g. ``America/Chicago``) if one was
+    resolved. Falls back to the local tzname() of the system clock (e.g.
+    ``Central Daylight Time``) when no IANA zone is configured. Empty string
+    only if both fail — callers should treat empty as "unknown".
+    """
+    tz = get_timezone()
+    if tz is not None:
+        return str(tz)
+    # No IANA zone configured — use the system-local tzname()
+    try:
+        return datetime.now().astimezone().tzname() or ""
+    except Exception:
+        return ""
+
+
 def reset_cache() -> None:
     """Clear the cached timezone so the next call re-resolves it.
 

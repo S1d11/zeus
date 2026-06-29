@@ -46,6 +46,38 @@ from agent.prompt_builder import (
 from agent.runtime_cwd import resolve_context_cwd
 
 
+def _read_location_line() -> str:
+    """Read the user's approximate location from ~/.hermes/location.json.
+
+    Returns a single-line string like ``lat, lng (±Nm)`` or empty string if
+    the file is absent or unreadable. The Electron desktop app writes this
+    file after obtaining geolocation from the browser API; CLI / gateway
+    users won't have it unless they create it manually.
+    """
+    try:
+        import json
+        from hermes_constants import get_hermes_home
+        loc_path = get_hermes_home() / "location.json"
+        if not loc_path.exists():
+            return ""
+        with open(loc_path, encoding="utf-8") as f:
+            data = json.load(f)
+        lat = data.get("latitude")
+        lng = data.get("longitude")
+        if not isinstance(lat, (int, float)) or not isinstance(lng, (int, float)):
+            return ""
+        # Use round() + str() instead of f-string :.4f — on some Windows
+        # locales the format specifier triggers a hard crash in the C
+        # formatting layer that bypasses Python's exception handling.
+        line = str(round(float(lat), 4)) + ", " + str(round(float(lng), 4))
+        accuracy = data.get("accuracy")
+        if isinstance(accuracy, (int, float)) and accuracy > 0:
+            line += " (+/-" + str(int(accuracy)) + "m)"
+        return line
+    except Exception:
+        return ""
+
+
 def _ra():
     """Lazy reference to the ``run_agent`` module.
 
@@ -444,6 +476,7 @@ def build_system_prompt_parts(agent: Any, system_message: Optional[str] = None) 
             pass
 
     from hermes_time import now as _hermes_now
+    from hermes_time import get_timezone_name as _get_tz_name
     now = _hermes_now()
     # Date-only (not minute-precision) so the system prompt is byte-stable
     # for the full day.  Minute-precision changes invalidate prefix-cache KV
@@ -452,6 +485,19 @@ def build_system_prompt_parts(agent: Any, system_message: Optional[str] = None) 
     # exact wall-clock time via tools when it actually needs it.
     # Credit: @iamfoz (PR #20451).
     timestamp_line = f"Conversation started: {now.strftime('%A, %B %d, %Y')}"
+    # Include the timezone name so the agent knows which zone the user is in.
+    # Stable for the day (DST transitions happen at most once per day), so
+    # this doesn't threaten prompt caching.
+    _tz_name = _get_tz_name()
+    if _tz_name:
+        timestamp_line += f"\nTimezone: {_tz_name}"
+    # Include the user's approximate location if available. The Electron
+    # desktop app writes ~/.hermes/location.json after getting geolocation
+    # from the browser API. Falls back gracefully when not present (CLI,
+    # gateway, first run before the renderer has fetched it).
+    _location_line = _read_location_line()
+    if _location_line:
+        timestamp_line += f"\nLocation: {_location_line}"
     if agent.pass_session_id and agent.session_id:
         timestamp_line += f"\nSession ID: {agent.session_id}"
     if agent.model:

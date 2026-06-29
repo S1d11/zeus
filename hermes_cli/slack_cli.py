@@ -107,7 +107,7 @@ def _build_full_manifest(
         },
         "display_information": {
             "name": bot_name[:35],
-            "description": (bot_description or "Your Hermes agent on Slack")[:140],
+            "description": (bot_description or "Your Zeus on Slack")[:140],
             "background_color": "#1a1a2e",
         },
         "features": features,
@@ -146,7 +146,7 @@ def slack_manifest_command(args) -> int:
                       work inline instead of the Assistant thread pane.
     """
     name = getattr(args, "name", None) or "Hermes"
-    description = getattr(args, "description", None) or "Your Hermes agent on Slack"
+    description = getattr(args, "description", None) or "Your Zeus on Slack"
     include_assistant = not getattr(args, "no_assistant", False)
 
     if getattr(args, "slashes_only", False):

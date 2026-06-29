@@ -556,7 +556,7 @@ class CopilotACPClient:
                     },
                     "clientInfo": {
                         "name": "hermes-agent",
-                        "title": "Hermes Agent",
+                        "title": "Zeus",
                         "version": "0.0.0",
                     },
                 },
