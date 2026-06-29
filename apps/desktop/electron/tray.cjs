@@ -32,6 +32,8 @@ let mainWindowRef = null;
 let onQuitCallback = null;
 let onToggleWakeWordCallback = null;
 let wakeWordEnabled = false;
+let defaultIcon = null;
+let listeningIcon = null;
 
 // ---------------------------------------------------------------------------
 // Icon resolution
@@ -65,6 +67,55 @@ function resolveTrayIcon() {
     }
   }
   return null;
+}
+
+/**
+ * Create a "listening" variant of the tray icon by compositing a green
+ * dot overlay in the bottom-right corner using raw RGBA pixel manipulation.
+ * Falls back to the base icon if compositing fails.
+ */
+function createListeningIcon(baseIcon) {
+  try {
+    const size = baseIcon.getSize();
+    const w = size.width || 16;
+    const h = size.height || 16;
+
+    // Get raw RGBA pixels from the base icon
+    const rawData = baseIcon.toBitmap();
+    if (!rawData || rawData.length < w * h * 4) return baseIcon;
+
+    // Work on a copy of the pixel buffer
+    const pixels = Buffer.from(rawData);
+
+    // Draw a filled green circle in the bottom-right corner
+    const dotRadius = Math.max(2, Math.round(Math.min(w, h) * 0.18));
+    const cx = w - dotRadius - 1;
+    const cy = h - dotRadius - 1;
+    const r2 = dotRadius * dotRadius;
+
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const dx = x - cx;
+        const dy = y - cy;
+        const dist2 = dx * dx + dy * dy;
+        if (dist2 <= r2) {
+          const idx = (y * w + x) * 4;
+          // Green dot with full opacity
+          pixels[idx] = 0x22;     // R
+          pixels[idx + 1] = 0xc5; // G
+          pixels[idx + 2] = 0x5e; // B
+          pixels[idx + 3] = 0xff; // A
+        }
+      }
+    }
+
+    // Create a new image from the modified RGBA buffer
+    const result = nativeImage.createFromBuffer(pixels, { width: w, height: h });
+    if (result.isEmpty()) return baseIcon;
+    return result;
+  } catch {
+    return baseIcon;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -168,6 +219,9 @@ function createTray(ref, opts = {}) {
     return null;
   }
 
+  defaultIcon = icon;
+  listeningIcon = createListeningIcon(icon);
+
   tray = new Tray(icon);
   tray.setToolTip("Zeus — click to show/hide");
 
@@ -201,6 +255,12 @@ function updateTrayTooltip(text) {
 function setWakeWordMenuItemEnabled(enabled) {
   wakeWordEnabled = enabled;
   if (tray) {
+    // Swap the tray icon to show a visual indicator when listening
+    if (enabled && listeningIcon) {
+      tray.setImage(listeningIcon);
+    } else if (defaultIcon) {
+      tray.setImage(defaultIcon);
+    }
     tray.setContextMenu(buildContextMenu());
   }
 }

@@ -56,6 +56,9 @@ function readPrefs(): GeneralPrefs {
 
 export const $generalPrefs = atom<GeneralPrefs>(readPrefs())
 
+/** Reactive flag: is the wake word listener currently active? */
+export const $wakeWordListening = atom<boolean>(false)
+
 function writePrefs(next: GeneralPrefs) {
   $generalPrefs.set(next)
   persistString(STORAGE_KEY, JSON.stringify(next))
@@ -84,6 +87,7 @@ export function setCloseToTray(enabled: boolean) {
 
 export function setWakeWordEnabled(enabled: boolean) {
   writePrefs({ ...$generalPrefs.get(), wakeWordEnabled: enabled })
+  $wakeWordListening.set(enabled)
   // Also toggle the actual wake word listener via IPC
   const desktop = window.hermesDesktop as any
   if (desktop?.zeus?.toggleWakeWord) {
@@ -103,6 +107,7 @@ export async function autoStartWakeWord() {
     if (!status.listening) {
       await desktop.zeus.toggleWakeWord()
     }
+    $wakeWordListening.set(true)
   } catch {
     // Best-effort — don't block boot
   }

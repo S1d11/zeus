@@ -364,6 +364,7 @@ function InstalledServerRow({
   const isOAuth = server.auth === 'oauth'
   const [authStatus, setAuthStatus] = useState<McpServerAuthStatus | null>(null)
   const [authStatusLoading, setAuthStatusLoading] = useState(false)
+  const [authStatusError, setAuthStatusError] = useState(false)
   const [loginInProgress, setLoginInProgress] = useState(false)
   const [logoutInProgress, setLogoutInProgress] = useState(false)
 
@@ -373,6 +374,7 @@ function InstalledServerRow({
     }
     let cancelled = false
     setAuthStatusLoading(true)
+    setAuthStatusError(false)
     void getMcpServerAuthStatus(server.name)
       .then(status => {
         if (!cancelled) {
@@ -383,6 +385,7 @@ function InstalledServerRow({
       .catch(() => {
         if (!cancelled) {
           setAuthStatusLoading(false)
+          setAuthStatusError(true)
         }
       })
     return () => void (cancelled = true)
@@ -438,6 +441,11 @@ function InstalledServerRow({
             )}
             {isOAuth && authStatusLoading && (
               <Codicon name="loading" size="0.75rem" spinning className="text-(--ui-text-tertiary)" />
+            )}
+            {isOAuth && authStatusError && !authStatusLoading && (
+              <span className="text-xs text-amber-600 dark:text-amber-400" title="Could not check auth status">
+                <Codicon name="warning" size="0.75rem" />
+              </span>
             )}
             {toolCount > 0 && <Badge variant="outline">{labels.toolsCount(toolCount)}</Badge>}
           </div>

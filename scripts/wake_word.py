@@ -33,6 +33,24 @@ def emit(obj):
     print(json.dumps(obj), flush=True)
 
 
+def _try_offline_recognition(recognizer, audio):
+    """Attempt offline recognition using PocketSphinx (bundled with SpeechRecognition).
+
+    Returns the recognized text (lowercased) or None if unavailable or no speech.
+    """
+    try:
+        text = recognizer.recognize_sphinx(audio).lower().strip()
+        return text if text else None
+    except sr.UnknownValueError:
+        return None
+    except LookupError:
+        # PocketSphinx not installed — can't do offline recognition
+        emit({"error": "offline recognition unavailable (PocketSphinx not installed); internet required"})
+        return None
+    except Exception:
+        return None
+
+
 def listen_loop(stop_event):
     """Continuously listen for the wake word until stop_event is set."""
     recognizer = sr.Recognizer()
@@ -74,15 +92,17 @@ def listen_loop(stop_event):
             continue
 
         try:
-            # Use Google's free speech recognition for wake word detection
+            # Try Google's free speech recognition first (requires internet)
             text = recognizer.recognize_google(audio).lower().strip()
         except sr.UnknownValueError:
             # No speech detected — keep listening
             continue
-        except sr.RequestError as e:
-            emit({"error": f"recognition service error: {e}"})
-            stop_event.wait(2.0)
-            continue
+        except sr.RequestError:
+            # Google API unavailable (offline or rate-limited) — try offline fallback
+            text = _try_offline_recognition(recognizer, audio)
+            if text is None:
+                stop_event.wait(2.0)
+                continue
         except Exception as e:
             emit({"error": f"recognition error: {e}"})
             continue

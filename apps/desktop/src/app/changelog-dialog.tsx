@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { BrandMark } from '@/components/brand-mark'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
-import { Loader } from '@/components/ui/loader'
 import { ExternalLink, RefreshCw } from '@/lib/icons'
 import { $desktopVersion, $changelogOpen, setChangelogOpen, refreshDesktopVersion } from '@/store/updates'
 
@@ -86,17 +85,131 @@ function formatDate(iso: string): string {
   }
 }
 
-/** Strip markdown to plain text for display in the dialog body. */
+/**
+ * Convert a limited subset of GitHub-flavored markdown to HTML for
+ * display in the changelog dialog. Supports: headers, bold, italic,
+ * inline code, fenced code blocks, unordered/ordered lists, links,
+ * and horizontal rules. Escapes HTML entities first to prevent XSS.
+ */
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 function renderMarkdown(md: string): string {
-  // Lightweight: strip headers markers, bold/italic, code fences, and links
-  return md
-    .replace(/^#{1,6}\s+/gm, '')
-    .replace(/\*\*(.+?)\*\*/g, '$1')
-    .replace(/\*(.+?)\*/g, '$1')
-    .replace(/`{3}[\s\S]*?`{3}/g, '')
-    .replace(/`(.+?)`/g, '$1')
-    .replace(/\[(.+?)\]\((.+?)\)/g, '$1')
-    .trim()
+  const lines = escapeHtml(md).split(/\r?\n/)
+  const html: string[] = []
+  let inCodeBlock = false
+  let codeLang = ''
+  let inList = false
+  let listType: 'ul' | 'ol' | null = null
+
+  const flushList = () => {
+    if (inList && listType) {
+      html.push(`</${listType}>`)
+      inList = false
+      listType = null
+    }
+  }
+
+  for (const line of lines) {
+    // Fenced code block
+    const fenceMatch = line.match(/^```(\w*)$/)
+    if (fenceMatch) {
+      if (inCodeBlock) {
+        html.push('</code></pre>')
+        inCodeBlock = false
+        codeLang = ''
+      } else {
+        codeLang = fenceMatch[1] || ''
+        html.push(`<pre class="rounded-md bg-muted/40 p-3 overflow-x-auto text-xs"><code>`)
+        inCodeBlock = true
+      }
+      continue
+    }
+    if (inCodeBlock) {
+      html.push(line)
+      continue
+    }
+
+    // Horizontal rule
+    if (/^---+\s*$/.test(line)) {
+      flushList()
+      html.push('<hr class="border-border/40 my-2" />')
+      continue
+    }
+
+    // Headers
+    const headerMatch = line.match(/^(#{1,4})\s+(.+)$/)
+    if (headerMatch) {
+      flushList()
+      const level = headerMatch[1].length
+      const sizes = ['text-sm font-bold', 'text-sm font-semibold', 'text-xs font-semibold', 'text-xs font-medium']
+      html.push(`<div class="${sizes[Math.min(level - 1, 3)]} mt-2 mb-1 text-foreground">${inlineFormat(headerMatch[2])}</div>`)
+      continue
+    }
+
+    // Unordered list item
+    const ulMatch = line.match(/^[\s]*[-*+]\s+(.+)$/)
+    if (ulMatch) {
+      if (!inList || listType !== 'ul') {
+        flushList()
+        html.push('<ul class="list-disc pl-5 space-y-0.5 my-1">')
+        inList = true
+        listType = 'ul'
+      }
+      html.push(`<li>${inlineFormat(ulMatch[1])}</li>`)
+      continue
+    }
+
+    // Ordered list item
+    const olMatch = line.match(/^[\s]*\d+\.\s+(.+)$/)
+    if (olMatch) {
+      if (!inList || listType !== 'ol') {
+        flushList()
+        html.push('<ol class="list-decimal pl-5 space-y-0.5 my-1">')
+        inList = true
+        listType = 'ol'
+      }
+      html.push(`<li>${inlineFormat(olMatch[1])}</li>`)
+      continue
+    }
+
+    // Empty line
+    if (line.trim() === '') {
+      flushList()
+      html.push('')
+      continue
+    }
+
+    // Regular paragraph
+    flushList()
+    html.push(`<p class="my-0.5">${inlineFormat(line)}</p>`)
+  }
+
+  if (inCodeBlock) html.push('</code></pre>')
+  flushList()
+  return html.join('\n')
+}
+
+/** Apply inline formatting: bold, italic, inline code, links. */
+function inlineFormat(text: string): string {
+  return text
+    // Links [text](url)
+    .replace(
+      /\[([^\]]+)\]\(([^)]+)\)/g,
+      '<a href="$2" class="text-primary underline underline-offset-2" target="_blank" rel="noreferrer">$1</a>'
+    )
+    // Bold **text**
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    // Italic *text* (but not ** which is bold)
+    .replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
+    // Inline code `text`
+    .replace(/`([^`]+)`/g, '<code class="rounded bg-muted/50 px-1 py-0.5 text-xs font-mono">$1</code>')
 }
 
 export function ChangelogDialog() {
@@ -136,6 +249,7 @@ export function ChangelogDialog() {
             </DialogDescription>
           </div>
           <Button
+            aria-label="Refresh changelog"
             disabled={loading}
             onClick={() => {
               setLoading(true)
@@ -159,8 +273,20 @@ export function ChangelogDialog() {
 
         <div className="max-h-[60vh] overflow-y-auto px-5 py-4">
           {loading && !releases ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader />
+            <div className="space-y-6">
+              {[0, 1, 2].map(i => (
+                <div key={i} className="rounded-lg border border-border/50 bg-muted/10 p-4">
+                  <div className="mb-2 flex items-center gap-2">
+                    <div className="h-4 w-24 animate-pulse rounded bg-muted/50" />
+                    <div className="ml-auto h-3 w-16 animate-pulse rounded bg-muted/50" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <div className="h-3 w-full animate-pulse rounded bg-muted/40" />
+                    <div className="h-3 w-4/5 animate-pulse rounded bg-muted/40" />
+                    <div className="h-3 w-3/5 animate-pulse rounded bg-muted/40" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : error ? (
             <div className="py-8 text-center text-sm text-muted-foreground">
@@ -211,9 +337,10 @@ export function ChangelogDialog() {
                       </span>
                     </div>
                     {release.body ? (
-                      <pre className="whitespace-pre-wrap break-words font-sans text-xs leading-relaxed text-muted-foreground">
-                        {renderMarkdown(release.body)}
-                      </pre>
+                      <div
+                        className="text-xs leading-relaxed text-muted-foreground [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2 [&_code]:rounded [&_code]:bg-muted/50 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_pre]:rounded-md [&_pre]:bg-muted/40 [&_pre]:p-3 [&_pre]:overflow-x-auto"
+                        dangerouslySetInnerHTML={{ __html: renderMarkdown(release.body) }}
+                      />
                     ) : (
                       <p className="text-xs text-muted-foreground">No release notes available.</p>
                     )}

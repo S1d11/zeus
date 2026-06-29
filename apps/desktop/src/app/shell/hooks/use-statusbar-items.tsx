@@ -24,6 +24,7 @@ import {
 } from '@/store/session'
 import { $subagentsBySession, activeSubagentCount, failedSubagentCount } from '@/store/subagents'
 import { $gatewayRestarting } from '@/store/system-actions'
+import { $wakeWordListening } from '@/store/general-settings'
 import {
   $backendUpdateApply,
   $backendUpdateStatus,
@@ -88,6 +89,7 @@ export function useStatusbarItems({
   const backendUpdateApply = useStore($backendUpdateApply)
   const desktopVersion = useStore($desktopVersion)
   const connection = useStore($connection)
+  const wakeWordListening = useStore($wakeWordListening)
 
   const contextUsage = useMemo(() => usageContextLabel(currentUsage), [currentUsage])
   const contextBar = useMemo(() => contextBarLabel(currentUsage), [currentUsage])
@@ -416,7 +418,14 @@ export function useStatusbarItems({
         variant: 'action'
       },
       clientVersionItem,
-      ...(backendVersionItem ? [backendVersionItem] : [])
+      ...(backendVersionItem ? [backendVersionItem] : []),
+      ...(wakeWordListening ? [{
+        className: 'px-1 text-emerald-500',
+        icon: <Codicon name="mic" size="0.75rem" />,
+        id: 'wake-word-listening',
+        title: 'Listening for "Hey Zeus"',
+        variant: 'action' as const
+      }] : [])
     ],
     [
       busy,
@@ -431,7 +440,8 @@ export function useStatusbarItems({
       turnStartedAt,
       clientVersionItem,
       backendVersionItem,
-      yoloActive
+      yoloActive,
+      wakeWordListening
     ]
   )
 

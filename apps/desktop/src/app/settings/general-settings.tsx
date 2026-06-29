@@ -86,17 +86,27 @@ export function GeneralSettings() {
   const prefs = useStore($generalPrefs)
   const copy = t.settings.general
   const [wakeWordListening, setWakeWordListening] = useState(false)
+  const [wakeWordDepsMissing, setWakeWordDepsMissing] = useState<string[] | null>(null)
 
-  // Check actual wake word listener status on mount
+  // Check actual wake word listener status and dependency availability on mount
   useEffect(() => {
     const desktop = window.hermesDesktop as any
     if (!desktop?.zeus?.getWakeWordStatus) return
     desktop.zeus.getWakeWordStatus().then((status: { listening: boolean }) => {
       setWakeWordListening(status.listening)
     })
+    if (desktop.zeus.checkWakeWordDeps) {
+      desktop.zeus.checkWakeWordDeps().then((deps: { available: boolean; missing: string[] }) => {
+        if (!deps.available) setWakeWordDepsMissing(deps.missing)
+      })
+    }
   }, [])
 
   const handleWakeWordToggle = (on: boolean) => {
+    if (on && wakeWordDepsMissing && wakeWordDepsMissing.length > 0) {
+      // Don't enable if deps are missing — the toggle will visually stay off
+      return
+    }
     setWakeWordEnabled(on)
     setWakeWordListening(on)
   }
@@ -145,9 +155,15 @@ export function GeneralSettings() {
           <ToggleRow
             checked={wakeWordListening}
             description={copy.wakeWordDesc}
+            disabled={!!wakeWordDepsMissing}
             label={copy.wakeWord}
             onChange={handleWakeWordToggle}
           />
+          {wakeWordDepsMissing && wakeWordDepsMissing.length > 0 && (
+            <div className="px-4 py-2.5 text-xs text-amber-600 dark:text-amber-400">
+              Missing dependencies: {wakeWordDepsMissing.join(', ')}. Install with: pip install SpeechRecognition PyAudio
+            </div>
+          )}
         </SettingsCard>
 
         {/* --- Updates --- */}

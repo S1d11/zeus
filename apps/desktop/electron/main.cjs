@@ -28618,10 +28618,13 @@ function openOauthLoginWindow(baseUrl) {
     let settled = false;
     let win = null;
     let pollTimer = null;
+    let timeoutTimer = null;
+    const OAUTH_TIMEOUT_MS = 5 * 60 * 1e3;
     const finish = (err) => {
       if (settled) return;
       settled = true;
       if (pollTimer) clearInterval(pollTimer);
+      if (timeoutTimer) clearTimeout(timeoutTimer);
       try {
         if (win && !win.isDestroyed()) win.destroy();
       } catch {
@@ -28655,6 +28658,9 @@ function openOauthLoginWindow(baseUrl) {
     win.webContents.on("did-redirect-navigation", () => void checkCookie());
     win.webContents.on("did-frame-navigate", () => void checkCookie());
     pollTimer = setInterval(() => void checkCookie(), 750);
+    timeoutTimer = setTimeout(() => {
+      if (!settled) finish(new Error("Login timed out after 5 minutes. Please try again."));
+    }, OAUTH_TIMEOUT_MS);
     win.on("closed", () => {
       if (!settled) finish(new Error("Login window closed before authentication completed."));
     });
@@ -30964,6 +30970,10 @@ ipcMain.handle("zeus:wake-word:toggle", () => {
 });
 ipcMain.handle("zeus:wake-word:status", () => {
   return { listening: wakeWordModule ? wakeWordModule.isWakeWordListening() : false };
+});
+ipcMain.handle("zeus:wake-word:check-deps", () => {
+  if (!wakeWordModule) return { available: false, pythonPath: null, missing: ["wake-word module not loaded"] };
+  return wakeWordModule.checkWakeWordDependencies();
 });
 ipcMain.handle("zeus:tray:show", () => {
   trayModule?.showWindowFromTray();

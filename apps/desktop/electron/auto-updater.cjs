@@ -198,10 +198,14 @@ async function checkForUpdatesNow() {
   if (isChecking) {
     return { ok: false, error: "already checking" };
   }
+  // Set the flag immediately (before the async call) to close the race window
+  isChecking = true;
   try {
     await autoUpdater.checkForUpdates();
+    // isChecking is reset by the "update-available" / "update-not-available" / "error" handlers
     return { ok: true, status: getUpdateStatus() };
   } catch (e) {
+    isChecking = false;
     lastError = e?.message || String(e);
     return { ok: false, error: lastError };
   }
@@ -220,11 +224,18 @@ async function downloadUpdate() {
   isDownloading = true;
   try {
     await autoUpdater.downloadUpdate();
+    // isDownloading is reset by the "update-downloaded" / "error" event handlers
     return { ok: true };
   } catch (e) {
-    isDownloading = false;
     lastError = e?.message || String(e);
     return { ok: false, error: lastError };
+  } finally {
+    // Safety net: if neither "update-downloaded" nor "error" fired,
+    // ensure the flag doesn't get stuck.
+    // (The event handlers will have already set it to false in the normal path.)
+    if (updateDownloaded) {
+      isDownloading = false;
+    }
   }
 }
 

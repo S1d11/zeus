@@ -200,8 +200,46 @@ function isWakeWordListening() {
   return listening && wakeWordProcess && wakeWordProcess.exitCode === null;
 }
 
+/**
+ * Check if Python and required dependencies (SpeechRecognition, PyAudio)
+ * are available without starting the listener.
+ * @returns {{ available: boolean, pythonPath: string|null, missing: string[] }}
+ */
+function checkWakeWordDependencies() {
+  const missing = [];
+  const pythonPath = resolvePythonPath();
+  if (!pythonPath) {
+    return { available: false, pythonPath: null, missing: ["Python 3.8+"] };
+  }
+
+  try {
+    const { execFileSync } = require("child_process");
+    execFileSync(pythonPath, ["-c", "import speech_recognition"], {
+      stdio: "ignore",
+      timeout: 5000,
+      windowsHide: true,
+    });
+  } catch {
+    missing.push("SpeechRecognition");
+  }
+
+  try {
+    const { execFileSync } = require("child_process");
+    execFileSync(pythonPath, ["-c", "import pyaudio"], {
+      stdio: "ignore",
+      timeout: 5000,
+      windowsHide: true,
+    });
+  } catch {
+    missing.push("PyAudio");
+  }
+
+  return { available: missing.length === 0, pythonPath, missing };
+}
+
 module.exports = {
   startWakeWordListener,
   stopWakeWordListener,
   isWakeWordListening,
+  checkWakeWordDependencies,
 };
