@@ -36,6 +36,7 @@ const INSERT_EVENT = 'hermes:composer-insert'
 const INSERT_REFS_EVENT = 'hermes:composer-insert-refs'
 const SUBMIT_EVENT = 'hermes:composer-submit'
 const VOICE_TOGGLE_EVENT = 'hermes:composer-voice-toggle'
+const VOICE_START_EVENT = 'hermes:composer-voice-start'
 
 interface SubmitDetail {
   target: ComposerTarget
@@ -135,6 +136,13 @@ export const requestVoiceToggle = () => dispatch<{ at: number }>(VOICE_TOGGLE_EV
 
 export const onComposerVoiceToggleRequest = (handler: () => void) =>
   subscribe<{ at: number }>(VOICE_TOGGLE_EVENT, () => handler())
+
+/** Start voice mode (idempotent — does nothing if already active).
+ *  Used by the wake word listener to boot straight into voice mode. */
+export const requestVoiceStart = () => dispatch<{ at: number }>(VOICE_START_EVENT, { at: Date.now() })
+
+export const onComposerVoiceStartRequest = (handler: () => void) =>
+  subscribe<{ at: number }>(VOICE_START_EVENT, () => handler())
 
 /**
  * Focus a composer input across React commit + browser focus restore.

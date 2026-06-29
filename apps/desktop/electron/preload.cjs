@@ -220,6 +220,11 @@ contextBridge.exposeInMainWorld('hermesDesktop', {
   zeus: {
     toggleWakeWord: () => ipcRenderer.invoke('zeus:wake-word:toggle'),
     getWakeWordStatus: () => ipcRenderer.invoke('zeus:wake-word:status'),
+    onWakeWordDetected: callback => {
+      const listener = (_event, payload) => callback(payload)
+      ipcRenderer.on('zeus:wake-word:detected', listener)
+      return () => ipcRenderer.removeListener('zeus:wake-word:detected', listener)
+    },
     showFromTray: () => ipcRenderer.invoke('zeus:tray:show'),
     // Auto-updater
     checkForUpdates: () => ipcRenderer.invoke('zeus:auto-updater:check'),

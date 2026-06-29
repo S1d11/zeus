@@ -84,7 +84,8 @@ import {
   onComposerInsertRefsRequest,
   onComposerInsertRequest,
   onComposerSubmitRequest,
-  onComposerVoiceToggleRequest
+  onComposerVoiceToggleRequest,
+  onComposerVoiceStartRequest
 } from './focus'
 import { HelpHint } from './help-hint'
 import { useAtCompletions } from './hooks/use-at-completions'
@@ -2020,6 +2021,16 @@ export function ChatBar({
   }, [conversation, disabled, voiceConversationActive])
 
   useEffect(() => onComposerVoiceToggleRequest(toggleVoiceConversation), [toggleVoiceConversation])
+
+  // Wake word: start voice mode without toggling it off if already active.
+  const startVoiceConversation = useCallback(() => {
+    if (disabled) return
+    if (!voiceConversationActive) {
+      setVoiceConversationActive(true)
+    }
+  }, [disabled, voiceConversationActive])
+
+  useEffect(() => onComposerVoiceStartRequest(startVoiceConversation), [startVoiceConversation])
 
   const contextMenu = (
     <ContextMenu

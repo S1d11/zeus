@@ -1,24 +1,36 @@
-v0.21.1: Changelog dialog, README overhaul, tray tooltip fix
+v0.21.2: Fix wake word + boot straight into voice mode
 
-Changelog dialog (click version badge in status bar):
-- New ChangelogDialog component fetches recent releases from GitHub API
-- Shows release notes, dates, download assets, and "Current" badge
-- Clicking the version badge in the bottom-right status bar now opens
-  the changelog dialog (for packaged/NSIS installs) instead of being
-  a no-op
-- Refresh button to re-fetch releases
-- Links to view full release on GitHub
+Wake word fix:
+- Created missing scripts/wake_word.py (the file the wake-word module
+  spawns but which never existed in the repo — this was the root cause
+  of wake word not working at all)
+- Uses speech_recognition + PyAudio to continuously listen for "zeus"
+  or "hey zeus", printing JSON events to stdout
+- Calibrates for ambient noise on startup, dynamically adjusts energy
+  threshold, and recovers from transient errors
 
-README overhaul:
-- Rewritten main README.md with correct S1d11/zeus repo links
-- Updated install instructions to point to raw.githubusercontent.com
-- Added Desktop App section with feature list
-- Removed Nous Research / Discord branding
-- Updated desktop README.md with MCP, changelog, tray features
-- Fixed all download/doc links to point to the correct repo
+Wake word → voice mode:
+- When the wake word is detected, the main process now sends an IPC
+  event (zeus:wake-word:detected) to the renderer instead of just
+  showing/focusing the window
+- New requestVoiceStart() event in composer/focus.ts (idempotent —
+  only starts voice mode, doesn't toggle it off if already active)
+- Desktop controller listens for the wake word event and dispatches
+  requestVoiceStart() to the composer
+- New onComposerVoiceStartRequest handler in composer starts voice
+  conversation without toggling off
+- Saying "Hey Zeus" now boots straight into voice mode
 
-Tray tooltip fix:
-- Cleaned up remaining "Zeus Agent" -> "Zeus" in tray tooltips
+Auto-start on boot:
+- Wake word listener now auto-starts on app boot if the user has it
+  enabled in settings (previously only started when toggled manually)
+- New autoStartWakeWord() in general-settings store checks status
+  before starting to avoid double-start
+
+IPC additions:
+- preload.cjs: onWakeWordDetected callback registration
+- global.d.ts: onWakeWordDetected type definition
+- main.cjs: mainWindow.webContents.send('zeus:wake-word:detected')
 
 Generated with [Devin](https://devin.ai)
 

@@ -91,6 +91,23 @@ export function setWakeWordEnabled(enabled: boolean) {
   }
 }
 
+/** Start the wake word listener on app boot if the user has it enabled.
+ *  Only starts — never stops. Safe to call on every boot. */
+export async function autoStartWakeWord() {
+  const prefs = $generalPrefs.get()
+  if (!prefs.wakeWordEnabled) return
+  const desktop = window.hermesDesktop as any
+  if (!desktop?.zeus?.getWakeWordStatus || !desktop?.zeus?.toggleWakeWord) return
+  try {
+    const status = await desktop.zeus.getWakeWordStatus()
+    if (!status.listening) {
+      await desktop.zeus.toggleWakeWord()
+    }
+  } catch {
+    // Best-effort — don't block boot
+  }
+}
+
 export function setMinimizeToTray(enabled: boolean) {
   writePrefs({ ...$generalPrefs.get(), minimizeToTray: enabled })
   void syncToMain('minimizeToTray', enabled)

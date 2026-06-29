@@ -199,6 +199,7 @@ declare global {
       zeus: {
         toggleWakeWord: () => Promise<{ enabled: boolean; error?: string }>
         getWakeWordStatus: () => Promise<{ listening: boolean }>
+        onWakeWordDetected: (callback: () => void) => () => void
         showFromTray: () => Promise<{ shown: boolean }>
         checkForUpdates: () => Promise<{ ok: boolean; error?: string; status?: any }>
         downloadUpdate: () => Promise<{ ok: boolean; error?: string }>

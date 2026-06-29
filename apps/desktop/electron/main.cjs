@@ -30937,8 +30937,14 @@ ipcMain.handle("zeus:wake-word:toggle", () => {
         if (mainWindow.isMinimized()) mainWindow.restore();
         if (!mainWindow.isVisible()) mainWindow.show();
         mainWindow.focus();
+        mainWindow.webContents.send("zeus:wake-word:detected");
       } else if (!mainWindow || mainWindow.isDestroyed()) {
         createWindow();
+        setTimeout(() => {
+          if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send("zeus:wake-word:detected");
+          }
+        }, 1500);
       }
     },
     onError: (msg) => console.error("[wake-word]", msg),

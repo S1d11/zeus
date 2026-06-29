@@ -26,7 +26,7 @@ import {
 } from '../lib/session-source'
 import { latestSessionTodos } from '../lib/todos'
 import { setCronFocusJobId, setCronJobs } from '../store/cron'
-import { syncAllPrefsToMain } from '../store/general-settings'
+import { autoStartWakeWord, syncAllPrefsToMain } from '../store/general-settings'
 import {
   $fileBrowserOpen,
   $panesFlipped,
@@ -107,7 +107,7 @@ import { openUpdatesWindow, startUpdatePoller, stopUpdatePoller } from '../store
 import { isSecondaryWindow } from '../store/windows'
 
 import { ChatView } from './chat'
-import { requestComposerFocus, requestComposerInsert } from './chat/composer/focus'
+import { requestComposerFocus, requestComposerInsert, requestVoiceStart } from './chat/composer/focus'
 import { useComposerActions } from './chat/hooks/use-composer-actions'
 import {
   ChatPreviewRail,
@@ -311,6 +311,23 @@ export function DesktopController() {
   // runs multiple profiles.
   useEffect(() => {
     void syncAllPrefsToMain()
+    // Auto-start the wake word listener if the user has it enabled in settings.
+    void autoStartWakeWord()
+  }, [])
+
+  // Wake word → voice mode: when the main process detects "Hey Zeus",
+  // it sends an IPC event. We forward it to the composer to toggle voice
+  // mode on, so the user can immediately start talking.
+  useEffect(() => {
+    const desktop = window.hermesDesktop as any
+    if (!desktop?.zeus?.onWakeWordDetected) return
+    const unsubscribe = desktop.zeus.onWakeWordDetected(() => {
+      // requestVoiceStart dispatches a window event the composer picks up
+      // to activate voice conversation mode (idempotent — won't toggle off
+      // if voice mode is already active).
+      requestVoiceStart()
+    })
+    return unsubscribe
   }, [])
 
   // Remember the open chat so a relaunch reopens it instead of an empty new-chat.

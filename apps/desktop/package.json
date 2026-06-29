@@ -2,7 +2,7 @@
   "name": "zeus",
   "productName": "Zeus",
   "private": true,
-  "version": "0.21.1",
+  "version": "0.21.2",
   "description": "Native desktop shell for Zeus Agent.",
   "author": "Zeus",
   "type": "module",
