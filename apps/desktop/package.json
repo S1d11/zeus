@@ -2,7 +2,7 @@
   "name": "zeus",
   "productName": "Zeus",
   "private": true,
-  "version": "0.21.2",
+  "version": "0.21.3",
   "description": "Native desktop shell for Zeus Agent.",
   "author": "Zeus",
   "type": "module",
@@ -252,7 +252,7 @@
     },
     "linux": {
       "category": "Development",
-      "maintainer": "Nous Research <support@nousresearch.com>",
+      "maintainer": "Zeus <support@zeus.ai>",
       "synopsis": "Native desktop shell for Zeus Agent.",
       "target": [
         "AppImage",

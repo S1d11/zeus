@@ -26,7 +26,7 @@ import {
   setWakeWordEnabled,
 } from '@/store/general-settings'
 
-import { ListRow, SectionHeading, SettingsContent } from './primitives'
+import { SectionHeading, SettingsContent } from './primitives'
 
 const CAPTION = 'text-[length:var(--conversation-caption-font-size)] text-(--ui-text-tertiary)'
 
@@ -34,6 +34,25 @@ function Caption({ children, className }: { children: React.ReactNode; className
   return <p className={cn(CAPTION, className)}>{children}</p>
 }
 
+/** A card that groups related settings with a header label. */
+function SettingsCard({
+  label,
+  children
+}: {
+  label: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className="rounded-lg border border-(--ui-stroke-secondary) bg-(--ui-chat-surface-background) overflow-hidden">
+      <div className="px-4 pt-3 pb-1 text-xs font-semibold text-(--ui-text-secondary) uppercase tracking-wide">
+        {label}
+      </div>
+      <div className="divide-y divide-(--ui-stroke-secondary)/50">{children}</div>
+    </div>
+  )
+}
+
+/** A single toggle row inside a settings card. */
 function ToggleRow(props: {
   checked: boolean
   description: string
@@ -42,21 +61,23 @@ function ToggleRow(props: {
   onChange: (on: boolean) => void
 }) {
   return (
-    <ListRow
-      action={
-        <Switch
-          aria-label={props.label}
-          checked={props.checked}
-          disabled={props.disabled}
-          onCheckedChange={on => {
-            triggerHaptic('selection')
-            props.onChange(on)
-          }}
-        />
-      }
-      description={props.description}
-      title={props.label}
-    />
+    <div className="flex items-center justify-between gap-4 px-4 py-3">
+      <div className="min-w-0 flex-1">
+        <div className="text-sm font-medium text-foreground">{props.label}</div>
+        <div className="mt-0.5 text-[length:var(--conversation-caption-font-size)] leading-(--conversation-caption-line-height) text-(--ui-text-tertiary)">
+          {props.description}
+        </div>
+      </div>
+      <Switch
+        aria-label={props.label}
+        checked={props.checked}
+        disabled={props.disabled}
+        onCheckedChange={on => {
+          triggerHaptic('selection')
+          props.onChange(on)
+        }}
+      />
+    </div>
   )
 }
 
@@ -83,76 +104,62 @@ export function GeneralSettings() {
   return (
     <SettingsContent>
       <SectionHeading icon={Settings2} title={copy.title} />
-      <Caption className="mb-2 leading-(--conversation-caption-line-height)">{copy.intro}</Caption>
+      <Caption className="mb-4 leading-(--conversation-caption-line-height)">{copy.intro}</Caption>
 
-      {/* --- Startup --- */}
-      <div className="mt-4 mb-1 text-[length:var(--conversation-caption-font-size)] font-medium text-(--ui-text-secondary) uppercase tracking-wide">
-        {copy.startupSection}
+      <div className="flex flex-col gap-3">
+        {/* --- Startup --- */}
+        <SettingsCard label={copy.startupSection}>
+          <ToggleRow
+            checked={prefs.autoLaunchOnStartup}
+            description={copy.autoLaunchDesc}
+            label={copy.autoLaunch}
+            onChange={setAutoLaunchOnStartup}
+          />
+          <ToggleRow
+            checked={prefs.startMinimized}
+            description={copy.startMinimizedDesc}
+            disabled={!prefs.autoLaunchOnStartup}
+            label={copy.startMinimized}
+            onChange={setStartMinimized}
+          />
+        </SettingsCard>
+
+        {/* --- Window behavior --- */}
+        <SettingsCard label={copy.windowSection}>
+          <ToggleRow
+            checked={prefs.closeToTray}
+            description={copy.closeToTrayDesc}
+            label={copy.closeToTray}
+            onChange={setCloseToTray}
+          />
+          <ToggleRow
+            checked={prefs.minimizeToTray}
+            description={copy.minimizeToTrayDesc}
+            label={copy.minimizeToTray}
+            onChange={setMinimizeToTray}
+          />
+        </SettingsCard>
+
+        {/* --- Voice --- */}
+        <SettingsCard label={copy.voiceSection}>
+          <ToggleRow
+            checked={wakeWordListening}
+            description={copy.wakeWordDesc}
+            label={copy.wakeWord}
+            onChange={handleWakeWordToggle}
+          />
+        </SettingsCard>
+
+        {/* --- Updates --- */}
+        <SettingsCard label={copy.updatesSection}>
+          <ToggleRow
+            checked={prefs.checkForUpdatesAutomatically}
+            description={copy.autoUpdatesDesc}
+            label={copy.autoUpdates}
+            onChange={setCheckForUpdatesAutomatically}
+          />
+        </SettingsCard>
       </div>
-
-      <ToggleRow
-        checked={prefs.autoLaunchOnStartup}
-        description={copy.autoLaunchDesc}
-        label={copy.autoLaunch}
-        onChange={setAutoLaunchOnStartup}
-      />
-
-      <ToggleRow
-        checked={prefs.startMinimized}
-        description={copy.startMinimizedDesc}
-        disabled={!prefs.autoLaunchOnStartup}
-        label={copy.startMinimized}
-        onChange={setStartMinimized}
-      />
-
-      <div className="my-1 h-px bg-border/30" />
-
-      {/* --- Window behavior --- */}
-      <div className="mt-2 mb-1 text-[length:var(--conversation-caption-font-size)] font-medium text-(--ui-text-secondary) uppercase tracking-wide">
-        {copy.windowSection}
-      </div>
-
-      <ToggleRow
-        checked={prefs.closeToTray}
-        description={copy.closeToTrayDesc}
-        label={copy.closeToTray}
-        onChange={setCloseToTray}
-      />
-
-      <ToggleRow
-        checked={prefs.minimizeToTray}
-        description={copy.minimizeToTrayDesc}
-        label={copy.minimizeToTray}
-        onChange={setMinimizeToTray}
-      />
-
-      <div className="my-1 h-px bg-border/30" />
-
-      {/* --- Voice --- */}
-      <div className="mt-2 mb-1 text-[length:var(--conversation-caption-font-size)] font-medium text-(--ui-text-secondary) uppercase tracking-wide">
-        {copy.voiceSection}
-      </div>
-
-      <ToggleRow
-        checked={wakeWordListening}
-        description={copy.wakeWordDesc}
-        label={copy.wakeWord}
-        onChange={handleWakeWordToggle}
-      />
-
-      <div className="my-1 h-px bg-border/30" />
-
-      {/* --- Updates --- */}
-      <div className="mt-2 mb-1 text-[length:var(--conversation-caption-font-size)] font-medium text-(--ui-text-secondary) uppercase tracking-wide">
-        {copy.updatesSection}
-      </div>
-
-      <ToggleRow
-        checked={prefs.checkForUpdatesAutomatically}
-        description={copy.autoUpdatesDesc}
-        label={copy.autoUpdates}
-        onChange={setCheckForUpdatesAutomatically}
-      />
     </SettingsContent>
   )
 }

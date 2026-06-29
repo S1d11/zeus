@@ -363,6 +363,7 @@ function InstalledServerRow({
   const toolCount = server.tools?.length ?? 0
   const isOAuth = server.auth === 'oauth'
   const [authStatus, setAuthStatus] = useState<McpServerAuthStatus | null>(null)
+  const [authStatusLoading, setAuthStatusLoading] = useState(false)
   const [loginInProgress, setLoginInProgress] = useState(false)
   const [logoutInProgress, setLogoutInProgress] = useState(false)
 
@@ -371,14 +372,18 @@ function InstalledServerRow({
       return
     }
     let cancelled = false
+    setAuthStatusLoading(true)
     void getMcpServerAuthStatus(server.name)
       .then(status => {
         if (!cancelled) {
           setAuthStatus(status)
+          setAuthStatusLoading(false)
         }
       })
       .catch(() => {
-        // Silent — auth status is best-effort
+        if (!cancelled) {
+          setAuthStatusLoading(false)
+        }
       })
     return () => void (cancelled = true)
   }, [isOAuth, server.name])
@@ -426,10 +431,13 @@ function InstalledServerRow({
           <div className="flex items-center gap-2">
             <span className="truncate text-sm font-medium text-foreground">{server.name}</span>
             <Badge variant="muted">{server.transport}</Badge>
-            {isOAuth && (
-              <Badge variant={authStatus?.authenticated ? 'default' : 'warn'}>
-                {authStatus?.authenticated ? labels.oauthAuthenticated : labels.oauthNotAuthenticated}
+            {isOAuth && !authStatusLoading && authStatus && (
+              <Badge variant={authStatus.authenticated ? 'default' : 'warn'}>
+                {authStatus.authenticated ? labels.oauthAuthenticated : labels.oauthNotAuthenticated}
               </Badge>
+            )}
+            {isOAuth && authStatusLoading && (
+              <Codicon name="loading" size="0.75rem" spinning className="text-(--ui-text-tertiary)" />
             )}
             {toolCount > 0 && <Badge variant="outline">{labels.toolsCount(toolCount)}</Badge>}
           </div>
@@ -452,7 +460,7 @@ function InstalledServerRow({
               <Button
                 aria-label={labels.oauthReconnect}
                 className="size-7 p-0 text-(--ui-text-tertiary) hover:text-foreground"
-                disabled={loginInProgress}
+                disabled={loginInProgress || !server.enabled}
                 onClick={() => void handleLogin()}
                 size="icon"
                 variant="ghost"
@@ -468,7 +476,7 @@ function InstalledServerRow({
               <Button
                 aria-label={labels.oauthConnect}
                 className="size-7 p-0 text-primary hover:text-primary"
-                disabled={loginInProgress}
+                disabled={loginInProgress || !server.enabled}
                 onClick={() => void handleLogin()}
                 size="icon"
                 variant="ghost"
@@ -500,7 +508,7 @@ function InstalledServerRow({
             )}
           </>
         )}
-        <Switch checked={server.enabled} disabled={toggling} onCheckedChange={onToggle} />
+        <Switch aria-label={server.enabled ? 'Disable server' : 'Enable server'} checked={server.enabled} disabled={toggling} onCheckedChange={onToggle} />
         <Button
           aria-label={labels.remove}
           className="size-7 p-0 text-(--ui-text-tertiary) hover:text-destructive"

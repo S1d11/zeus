@@ -26029,7 +26029,7 @@ function previewFileMetadata(filePath, mimeType) {
 }
 app.setName(APP_NAME);
 if (IS_WINDOWS) {
-  app.setAppUserModelId("com.nousresearch.hermes");
+  app.setAppUserModelId("com.zeus.agent");
 }
 app.setAboutPanelOptions({
   applicationName: APP_NAME,
@@ -28637,7 +28637,7 @@ function openOauthLoginWindow(baseUrl) {
       win = new BrowserWindow({
         width: 520,
         height: 720,
-        title: "Sign in to Hermes gateway",
+        title: "Sign in to Zeus gateway",
         autoHideMenuBar: true,
         webPreferences: {
           contextIsolation: true,
@@ -29767,6 +29767,11 @@ function createWindow() {
     schedulePersistWindowState.flush();
     if (trayModule && !app.isQuitting && zeusGeneralPrefs.closeToTray) {
       e.preventDefault();
+      mainWindow.hide();
+    }
+  });
+  mainWindow.on("minimize", () => {
+    if (trayModule && zeusGeneralPrefs.minimizeToTray) {
       mainWindow.hide();
     }
   });

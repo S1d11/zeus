@@ -1,0 +1,28 @@
+v0.21.3: Complete branding cleanup, settings UX polish, desktop fixes
+
+Branding:
+- Fix app user model ID to com.zeus.agent (was com.nousresearch.hermes)
+- Redesign ASCII logo to spell ZEUS (was HERMES)
+- Update Slack bot name to Zeus (was Hermes)
+- Replace all remaining user-facing "Hermes" strings with "Zeus" in
+  setup wizard, uninstall, tools_config, web_server, telegram bot
+- Update all dead hermes-agent.nousresearch.com docs URLs to github.com/S1d11/zeus
+- Point auto-updater and release URLs to S1d11/zeus (was NousResearch/hermes-agent)
+- Update system prompt docs URL in prompt_builder.py
+- Rename theme labels: "Nous Blue" -> "Zeus Blue", "Hermes Teal" -> "Zeus Teal"
+- Update HTTP Referer/User-Agent headers to new repo URL
+- Fix OAuth login window title to "Sign in to Zeus gateway"
+
+Desktop UI:
+- Redesign General Settings page with card-based grouping for readability
+- Shorten settings descriptions to be more concise
+- Fix OAuth badge showing misleading "Not authenticated" during loading
+- Disable OAuth login button when server is disabled
+- Add aria-label to server enable/disable switch
+- Add GitHub API rate limit handling (403) and 5-min caching in changelog dialog
+- Implement minimizeToTray preference in Electron main process
+- Update wake word description to mention voice mode activation
+
+Generated with [Devin](https://devin.ai)
+
+Co-Authored-By: Devin <158243242+devin-ai-integration[bot]@users.noreply.github.com>

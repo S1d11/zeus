@@ -18,15 +18,54 @@ interface ReleaseInfo {
 }
 
 const RELEASES_API = 'https://api.github.com/repos/S1d11/zeus/releases'
+const CACHE_KEY = 'zeus:changelog-cache'
+const CACHE_TTL_MS = 5 * 60 * 1000 // 5 minutes
+
+interface CachedReleases {
+  timestamp: number
+  releases: ReleaseInfo[]
+}
+
+function loadCachedReleases(): ReleaseInfo[] | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY)
+    if (!raw) return null
+    const cached = JSON.parse(raw) as CachedReleases
+    if (Date.now() - cached.timestamp > CACHE_TTL_MS) return null
+    return cached.releases
+  } catch {
+    return null
+  }
+}
+
+function saveCachedReleases(releases: ReleaseInfo[]) {
+  try {
+    const data: CachedReleases = { timestamp: Date.now(), releases }
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data))
+  } catch {
+    // localStorage may be full or unavailable — best-effort
+  }
+}
 
 async function fetchReleases(): Promise<ReleaseInfo[]> {
+  const cached = loadCachedReleases()
+  if (cached) return cached
+
   const resp = await fetch(`${RELEASES_API}?per_page=10`, {
     headers: { Accept: 'application/vnd.github+json' }
   })
+  if (resp.status === 403) {
+    throw new Error('GitHub API rate limit exceeded. Try again in a few minutes.')
+  }
+  if (resp.status === 404) {
+    throw new Error('No releases found for this repository.')
+  }
   if (!resp.ok) {
     throw new Error(`GitHub API returned ${resp.status}`)
   }
-  return resp.json()
+  const data = await resp.json()
+  saveCachedReleases(data)
+  return data
 }
 
 function formatBytes(bytes: number): string {

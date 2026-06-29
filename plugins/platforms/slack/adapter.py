@@ -4113,7 +4113,7 @@ def interactive_setup() -> None:
             import json as _json
 
             manifest = _build_full_manifest(
-                bot_name="Hermes",
+                bot_name="Zeus",
                 bot_description="Your Zeus on Slack",
             )
             target = Path(get_hermes_home()) / "slack-manifest.json"
@@ -4158,7 +4158,7 @@ def interactive_setup() -> None:
     print_info("   3. Install to Workspace: Settings → Install App")
     print_info("   4. After installing, invite the bot to channels: /invite @YourBot")
     print()
-    print_info("   Full guide: https://hermes-agent.nousresearch.com/docs/user-guide/messaging/slack/")
+    print_info("   Full guide: https://github.com/S1d11/zeus")
     print()
 
     # Generate and write manifest up-front so the user can paste it into
@@ -4191,7 +4191,7 @@ def interactive_setup() -> None:
         print_info("   Set SLACK_ALLOW_ALL_USERS=true or GATEWAY_ALLOW_ALL_USERS=true only if you intentionally want open workspace access.")
 
     print()
-    print_info("📬 Home Channel: where Hermes delivers cron job results,")
+    print_info("📬 Home Channel: where Zeus delivers cron job results,")
     print_info("   cross-platform messages, and notifications.")
     print_info("   To get a channel ID: open the channel in Slack, then right-click")
     print_info("   the channel name → Copy link — the ID starts with C (e.g. C01ABC2DE3F).")
