@@ -295,6 +295,8 @@ from hermes_cli.subcommands.memory import build_memory_parser
 from hermes_cli.subcommands.acp import build_acp_parser
 from hermes_cli.subcommands.tools import build_tools_parser
 from hermes_cli.subcommands.insights import build_insights_parser
+from hermes_cli.subcommands.usage import build_usage_parser
+from hermes_cli.subcommands.monitor import build_monitor_parser
 from hermes_cli.subcommands.skills import build_skills_parser
 from hermes_cli.subcommands.pairing import build_pairing_parser
 from hermes_cli.subcommands.plugins import build_plugins_parser
@@ -12101,10 +12103,67 @@ def cmd_insights(args):
         print(f"Error generating insights: {e}")
 
 
+def cmd_usage(args):
+    try:
+        from agent.usage_bar import collect_usage, render_usage_bar
+
+        # Try to get the active provider for API limit fetching
+        active_provider = None
+        base_url = None
+        api_key = None
+        try:
+            from hermes_cli.config import get_config
+
+            config = get_config()
+            active_provider = config.get("provider")
+            base_url = config.get("base_url")
+        except Exception:
+            pass
+
+        providers = collect_usage(
+            active_provider=active_provider,
+            base_url=base_url,
+            api_key=api_key,
+        )
+
+        if getattr(args, "json", False):
+            import json
+
+            data = [
+                {
+                    "provider": p.provider,
+                    "sessions": p.sessions,
+                    "total_tokens": p.total_tokens,
+                    "input_tokens": p.input_tokens,
+                    "output_tokens": p.output_tokens,
+                    "estimated_cost_usd": p.estimated_cost_usd,
+                    "api_calls": p.api_calls,
+                    "limit_type": p.limit_type,
+                    "limit_value": p.limit_value,
+                    "used_value": p.used_value,
+                    "used_percent": p.used_percent,
+                    "limit_source": p.limit_source,
+                }
+                for p in providers
+            ]
+            print(json.dumps(data, indent=2, default=str))
+        else:
+            output = render_usage_bar(providers, use_color=not getattr(args, "no_color", False))
+            print(output)
+    except Exception as e:
+        print(f"Error generating usage bar: {e}")
+
+
 def cmd_evolve(args):
     from hermes_cli.evolve_cmd import evolve_command
 
     evolve_command(args)
+
+
+def cmd_monitor(args):
+    from hermes_cli.monitor_cmd import monitor_command
+
+    monitor_command(args)
 
 
 def cmd_skills(args):
@@ -13165,6 +13224,16 @@ def main():
     # insights command  (parser built in hermes_cli/subcommands/insights.py)
     # =========================================================================
     build_insights_parser(subparsers, cmd_insights=cmd_insights)
+
+    # =========================================================================
+    # usage command  (parser built in hermes_cli/subcommands/usage.py)
+    # =========================================================================
+    build_usage_parser(subparsers, cmd_usage=cmd_usage)
+
+    # =========================================================================
+    # monitor command  (parser built in hermes_cli/subcommands/monitor.py)
+    # =========================================================================
+    build_monitor_parser(subparsers, cmd_monitor=cmd_monitor)
 
     # =========================================================================
     # evolve command  (parser built in hermes_cli/subcommands/evolve.py)

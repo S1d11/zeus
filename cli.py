@@ -9253,6 +9253,21 @@ class HermesCLI(CLIAgentSetupMixin, CLICommandsMixin):
             for line in account_lines:
                 print(line)
 
+        # Monthly usage limit bar (SessionDB aggregation + API/config limits)
+        try:
+            from agent.usage_bar import show_usage_bar
+
+            usage_bar_output = show_usage_bar(
+                active_provider=provider,
+                base_url=base_url,
+                api_key=api_key,
+            )
+            if usage_bar_output and "No usage data" not in usage_bar_output:
+                print()
+                print(usage_bar_output)
+        except Exception:
+            pass
+
         # Nous credits magnitudes + monthly-grant gauge (agent-independent — also
         # runs at the no-agent / no-calls early-returns above). See the helper.
         self._print_nous_credits_block()

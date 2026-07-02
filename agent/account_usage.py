@@ -617,6 +617,94 @@ def _fetch_openrouter_account_usage(base_url: Optional[str], api_key: Optional[s
     )
 
 
+def _fetch_copilot_account_usage() -> Optional[AccountUsageSnapshot]:
+    """Fetch GitHub Copilot premium request usage via the GitHub API.
+
+    Requires a GitHub token (from ``GITHUB_TOKEN`` env var or the Hermes
+    auth store). The GitHub Copilot billing endpoint returns the monthly
+    premium request quota and usage. If the token is unavailable or the
+    endpoint returns an error, we fail open (return None) so the usage bar
+    falls back to SessionDB-aggregated data with config.yaml limits.
+    """
+    import os
+
+    token = os.getenv("GITHUB_TOKEN", "").strip()
+    if not token:
+        try:
+            from hermes_cli.auth import get_provider_auth_state
+
+            auth = get_provider_auth_state("github") or {}
+            token = (auth.get("access_token") or "").strip()
+        except Exception:
+            pass
+    if not token:
+        return None
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    try:
+        with httpx.Client(timeout=10.0) as client:
+            # Get the authenticated user to find their login
+            user_resp = client.get("https://api.github.com/user", headers=headers)
+            user_resp.raise_for_status()
+            user_data = user_resp.json() or {}
+            username = user_data.get("login")
+            if not username:
+                return None
+
+            # Fetch Copilot billing/usage for the user
+            # This endpoint returns premium request usage for the current billing period
+            billing_resp = client.get(
+                f"https://api.github.com/user/copilot_billing",
+                headers=headers,
+            )
+            if billing_resp.status_code == 404:
+                # Endpoint may not be available for all accounts
+                return None
+            billing_resp.raise_for_status()
+            billing = billing_resp.json() or {}
+    except Exception:
+        logger.debug("usage_bar ▸ Copilot billing fetch failed (fail-open)", exc_info=True)
+        return None
+
+    windows: list[AccountUsageWindow] = []
+    # Parse the billing response — structure depends on GitHub's API version
+    quota = billing.get("quota") or billing.get("plan") or {}
+    used = quota.get("usage_this_cycle") or quota.get("used")
+    limit = quota.get("quota") or quota.get("monthly_limit") or quota.get("limit")
+    reset_date = quota.get("reset_date") or quota.get("resets_at")
+
+    if isinstance(used, (int, float)) and isinstance(limit, (int, float)) and limit > 0:
+        used_pct = min(100.0, (float(used) / float(limit)) * 100.0)
+        windows.append(
+            AccountUsageWindow(
+                label="Premium requests",
+                used_percent=used_pct,
+                detail=f"{int(used)} / {int(limit)} requests used",
+                reset_at=_parse_dt(reset_date),
+            )
+        )
+
+    details: list[str] = []
+    if billing.get("plan_type"):
+        details.append(f"Plan: {billing['plan_type']}")
+
+    if not windows and not details:
+        return None
+
+    return AccountUsageSnapshot(
+        provider="copilot",
+        source="github_billing_api",
+        fetched_at=_utc_now(),
+        title="GitHub Copilot usage",
+        windows=tuple(windows),
+        details=tuple(details),
+    )
+
+
 def fetch_account_usage(
     provider: Optional[str],
     *,
@@ -633,6 +721,8 @@ def fetch_account_usage(
             return _fetch_anthropic_account_usage()
         if normalized == "openrouter":
             return _fetch_openrouter_account_usage(base_url, api_key)
+        if normalized in {"copilot", "github", "github-copilot"}:
+            return _fetch_copilot_account_usage()
     except Exception:
         return None
     return None
