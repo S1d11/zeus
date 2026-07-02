@@ -196,6 +196,27 @@ def evolve_command(args) -> None:
 
     if action == "auto":
         _ensure_evolution_importable()
+
+        # --cron: register as a recurring Hermes cron job instead of running once
+        if getattr(args, "cron", False):
+            from evolution.monitor.auto_evolve import register_cron_job
+
+            schedule = getattr(args, "cron_interval", None)
+            job = register_cron_job(
+                schedule=schedule,
+                zeus_repo=getattr(args, "zeus_repo", None),
+            )
+            if job:
+                print(f"[evolve auto] Cron job registered: {job.get('name', 'Zeus Self-Improvement Loop')}")
+                if job.get("schedule"):
+                    print(f"  Schedule: {job['schedule']}")
+                if job.get("id"):
+                    print(f"  Job ID: {job['id']}")
+                print("  The loop will run automatically on schedule.")
+            else:
+                print("[evolve auto] Failed to register cron job (see logs above).")
+            return
+
         from evolution.monitor.auto_evolve import run_auto_loop
 
         run_auto_loop(
@@ -244,6 +265,7 @@ def evolve_command(args) -> None:
             optimizer_model=args.optimizer_model,
             eval_model=args.eval_model,
             hermes_repo=args.zeus_repo,
+            run_tests=getattr(args, "run_tests", False),
             dry_run=args.dry_run,
         )
         return
@@ -274,6 +296,7 @@ def evolve_command(args) -> None:
             optimizer_model=args.optimizer_model,
             eval_model=args.eval_model,
             hermes_repo=args.zeus_repo,
+            run_tests=getattr(args, "run_tests", False),
             dry_run=args.dry_run,
         )
         return

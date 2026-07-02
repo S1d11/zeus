@@ -82,6 +82,32 @@ def build_evolve_parser(subparsers, *, cmd_evolve: Callable) -> None:
         action="store_true",
         help="Validate setup without running optimization",
     )
+    evolve_skill.add_argument(
+        "--create-pr",
+        action="store_true",
+        default=True,
+        help="Create a git branch with the evolved skill (default: on)",
+    )
+    evolve_skill.add_argument(
+        "--no-pr",
+        action="store_true",
+        help="Skip git branch/PR creation",
+    )
+    evolve_skill.add_argument(
+        "--push",
+        action="store_true",
+        help="Push the evolution branch to the remote",
+    )
+    evolve_skill.add_argument(
+        "--github-pr",
+        action="store_true",
+        help="Create a GitHub PR via gh CLI (implies --push)",
+    )
+    evolve_skill.add_argument(
+        "--run-tblite",
+        action="store_true",
+        help="Run TBLite benchmark as an additional gate (if installed)",
+    )
     evolve_skill.set_defaults(func=cmd_evolve)
 
     # ── status ─────────────────────────────────────────────────────────────
@@ -175,6 +201,16 @@ def build_evolve_parser(subparsers, *, cmd_evolve: Callable) -> None:
         action="store_true",
         help="Analyze and report only — don't run evolution",
     )
+    evolve_auto.add_argument(
+        "--cron",
+        action="store_true",
+        help="Register the self-improvement loop as a Hermes cron job (recurring) instead of running once",
+    )
+    evolve_auto.add_argument(
+        "--cron-interval",
+        default="0 3 * * *",
+        help="Cron schedule expression (default: '0 3 * * *' = daily at 3 AM). Only used with --cron.",
+    )
     evolve_auto.set_defaults(func=cmd_evolve)
 
     # ── tool ───────────────────────────────────────────────────────────────
@@ -226,6 +262,37 @@ def build_evolve_parser(subparsers, *, cmd_evolve: Callable) -> None:
         "--dry-run",
         action="store_true",
         help="Validate setup without running optimization",
+    )
+    evolve_tool.add_argument(
+        "--run-tests",
+        action="store_true",
+        help="Run the full pytest suite as a constraint gate",
+    )
+    evolve_tool.add_argument(
+        "--create-pr",
+        action="store_true",
+        default=True,
+        help="Create a git branch with the evolved tool (default: on)",
+    )
+    evolve_tool.add_argument(
+        "--no-pr",
+        action="store_true",
+        help="Skip git branch/PR creation",
+    )
+    evolve_tool.add_argument(
+        "--push",
+        action="store_true",
+        help="Push the evolution branch to the remote",
+    )
+    evolve_tool.add_argument(
+        "--github-pr",
+        action="store_true",
+        help="Create a GitHub PR via gh CLI (implies --push)",
+    )
+    evolve_tool.add_argument(
+        "--run-tblite",
+        action="store_true",
+        help="Run TBLite benchmark as an additional gate (if installed)",
     )
     evolve_tool.set_defaults(func=cmd_evolve)
 
@@ -288,6 +355,37 @@ def build_evolve_parser(subparsers, *, cmd_evolve: Callable) -> None:
         "--dry-run",
         action="store_true",
         help="Validate setup without running optimization",
+    )
+    evolve_prompt.add_argument(
+        "--run-tests",
+        action="store_true",
+        help="Run the full pytest suite as a constraint gate",
+    )
+    evolve_prompt.add_argument(
+        "--create-pr",
+        action="store_true",
+        default=True,
+        help="Create a git branch with the evolved section (default: on)",
+    )
+    evolve_prompt.add_argument(
+        "--no-pr",
+        action="store_true",
+        help="Skip git branch/PR creation",
+    )
+    evolve_prompt.add_argument(
+        "--push",
+        action="store_true",
+        help="Push the evolution branch to the remote",
+    )
+    evolve_prompt.add_argument(
+        "--github-pr",
+        action="store_true",
+        help="Create a GitHub PR via gh CLI (implies --push)",
+    )
+    evolve_prompt.add_argument(
+        "--run-tblite",
+        action="store_true",
+        help="Run TBLite benchmark as an additional gate (if installed)",
     )
     evolve_prompt.set_defaults(func=cmd_evolve)
 

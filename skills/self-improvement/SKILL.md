@@ -52,24 +52,41 @@ hermes evolve auto --days 7 --max-candidates 5
 Analyzes sessions, ranks improvement candidates, and automatically
 evolves the top candidates. Results saved to git branches.
 
+### Register the loop as a recurring cron job
+```
+hermes evolve auto --cron
+hermes evolve auto --cron --cron-interval "0 3 * * *"
+```
+Registers the self-improvement loop as a Hermes cron job that runs
+automatically on schedule (default: daily at 3 AM). The loop will
+analyze sessions, evolve candidates, and create git branches without
+manual intervention. Review branches at your convenience.
+
 ### Evolve a specific skill
 ```
 hermes evolve skill <skill-name> --iterations 10
+hermes evolve skill <skill-name> --eval-source sessiondb --run-tests --github-pr
 ```
 Runs GEPA optimization on a single skill's SKILL.md instructions.
+Use `--eval-source sessiondb` to mine real session history for eval data.
+Use `--run-tests` to run the benchmark gate (pytest + TBLite) after optimization.
+Use `--github-pr` to automatically create a GitHub PR with the evolved skill.
 
 ### Evolve a tool description
 ```
 hermes evolve tool <tool-name> --iterations 5
+hermes evolve tool <tool-name> --run-tests --github-pr
 ```
 Optimizes a tool's description text for better tool selection accuracy.
+Same flags as skill evolution (`--run-tests`, `--github-pr`, `--eval-source`).
 
 ### Evolve a system prompt section
 ```
 hermes evolve prompt <section-name> --iterations 5
+hermes evolve prompt <section-name> --run-tests --github-pr
 ```
 Optimizes a system prompt section (e.g., DEFAULT_AGENT_IDENTITY,
-MEMORY_GUIDANCE, SKILLS_GUIDANCE).
+MEMORY_GUIDANCE, SKILLS_GUIDANCE). Same flags as skill evolution.
 
 ### List evolvable prompt sections
 ```
@@ -111,6 +128,14 @@ hermes evolve prompt --list-sections
 3. Report which targets were evolved and the improvement scores
 4. List any git branches created for review
 
+### When the user says "schedule self-improvement" or "make it automatic"
+
+1. Run `hermes evolve auto --cron` to register a recurring cron job
+2. The loop will run automatically on schedule (default: daily at 3 AM)
+3. Each run creates git branches for review — no auto-merging
+4. Tell the user they can review branches with `hermes evolve status`
+5. To change the schedule: `hermes evolve auto --cron --cron-interval "0 */6 * * *"`
+
 ## Important Notes
 
 - **Prompt caching is sacred**: System prompt changes invalidate the
@@ -124,3 +149,12 @@ hermes evolve prompt --list-sections
 - **Constraints**: All evolved artifacts must pass size limits (skills:
   15KB, tool descriptions: 500 chars) and growth limits (max 20%
   growth over baseline).
+- **Benchmark gate**: When `--run-tests` is used, the benchmark gate
+  runs pytest and TBLite (if installed) to verify no regressions.
+  Failed benchmarks block PR creation automatically.
+- **SessionDB mining**: Use `--eval-source sessiondb` to build eval
+  datasets from real Zeus session history (SQLite SessionDB), not just
+  synthetic data. This produces more realistic evaluation examples.
+- **Cron scheduling**: `hermes evolve auto --cron` registers the loop
+  as a Hermes cron job. The loop runs on schedule, creates branches,
+  and never auto-merges — you review when convenient.
