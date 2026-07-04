@@ -32,10 +32,10 @@ import type { HermesConfigRecord } from '@/types/hermes'
 
 import { CONTROL_TEXT } from './constants'
 import { getNested, setNested } from './helpers'
-import { ListRow, LoadingState, Pill, SectionHeading } from './primitives'
+import { ListRow, LoadingState, Pill, RecommendationBadge, SectionHeading } from './primitives'
 
-// Hermes' reasoning levels (VALID_REASONING_EFFORTS); `none` = thinking off.
-// Empty config = Hermes default (medium), shown as Medium.
+// Zeus' reasoning levels (VALID_REASONING_EFFORTS); `none` = thinking off.
+// Empty config = Zeus default (medium), shown as Medium.
 const EFFORT_VALUES = ['none', 'minimal', 'low', 'medium', 'high', 'xhigh'] as const
 
 // agent.service_tier stores "fast"/"priority"/"on" for fast; anything else is
@@ -579,6 +579,7 @@ export function ModelSettings({ onMainModelChanged }: ModelSettingsProps) {
             </>
           )}
         </div>
+        <RecommendationBadge text={m.mainModelRec} />
         {needsSetup && !setupIsApiKey && (
           <p className="mt-2 text-xs text-muted-foreground">
             {selectedProviderRow?.auth_type === 'api_key'
@@ -647,6 +648,7 @@ export function ModelSettings({ onMainModelChanged }: ModelSettingsProps) {
           </Button>
         </div>
         <p className="mb-2 text-xs text-muted-foreground">{m.auxiliaryDesc}</p>
+        <RecommendationBadge text={m.auxiliaryRec} />
         {switchStaleAux.length === 0 && persistentStaleAux.length > 0 && (
           <div className="mb-2.5">
             <StaleAuxWarning

@@ -277,29 +277,44 @@ export interface Translations {
       startupSection: string
       autoLaunch: string
       autoLaunchDesc: string
+      autoLaunchRec: string
       startMinimized: string
       startMinimizedDesc: string
+      startMinimizedRec: string
       windowSection: string
       closeToTray: string
       closeToTrayDesc: string
+      closeToTrayRec: string
       minimizeToTray: string
       minimizeToTrayDesc: string
+      minimizeToTrayRec: string
       voiceSection: string
       wakeWord: string
       wakeWordDesc: string
+      wakeWordRec: string
       updatesSection: string
       autoUpdates: string
       autoUpdatesDesc: string
+      autoUpdatesRec: string
+      checkNow: string
+      checking: string
+      upToDate: string
+      updateAvailable: (count: number) => string
+      checkFailed: string
+      relaunchLastSession: string
+      relaunchLastSessionDesc: string
+      relaunchLastSessionRec: string
     }
     notifications: {
       title: string
       intro: string
       enableAll: string
       enableAllDesc: string
+      enableAllRec: string
       focusedHint: string
       kinds: Record<
         'approval' | 'backgroundDone' | 'input' | 'turnDone' | 'turnError',
-        { label: string; description: string }
+        { label: string; description: string; rec: string }
       >
       test: string
       testTitle: string
@@ -308,6 +323,7 @@ export interface Translations {
       testUnsupported: string
       completionSoundTitle: string
       completionSoundDesc: string
+      completionSoundRec: string
       completionSoundPreview: string
     }
     sections: Record<string, string>
@@ -331,10 +347,19 @@ export interface Translations {
       colorModeDesc: string
       toolViewTitle: string
       toolViewDesc: string
+      toolViewRec: string
+      terminalPositionTitle: string
+      terminalPositionDesc: string
+      terminalPositionRec: string
+      terminalPositionAuto: string
+      terminalPositionSide: string
+      terminalPositionBottom: string
       translucencyTitle: string
       translucencyDesc: string
+      translucencyRec: string
       embedsTitle: string
       embedsDesc: string
+      embedsRec: string
       embedsAsk: string
       embedsAlways: string
       embedsOff: string
@@ -345,6 +370,7 @@ export interface Translations {
       technicalDesc: string
       themeTitle: string
       themeDesc: string
+      themeRec: string
       themeProfileNote: (profile: string) => string
       installTitle: string
       installDesc: string
@@ -528,10 +554,12 @@ export interface Translations {
       auxiliaryTitle: string
       resetAllToMain: string
       auxiliaryDesc: string
+      auxiliaryRec: string
       setToMain: string
       change: string
       autoUseMain: string
       providerDefault: string
+      mainModelRec: string
       tasks: Record<string, AuxTaskCopy>
     }
     providers: {
@@ -933,6 +961,7 @@ export interface Translations {
     customHint: string
     optional: string
     promptScheduleRequired: string
+    invalidSchedule: string
     saveChanges: string
     createAction: string
   }
@@ -1792,6 +1821,9 @@ export interface Translations {
     cwdChangeFailed: string
     cwdStagedTitle: string
     cwdStagedMessage: string
+    cwdCurrent: (cwd: string) => string
+    cwdUnset: string
+    cwdChanged: (cwd: string) => string
     modelSwitchFailed: string
     sessionExported: string
     sessionExportFailed: string

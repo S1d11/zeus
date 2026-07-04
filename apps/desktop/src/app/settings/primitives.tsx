@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { PageLoader } from '@/components/page-loader'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Codicon } from '@/components/ui/codicon'
 import type { IconComponent } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 
@@ -20,6 +21,29 @@ export function SettingsContent({ children }: { children: ReactNode }) {
 
 export function Pill({ tone = 'muted', children }: { tone?: 'muted' | 'primary'; children: ReactNode }) {
   return <Badge variant={tone === 'primary' ? 'default' : 'muted'}>{children}</Badge>
+}
+
+/**
+ * A "Recommended" badge + optional explanation, shown below a setting's
+ * description. Helps average users pick sensible defaults without reading
+ * documentation.
+ */
+export function RecommendationBadge({ text }: { text?: ReactNode }) {
+  if (!text) {
+    return null
+  }
+
+  return (
+    <div className="mt-1.5 flex items-start gap-1.5">
+      <Badge className="shrink-0 gap-1" variant="default">
+        <Codicon className="size-3" name="lightbulb" />
+        Recommended
+      </Badge>
+      <span className="text-[length:var(--conversation-caption-font-size)] leading-(--conversation-caption-line-height) text-(--ui-text-secondary)">
+        {text}
+      </span>
+    </div>
+  )
 }
 
 export function SectionHeading({ icon: Icon, title, meta }: { icon: IconComponent; title: string; meta?: string }) {
@@ -68,6 +92,7 @@ export function ListRow({
   hint,
   action,
   below,
+  recommendation,
   wide = false
 }: {
   title: ReactNode
@@ -75,6 +100,7 @@ export function ListRow({
   hint?: ReactNode
   action?: ReactNode
   below?: ReactNode
+  recommendation?: ReactNode
   wide?: boolean
 }) {
   return (
@@ -91,6 +117,7 @@ export function ListRow({
             {description}
           </div>
         )}
+        <RecommendationBadge text={recommendation} />
         {hint && <div className="mt-1 block font-mono text-[0.68rem] text-muted-foreground/45">{hint}</div>}
         {below}
       </div>

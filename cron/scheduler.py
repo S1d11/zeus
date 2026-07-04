@@ -57,6 +57,20 @@ def _summarize_cron_failure_for_delivery(job: dict, error: str | None) -> str:
     text = (error or "unknown error").strip()
     lower = text.lower()
 
+    # Retry context suffix — appended to every return path so the operator
+    # knows whether a retry is pending or all attempts are exhausted. The job
+    # dict reflects the attempt that just ran (mark_job_run hasn't incremented
+    # it yet at delivery time).
+    retry = job.get("retry") or {}
+    max_attempts = retry.get("max_attempts", 1) or 1
+    retry_suffix = ""
+    if max_attempts > 1:
+        attempt = retry.get("attempt", 0)
+        if attempt + 1 < max_attempts:
+            retry_suffix = f" (attempt {attempt + 1}/{max_attempts} — retrying)"
+        else:
+            retry_suffix = f" (all {max_attempts} attempts failed)"
+
     # Provider/API failures are the common noisy path. Keep these short.
     if "429" in text or "rate limit" in lower or "usage limit" in lower:
         reason = "rate limit"
@@ -68,6 +82,7 @@ def _summarize_cron_failure_for_delivery(job: dict, error: str | None) -> str:
             f"⚠️ Cron '{job_name}' failed: provider {reason}. "
             "Fallback chain was exhausted or unavailable. "
             "Full details saved in cron output."
+            + retry_suffix
         )
 
     if "readtimeout" in lower or "timed out" in lower or "timeout" in lower:
@@ -75,6 +90,7 @@ def _summarize_cron_failure_for_delivery(job: dict, error: str | None) -> str:
             f"⚠️ Cron '{job_name}' failed: provider timeout. "
             "Fallback chain was exhausted or unavailable. "
             "Full details saved in cron output."
+            + retry_suffix
         )
 
     # Match authentication/authorization wording at a word boundary and the
@@ -84,6 +100,7 @@ def _summarize_cron_failure_for_delivery(job: dict, error: str | None) -> str:
         return (
             f"⚠️ Cron '{job_name}' failed: provider authentication error. "
             "Full details saved in cron output."
+            + retry_suffix
         )
 
     # Strip common exception wrappers and collapse provider payloads. Bound
@@ -96,7 +113,7 @@ def _summarize_cron_failure_for_delivery(job: dict, error: str | None) -> str:
     cleaned = re.sub(r"\s+", " ", cleaned).strip()
     if len(cleaned) > 180:
         cleaned = cleaned[:177].rstrip() + "..."
-    return f"⚠️ Cron '{job_name}' failed: {cleaned}"
+    return f"⚠️ Cron '{job_name}' failed: {cleaned}{retry_suffix}"
 
 
 class CronPromptInjectionBlocked(Exception):

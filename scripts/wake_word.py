@@ -14,11 +14,21 @@ Status/error lines are also JSON:
 Reads optional JSON commands from stdin:
 
     {"action": "stop"}    — shut down cleanly
+
+Recognition strategy (tries each in order until one works):
+  1. PocketSphinx offline (keyword spotting — lightweight, no internet)
+  2. Google free speech-to-text (requires internet, rate-limited)
+  3. Vosk offline (if installed — lightweight, accurate, no internet)
+
+The wake word "zeus" is phonetically similar to several common words
+("use", "loose", "juice", "deuce"), so we match a broad set of
+near-homophones to avoid false negatives.
 """
 
 import json
 import sys
 import threading
+import time
 
 try:
     import speech_recognition as sr
@@ -33,7 +43,72 @@ def emit(obj):
     print(json.dumps(obj), flush=True)
 
 
-def _try_offline_recognition(recognizer, audio):
+# Wake words and common misrecognitions of "zeus" / "hey zeus".
+# Google's free STT frequently transcribes "zeus" as these near-homophones.
+WAKE_WORDS = [
+    "zeus",
+    "hey zeus",
+    "hey zero",
+    # Common misrecognitions of "zeus" alone:
+    "use",
+    "loose",
+    "juice",
+    "deuce",
+    "goose",
+    "moose",
+    # Common misrecognitions of "hey zeus":
+    "hey use",
+    "hey loose",
+    "hey juice",
+    "a zeus",
+    "the zeus",
+]
+
+# Words that look like wake words but are NOT — filter out false positives.
+# e.g. "use" alone is too common, so we only accept it if preceded by "hey"
+# or if the full text is very short (just the one word).
+SINGLE_WORD_ACCEPT = {"zeus", "loose", "juice", "deuce", "goose", "moose"}
+# "use" alone is too common in normal speech — only accept with "hey"
+HEADED_WORDS = {"use", "deuce"}
+
+
+def matches_wake_word(text: str) -> str | None:
+    """Return the matched wake word if text contains one, else None.
+
+    Filters out false positives where a single common word like "use"
+    appears alone without "hey" prefix.
+    """
+    text = text.lower().strip()
+    if not text:
+        return None
+
+    # Check multi-word phrases first (higher confidence)
+    for word in WAKE_WORDS:
+        if " " in word and word in text:
+            return word
+
+    # Single-word matches: filter false positives
+    words = text.split()
+    for word in WAKE_WORDS:
+        if " " not in word and word in words:
+            # Words like "use" are too common in normal speech — only accept
+            # if preceded by "hey" (already caught by multi-word match above)
+            if word in HEADED_WORDS:
+                continue
+            if word not in SINGLE_WORD_ACCEPT and len(words) == 1:
+                # Unknown single word — skip to avoid false positives
+                continue
+            # Only accept single-word matches when the utterance is short
+            # (1-2 words). In a long sentence, "loose" or "juice" are likely
+            # not wake words.
+            if len(words) > 2:
+                continue
+            return word
+
+    return None
+
+
+def _try_sphinx(recognizer, audio):
     """Attempt offline recognition using PocketSphinx (bundled with SpeechRecognition).
 
     Returns the recognized text (lowercased) or None if unavailable or no speech.
@@ -44,11 +119,71 @@ def _try_offline_recognition(recognizer, audio):
     except sr.UnknownValueError:
         return None
     except LookupError:
-        # PocketSphinx not installed — can't do offline recognition
-        emit({"error": "offline recognition unavailable (PocketSphinx not installed); internet required"})
+        # PocketSphinx not installed
         return None
     except Exception:
         return None
+
+
+def _try_vosk(recognizer, audio):
+    """Attempt offline recognition using Vosk (if installed).
+
+    Returns the recognized text (lowercased) or None.
+    """
+    try:
+        text = recognizer.recognize_vosk(audio).lower().strip()
+        # Vosk returns JSON like {"text": "hey zeus"}
+        if text.startswith("{"):
+            try:
+                parsed = json.loads(text)
+                text = parsed.get("text", "").lower().strip()
+            except (json.JSONDecodeError, AttributeError):
+                return None
+        return text if text else None
+    except sr.UnknownValueError:
+        return None
+    except (LookupError, AttributeError):
+        # Vosk not installed or not configured
+        return None
+    except Exception:
+        return None
+
+
+def _try_google(recognizer, audio):
+    """Attempt Google's free speech recognition (requires internet).
+
+    Returns the recognized text (lowercased) or None.
+    """
+    try:
+        text = recognizer.recognize_google(audio).lower().strip()
+        return text if text else None
+    except sr.UnknownValueError:
+        return None
+    except sr.RequestError:
+        # Google API unavailable (offline or rate-limited)
+        return None
+    except Exception:
+        return None
+
+
+def recognize(recognizer, audio):
+    """Try each recognition backend in order. Returns (text, backend) or (None, None)."""
+    # Try PocketSphinx first — it's offline, fast, and doesn't rate-limit
+    text = _try_sphinx(recognizer, audio)
+    if text:
+        return text, "sphinx"
+
+    # Try Vosk — offline, more accurate than Sphinx if installed
+    text = _try_vosk(recognizer, audio)
+    if text:
+        return text, "vosk"
+
+    # Fall back to Google's free API (may rate-limit or fail offline)
+    text = _try_google(recognizer, audio)
+    if text:
+        return text, "google"
+
+    return None, None
 
 
 def listen_loop(stop_event):
@@ -78,6 +213,9 @@ def listen_loop(stop_event):
         emit({"error": f"calibration failed: {e}"})
         return
 
+    consecutive_errors = 0
+    last_backend = None
+
     while not stop_event.is_set():
         try:
             with mic as source:
@@ -91,25 +229,25 @@ def listen_loop(stop_event):
             stop_event.wait(0.5)
             continue
 
-        try:
-            # Try Google's free speech recognition first (requires internet)
-            text = recognizer.recognize_google(audio).lower().strip()
-        except sr.UnknownValueError:
-            # No speech detected — keep listening
-            continue
-        except sr.RequestError:
-            # Google API unavailable (offline or rate-limited) — try offline fallback
-            text = _try_offline_recognition(recognizer, audio)
-            if text is None:
+        text, backend = recognize(recognizer, audio)
+
+        if text is None:
+            consecutive_errors += 1
+            if consecutive_errors >= 10:
+                emit({"error": "all recognition backends failing — check microphone and dependencies"})
+                consecutive_errors = 0
                 stop_event.wait(2.0)
-                continue
-        except Exception as e:
-            emit({"error": f"recognition error: {e}"})
             continue
 
+        consecutive_errors = 0
+
+        # Log backend changes for debugging
+        if backend != last_backend:
+            emit({"status": f"using {backend} recognition"})
+            last_backend = backend
+
         # Check for wake word
-        wake_words = ["zeus", "hey zeus", "hey zero"]
-        matched = next((w for w in wake_words if w in text), None)
+        matched = matches_wake_word(text)
 
         if matched:
             emit({"detected": True, "phrase": matched, "full_text": text})

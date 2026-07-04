@@ -53,6 +53,7 @@ else:
         HTTPX_AVAILABLE = False
         httpx = None
 
+from hermes_cli._subprocess_compat import windows_hide_flags
 from gateway.config import Platform, PlatformConfig
 from gateway.platforms.base import (
     BasePlatformAdapter,
@@ -865,6 +866,7 @@ class PhotonAdapter(BasePlatformAdapter):
                 text=True,
                 timeout=10,
                 check=False,
+                creationflags=windows_hide_flags(),
             )
             if patch.returncode != 0:
                 raise RuntimeError((patch.stderr or patch.stdout or "").strip())
@@ -883,6 +885,7 @@ class PhotonAdapter(BasePlatformAdapter):
             stderr=subprocess.STDOUT,
             env=env,
             start_new_session=(sys.platform != "win32"),
+            creationflags=windows_hide_flags(),
         )
 
         # Pump sidecar stderr/stdout into our logger so users see crashes.

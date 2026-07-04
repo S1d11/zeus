@@ -25,6 +25,8 @@ import sys
 import tempfile
 import threading
 import time
+
+from hermes_cli._subprocess_compat import windows_hide_flags
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Any, Optional, List, Tuple, Set
@@ -2347,6 +2349,18 @@ DEFAULT_CONFIG = {
     "command_allowlist": [],
     # User-defined quick commands that bypass the agent loop (type: exec only)
     "quick_commands": {},
+
+    # File access scope.  By default the agent can read/write anywhere on disk
+    # (the workspace-divergence warning fires for edits outside the project
+    # folder, but the write still goes through).  Trusted paths are directories
+    # where edits are silently allowed — no warning, no approval prompt.  The
+    # static deny list (SSH keys, credentials, system paths) always wins, even
+    # for trusted paths.  The HERMES_WRITE_SAFE_ROOT env var, if set, further
+    # restricts writes to ONLY the listed roots (deny-by-default mode); config
+    # trusted_paths do not enable deny-by-default, they only suppress warnings.
+    "file_access": {
+        "trusted_paths": [],
+    },
 
     # Per-platform system-prompt hint overrides. Lets an admin append to or
     # replace Hermes' built-in platform hint for a single messaging platform
@@ -7198,7 +7212,7 @@ def edit_config():
         return
     
     print(f"Opening {config_path} in {editor}...")
-    subprocess.run([editor, str(config_path)])
+    subprocess.run([editor, str(config_path)], creationflags=windows_hide_flags())
 
 
 def set_config_value(key: str, value: str):

@@ -54,6 +54,7 @@ import yaml
 from hermes_cli.fallback_config import get_fallback_chain
 from hermes_cli.cli_agent_setup_mixin import CLIAgentSetupMixin
 from hermes_cli.cli_commands_mixin import CLICommandsMixin
+from hermes_cli._subprocess_compat import windows_hide_flags
 
 # prompt_toolkit for fixed input area TUI
 from prompt_toolkit.history import FileHistory
@@ -1230,6 +1231,7 @@ def _git_repo_root() -> Optional[str]:
         result = subprocess.run(
             ["git", "rev-parse", "--show-toplevel"],
             capture_output=True, text=True, timeout=5,
+            creationflags=windows_hide_flags(),
         )
         if result.returncode == 0:
             return _normalize_git_bash_path(result.stdout.strip())
@@ -1277,6 +1279,7 @@ def _resolve_worktree_base(repo_root: str) -> tuple:
         return subprocess.run(
             ["git", *args],
             capture_output=True, text=True, timeout=timeout, cwd=repo_root,
+            creationflags=windows_hide_flags(),
         )
 
     # 1. Current branch's upstream, if it tracks one.
@@ -1376,6 +1379,7 @@ def _setup_worktree(repo_root: str = None, sync_base: bool = True) -> Optional[D
         result = subprocess.run(
             ["git", "worktree", "add", str(wt_path), "-b", branch_name, base_ref],
             capture_output=True, text=True, timeout=30, cwd=repo_root,
+            creationflags=windows_hide_flags(),
         )
         if result.returncode != 0:
             # If branching from the resolved remote ref failed for any reason
@@ -1390,6 +1394,7 @@ def _setup_worktree(repo_root: str = None, sync_base: bool = True) -> Optional[D
                 result = subprocess.run(
                     ["git", "worktree", "add", str(wt_path), "-b", branch_name, base_ref],
                     capture_output=True, text=True, timeout=30, cwd=repo_root,
+                    creationflags=windows_hide_flags(),
                 )
             if result.returncode != 0:
                 print(f"\033[31m✗ Failed to create worktree: {result.stderr.strip()}\033[0m")
@@ -1471,6 +1476,7 @@ def _setup_worktree(repo_root: str = None, sync_base: bool = True) -> Optional[D
         subprocess.run(
             ["git", "worktree", "lock", "--reason", f"hermes pid={os.getpid()}", str(wt_path)],
             capture_output=True, text=True, timeout=10, cwd=repo_root,
+            creationflags=windows_hide_flags(),
         )
         logger.debug("Worktree locked: %s (pid=%s)", wt_path, os.getpid())
     except Exception as e:
@@ -1504,6 +1510,7 @@ def _worktree_has_unpushed_commits(worktree_path: str, timeout: int = 10) -> boo
         remote_refs = subprocess.run(
             ["git", "for-each-ref", "--format=%(refname)", "refs/remotes"],
             capture_output=True, text=True, timeout=timeout, cwd=worktree_path,
+            creationflags=windows_hide_flags(),
         )
         if remote_refs.returncode != 0:
             return True
@@ -1513,6 +1520,7 @@ def _worktree_has_unpushed_commits(worktree_path: str, timeout: int = 10) -> boo
         result = subprocess.run(
             ["git", "log", "--oneline", "HEAD", "--not", "--remotes"],
             capture_output=True, text=True, timeout=timeout, cwd=worktree_path,
+            creationflags=windows_hide_flags(),
         )
         if result.returncode != 0:
             return True
@@ -1559,6 +1567,7 @@ def _cleanup_worktree(info: Dict[str, str] = None) -> None:
         subprocess.run(
             ["git", "worktree", "unlock", wt_path],
             capture_output=True, text=True, timeout=10, cwd=repo_root,
+            creationflags=windows_hide_flags(),
         )
     except Exception as e:
         logger.debug("git worktree unlock failed (non-fatal): %s", e)
@@ -1567,6 +1576,7 @@ def _cleanup_worktree(info: Dict[str, str] = None) -> None:
         subprocess.run(
             ["git", "worktree", "remove", wt_path, "--force"],
             capture_output=True, text=True, timeout=15, cwd=repo_root,
+            creationflags=windows_hide_flags(),
         )
     except Exception as e:
         logger.debug("Failed to remove worktree: %s", e)
@@ -1576,6 +1586,7 @@ def _cleanup_worktree(info: Dict[str, str] = None) -> None:
         subprocess.run(
             ["git", "branch", "-D", branch],
             capture_output=True, text=True, timeout=10, cwd=repo_root,
+            creationflags=windows_hide_flags(),
         )
     except Exception as e:
         logger.debug("Failed to delete branch %s: %s", branch, e)
@@ -1709,17 +1720,20 @@ def _prune_stale_worktrees(repo_root: str, max_age_hours: int = 24) -> None:
             branch_result = subprocess.run(
                 ["git", "branch", "--show-current"],
                 capture_output=True, text=True, timeout=5, cwd=str(entry),
+                creationflags=windows_hide_flags(),
             )
             branch = branch_result.stdout.strip()
 
             subprocess.run(
                 ["git", "worktree", "remove", str(entry), "--force"],
                 capture_output=True, text=True, timeout=15, cwd=repo_root,
+                creationflags=windows_hide_flags(),
             )
             if branch:
                 subprocess.run(
                     ["git", "branch", "-D", branch],
                     capture_output=True, text=True, timeout=10, cwd=repo_root,
+                    creationflags=windows_hide_flags(),
                 )
             logger.debug("Pruned stale worktree: %s (force=%s)", entry.name, force)
         except Exception as e:
@@ -1741,6 +1755,7 @@ def _prune_orphaned_branches(repo_root: str) -> None:
         result = subprocess.run(
             ["git", "branch", "--format=%(refname:short)"],
             capture_output=True, text=True, timeout=10, cwd=repo_root,
+            creationflags=windows_hide_flags(),
         )
         if result.returncode != 0:
             return
@@ -1754,6 +1769,7 @@ def _prune_orphaned_branches(repo_root: str) -> None:
         wt_result = subprocess.run(
             ["git", "worktree", "list", "--porcelain"],
             capture_output=True, text=True, timeout=10, cwd=repo_root,
+            creationflags=windows_hide_flags(),
         )
         for line in wt_result.stdout.split("\n"):
             if line.startswith("branch refs/heads/"):
@@ -1766,6 +1782,7 @@ def _prune_orphaned_branches(repo_root: str) -> None:
         head_result = subprocess.run(
             ["git", "branch", "--show-current"],
             capture_output=True, text=True, timeout=5, cwd=repo_root,
+            creationflags=windows_hide_flags(),
         )
         current = head_result.stdout.strip()
         if current:
@@ -1790,6 +1807,7 @@ def _prune_orphaned_branches(repo_root: str) -> None:
             subprocess.run(
                 ["git", "branch", "-D"] + batch,
                 capture_output=True, text=True, timeout=30, cwd=repo_root,
+                creationflags=windows_hide_flags(),
             )
         except Exception as e:
             logger.debug("Failed to prune orphaned branches: %s", e)
@@ -7690,7 +7708,7 @@ class HermesCLI(CLIAgentSetupMixin, CLICommandsMixin):
 
         Usage:
             /codex-runtime                       — show current state
-            /codex-runtime auto                  — Hermes default (chat_completions)
+            /codex-runtime auto                  — Zeus default (chat_completions)
             /codex-runtime codex_app_server      — hand turns to codex subprocess
             /codex-runtime on / off              — synonyms for the above
         """
@@ -8344,7 +8362,8 @@ class HermesCLI(CLIAgentSetupMixin, CLICommandsMixin):
                             # shell snippets from config.yaml — not agent/LLM controlled.
                             result = subprocess.run(
                                 exec_cmd, shell=True, capture_output=True,
-                                text=True, timeout=30
+                                text=True, timeout=30,
+                                creationflags=windows_hide_flags(),
                             )
                             output = result.stdout.strip() or result.stderr.strip()
                             if output:

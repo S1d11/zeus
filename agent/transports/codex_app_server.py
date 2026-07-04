@@ -22,6 +22,8 @@ import queue
 import subprocess
 import threading
 import time
+
+from hermes_cli._subprocess_compat import windows_hide_flags
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
@@ -121,6 +123,7 @@ class CodexAppServerClient:
             stderr=subprocess.PIPE,
             bufsize=0,
             env=spawn_env,
+            creationflags=windows_hide_flags(),
         )
         self._next_id = 1
         self._pending: dict[int, _Pending] = {}

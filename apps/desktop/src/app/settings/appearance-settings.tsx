@@ -13,6 +13,7 @@ import { selectableCardClass } from '@/lib/selectable-card'
 import { cn } from '@/lib/utils'
 import { $embedAllowed, $embedMode, clearEmbedAllowed, type EmbedMode, setEmbedMode } from '@/store/embed-consent'
 import { $activeGatewayProfile, $profiles, normalizeProfileKey } from '@/store/profile'
+import { $terminalPosition, setTerminalPosition, type TerminalPosition } from '@/store/terminal-position'
 import { $toolViewMode, setToolViewMode } from '@/store/tool-view'
 import { $translucency, setTranslucency } from '@/store/translucency'
 import { getBaseColors, useTheme } from '@/themes/context'
@@ -20,7 +21,6 @@ import { installVscodeThemeFromMarketplace } from '@/themes/install'
 import { isUserTheme, removeUserTheme } from '@/themes/user-themes'
 
 import { MODE_OPTIONS } from './constants'
-import { PetSettings } from './pet-settings'
 import { ListRow, SectionHeading, SettingsContent } from './primitives'
 
 function ThemePreview({ name, mode }: { name: string; mode: 'light' | 'dark' }) {
@@ -217,6 +217,7 @@ export function AppearanceSettings() {
   const { t, isSavingLocale } = useI18n()
   const { themeName, mode, resolvedMode, availableThemes, setTheme, setMode } = useTheme()
   const toolViewMode = useStore($toolViewMode)
+  const terminalPosition = useStore($terminalPosition)
   const embedMode = useStore($embedMode)
   const embedAllowed = useStore($embedAllowed)
   const translucency = useStore($translucency)
@@ -275,6 +276,12 @@ export function AppearanceSettings() {
     { id: 'always', label: a.embedsAlways },
     { id: 'off', label: a.embedsOff }
   ] as const satisfies readonly { id: EmbedMode; label: string }[]
+
+  const terminalPositionOptions = [
+    { id: 'auto', label: a.terminalPositionAuto },
+    { id: 'side', label: a.terminalPositionSide },
+    { id: 'bottom', label: a.terminalPositionBottom }
+  ] as const satisfies readonly { id: TerminalPosition; label: string }[]
 
   return (
     <SettingsContent>
@@ -379,6 +386,7 @@ export function AppearanceSettings() {
               </>
             }
             description={a.themeDesc}
+            recommendation={a.themeRec}
             title={
               <div className="flex items-center justify-between gap-3">
                 <span>{a.themeTitle}</span>
@@ -418,6 +426,7 @@ export function AppearanceSettings() {
               </div>
             }
             description={a.translucencyDesc}
+            recommendation={a.translucencyRec}
             title={a.translucencyTitle}
           />
 
@@ -433,7 +442,24 @@ export function AppearanceSettings() {
               />
             }
             description={a.toolViewDesc}
+            recommendation={a.toolViewRec}
             title={a.toolViewTitle}
+          />
+
+          <ListRow
+            action={
+              <SegmentedControl
+                onChange={id => {
+                  triggerHaptic('selection')
+                  setTerminalPosition(id)
+                }}
+                options={terminalPositionOptions}
+                value={terminalPosition}
+              />
+            }
+            description={a.terminalPositionDesc}
+            recommendation={a.terminalPositionRec}
+            title={a.terminalPositionTitle}
           />
 
           <ListRow
@@ -462,13 +488,10 @@ export function AppearanceSettings() {
               </div>
             }
             description={a.embedsDesc}
+            recommendation={a.embedsRec}
             title={a.embedsTitle}
           />
         </div>
-      </div>
-
-      <div className="mt-6">
-        <PetSettings />
       </div>
     </SettingsContent>
   )

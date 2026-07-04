@@ -518,6 +518,14 @@ def _format_job(job: Dict[str, Any]) -> Dict[str, Any]:
         result["enabled_toolsets"] = job["enabled_toolsets"]
     if job.get("workdir"):
         result["workdir"] = job["workdir"]
+    retry = job.get("retry") or {}
+    if retry.get("max_attempts", 1) and retry["max_attempts"] > 1:
+        result["retry"] = {
+            "max_attempts": retry["max_attempts"],
+            "attempt": retry.get("attempt", 0),
+            "backoff_base_seconds": retry.get("backoff_base_seconds", 60),
+            "next_retry_at": retry.get("next_retry_at"),
+        }
     return result
 
 
@@ -587,6 +595,8 @@ def cronjob(
     workdir: Optional[str] = None,
     no_agent: Optional[bool] = None,
     attach_to_session: Optional[bool] = None,
+    retry_max_attempts: Optional[int] = None,
+    retry_backoff_seconds: Optional[int] = None,
     task_id: str = None,
 ) -> str:
     """Unified cron job management tool."""
@@ -654,6 +664,8 @@ def cronjob(
                 workdir=_normalize_optional_job_value(workdir),
                 no_agent=_no_agent,
                 attach_to_session=attach_to_session,
+                retry_max_attempts=retry_max_attempts,
+                retry_backoff_seconds=retry_backoff_seconds,
             )
             _notify_provider_jobs_changed_safe()
             _create_message = f"Cron job '{job['name']}' created."
@@ -826,6 +838,20 @@ def cronjob(
                             success=False,
                         )
                 updates["no_agent"] = target_no_agent
+            if retry_max_attempts is not None:
+                retry_state = dict(job.get("retry") or {})
+                retry_state["max_attempts"] = max(1, int(retry_max_attempts))
+                # Reset attempt counter when retry config changes
+                retry_state["attempt"] = 0
+                retry_state["next_retry_at"] = None
+                if retry_backoff_seconds is not None:
+                    retry_state["backoff_base_seconds"] = max(1, int(retry_backoff_seconds))
+                retry_state.setdefault("backoff_base_seconds", 60)
+                updates["retry"] = retry_state
+            elif retry_backoff_seconds is not None:
+                retry_state = dict(job.get("retry") or {})
+                retry_state["backoff_base_seconds"] = max(1, int(retry_backoff_seconds))
+                updates["retry"] = retry_state
             if repeat is not None:
                 # Normalize: treat 0 or negative as None (infinite)
                 normalized_repeat = None if repeat <= 0 else repeat
@@ -970,6 +996,14 @@ Important safety rule: cron-run sessions should not recursively schedule more cr
                 "type": "boolean",
                 "description": "When True, this job becomes CONTINUABLE: the user can reply to its delivery and the agent has the brief in context instead of asking 'what is that?'. On thread-capable platforms (Telegram topics, Discord/Slack threads) a dedicated thread is opened for the job and its replies; on DM-only platforms (WhatsApp/Signal) the brief is mirrored into the origin DM session. Use this for conversational recurring jobs the user will reply to — daily briefings, reminders that kick off follow-up work. Leave unset for fire-and-forget alerts/watchdogs. Overrides the global cron.mirror_delivery config for this one job. Only the origin chat is touched (never fan-out targets); no effect when deliver='local'."
             },
+            "retry_max_attempts": {
+                "type": "integer",
+                "description": "Total attempts per scheduled fire including the first (1 = no retry, 3 = initial + 2 retries). When a job fails and attempts remain, the scheduler re-fires it after an exponential backoff instead of waiting for the next scheduled run. Default 1 (no retry). On update, set to 1 to disable retry."
+            },
+            "retry_backoff_seconds": {
+                "type": "integer",
+                "description": "Base delay in seconds for exponential backoff between retry attempts. The n-th retry waits backoff * 2^(n-1) seconds (60, 120, 240, ...). Default 60. Only meaningful when retry_max_attempts > 1."
+            },
         },
         "required": ["action"]
     }
@@ -1025,6 +1059,8 @@ registry.register(
         enabled_toolsets=args.get("enabled_toolsets"),
         workdir=args.get("workdir"),
         no_agent=args.get("no_agent"),
+        retry_max_attempts=args.get("retry_max_attempts"),
+        retry_backoff_seconds=args.get("retry_backoff_seconds"),
         task_id=kw.get("task_id"),
     ))(),
     check_fn=check_cronjob_requirements,

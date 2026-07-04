@@ -20,7 +20,7 @@ import { cn } from '@/lib/utils'
 import { notify, notifyError } from '@/store/notifications'
 import type { ConfigFieldSchema, HermesConfigRecord } from '@/types/hermes'
 
-import { CONTROL_TEXT, EMPTY_SELECT_VALUE, FIELD_DESCRIPTIONS, FIELD_LABELS, GROUPED_PROVIDER_KEYS, OPTION_LABELS, PROVIDER_OPTION_META, SECTIONS } from './constants'
+import { CONTROL_TEXT, EMPTY_SELECT_VALUE, FIELD_DESCRIPTIONS, FIELD_LABELS, FIELD_RECOMMENDATIONS, GROUPED_PROVIDER_KEYS, OPTION_LABELS, PROVIDER_OPTION_META, SECTIONS } from './constants'
 import { fieldCopyForSchemaKey } from './field-copy'
 import { enumOptionsFor, getNested, prettyName, setNested } from './helpers'
 import { MemoryConnect } from './memory/connect'
@@ -185,8 +185,10 @@ function ConfigField({
     description
   )
 
+  const recommendation = fieldCopyForSchemaKey(FIELD_RECOMMENDATIONS, schemaKey)
+
   const row = (action: ReactNode, wide = false) => (
-    <ListRow action={action} description={descriptionNode} title={label} wide={wide} />
+    <ListRow action={action} description={descriptionNode} recommendation={recommendation} title={label} wide={wide} />
   )
 
   if (schema.type === 'boolean') {
@@ -217,7 +219,7 @@ function ConfigField({
   )
 
   const rowWithBadge = (action: ReactNode, wide = false) => (
-    <ListRow action={action} description={descriptionWithBadge} title={label} wide={wide} />
+    <ListRow action={action} description={descriptionWithBadge} recommendation={recommendation} title={label} wide={wide} />
   )
 
   if (selectOptions) {

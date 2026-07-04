@@ -647,6 +647,7 @@ _CATEGORY_MERGE: Dict[str, str] = {
     "network": "agent",
     "checkpoints": "agent",
     "approvals": "security",
+    "file_access": "security",
     "human_delay": "display",
     "dashboard": "display",
     "code_execution": "agent",
@@ -2786,6 +2787,7 @@ def _recent_upstream_commits(n: int = 20) -> List[Dict[str, Any]]:
             capture_output=True,
             text=True,
             timeout=5,
+            creationflags=windows_hide_flags(),
         )
         if out.returncode != 0:
             return []

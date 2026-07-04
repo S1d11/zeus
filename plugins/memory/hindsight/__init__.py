@@ -47,6 +47,7 @@ from agent.memory_provider import MemoryProvider
 from hermes_constants import get_hermes_home
 from tools.registry import tool_error
 from hermes_cli.config import cfg_get
+from hermes_cli._subprocess_compat import windows_hide_flags
 
 logger = logging.getLogger(__name__)
 
@@ -832,6 +833,7 @@ class HindsightMemoryProvider(MemoryProvider):
                     [uv_path, "pip", "install", "--python", sys.executable, "--quiet", "--upgrade"] + deps_to_install,
                     check=True, timeout=120, capture_output=True,
                     stdin=subprocess.DEVNULL,
+                    creationflags=windows_hide_flags(),
                 )
                 print("  ✓ Dependencies up to date")
             except Exception as e:
@@ -1230,6 +1232,7 @@ class HindsightMemoryProvider(MemoryProvider):
                              "--quiet", "--upgrade", f"hindsight-client>={_MIN_CLIENT_VERSION}"],
                             check=True, timeout=120, capture_output=True,
                             stdin=subprocess.DEVNULL,
+                            creationflags=windows_hide_flags(),
                         )
                         logger.info("hindsight-client upgraded to >=%s", _MIN_CLIENT_VERSION)
                     except Exception as e:

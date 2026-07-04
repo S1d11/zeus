@@ -16,6 +16,8 @@ import shlex
 import subprocess
 import threading
 import time
+
+from hermes_cli._subprocess_compat import windows_hide_flags
 from collections import deque
 from pathlib import Path
 from types import SimpleNamespace
@@ -136,7 +138,7 @@ def _format_messages_as_prompt(
     tool_choice: Any = None,
 ) -> str:
     sections: list[str] = [
-        "You are being used as the active ACP agent backend for Hermes.",
+        "You are being used as the active ACP agent backend for Zeus.",
         "Use ACP capabilities to complete tasks.",
         "IMPORTANT: If you take an action with a tool, you MUST output tool calls using <tool_call>{...}</tool_call> blocks with JSON exactly in OpenAI function-call shape.",
         "If no tool is needed, answer normally.",
@@ -443,6 +445,7 @@ class CopilotACPClient:
                 bufsize=1,
                 cwd=self._acp_cwd,
                 env=_build_subprocess_env(),
+                creationflags=windows_hide_flags(),
             )
         except FileNotFoundError as exc:
             raise RuntimeError(
@@ -534,7 +537,7 @@ class CopilotACPClient:
                         "  npm install -g @github/copilot\n"
                         "  # then verify with: copilot --help\n\n"
                         "If `copilot` already resolves to the new CLI but you still see this,\n"
-                        "point Hermes at it explicitly:\n"
+                        "point Zeus at it explicitly:\n"
                         "  export HERMES_COPILOT_ACP_COMMAND=/path/to/new/copilot\n\n"
                         "Alternative: use the `copilot` provider (no ACP, hits the Copilot API\n"
                         "directly with a Copilot subscription token) via `hermes setup`.\n\n"
@@ -675,7 +678,7 @@ class CopilotACPClient:
             response = _jsonrpc_error(
                 message_id,
                 -32601,
-                f"ACP client method '{method}' is not supported by Hermes yet.",
+                f"ACP client method '{method}' is not supported by Zeus yet.",
             )
 
         process.stdin.write(json.dumps(response) + "\n")

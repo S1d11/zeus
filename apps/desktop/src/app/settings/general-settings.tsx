@@ -11,10 +11,11 @@
 import { useStore } from '@nanostores/react'
 import { useEffect, useState } from 'react'
 
+import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { useI18n } from '@/i18n'
 import { triggerHaptic } from '@/lib/haptics'
-import { Settings2 } from '@/lib/icons'
+import { Loader2, RefreshCw, Settings2 } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import {
   $generalPrefs,
@@ -22,11 +23,13 @@ import {
   setCheckForUpdatesAutomatically,
   setCloseToTray,
   setMinimizeToTray,
+  setRelaunchLastSession,
   setStartMinimized,
   setWakeWordEnabled,
 } from '@/store/general-settings'
+import { $updateChecking, $updateStatus, checkUpdates, openUpdatesWindow } from '@/store/updates'
 
-import { SectionHeading, SettingsContent } from './primitives'
+import { RecommendationBadge, SectionHeading, SettingsContent } from './primitives'
 
 const CAPTION = 'text-[length:var(--conversation-caption-font-size)] text-(--ui-text-tertiary)'
 
@@ -59,6 +62,7 @@ function ToggleRow(props: {
   disabled?: boolean
   label: string
   onChange: (on: boolean) => void
+  recommendation?: string
 }) {
   return (
     <div className="flex items-center justify-between gap-4 px-4 py-3">
@@ -67,6 +71,7 @@ function ToggleRow(props: {
         <div className="mt-0.5 text-[length:var(--conversation-caption-font-size)] leading-(--conversation-caption-line-height) text-(--ui-text-tertiary)">
           {props.description}
         </div>
+        <RecommendationBadge text={props.recommendation} />
       </div>
       <Switch
         aria-label={props.label}
@@ -85,8 +90,11 @@ export function GeneralSettings() {
   const { t } = useI18n()
   const prefs = useStore($generalPrefs)
   const copy = t.settings.general
+  const updateChecking = useStore($updateChecking)
+  const updateStatus = useStore($updateStatus)
   const [wakeWordListening, setWakeWordListening] = useState(false)
   const [wakeWordDepsMissing, setWakeWordDepsMissing] = useState<string[] | null>(null)
+  const [wakeWordError, setWakeWordError] = useState<string | null>(null)
 
   // Check actual wake word listener status and dependency availability on mount
   useEffect(() => {
@@ -99,6 +107,13 @@ export function GeneralSettings() {
       desktop.zeus.checkWakeWordDeps().then((deps: { available: boolean; missing: string[] }) => {
         if (!deps.available) setWakeWordDepsMissing(deps.missing)
       })
+    }
+    // Listen for runtime errors from the wake word process
+    if (desktop.zeus.onWakeWordError) {
+      const unsubscribe = desktop.zeus.onWakeWordError((msg: string) => {
+        setWakeWordError(msg)
+      })
+      return unsubscribe
     }
   }, [])
 
@@ -124,6 +139,7 @@ export function GeneralSettings() {
             description={copy.autoLaunchDesc}
             label={copy.autoLaunch}
             onChange={setAutoLaunchOnStartup}
+            recommendation={copy.autoLaunchRec}
           />
           <ToggleRow
             checked={prefs.startMinimized}
@@ -131,6 +147,14 @@ export function GeneralSettings() {
             disabled={!prefs.autoLaunchOnStartup}
             label={copy.startMinimized}
             onChange={setStartMinimized}
+            recommendation={copy.startMinimizedRec}
+          />
+          <ToggleRow
+            checked={prefs.relaunchLastSession}
+            description={copy.relaunchLastSessionDesc}
+            label={copy.relaunchLastSession}
+            onChange={setRelaunchLastSession}
+            recommendation={copy.relaunchLastSessionRec}
           />
         </SettingsCard>
 
@@ -141,12 +165,14 @@ export function GeneralSettings() {
             description={copy.closeToTrayDesc}
             label={copy.closeToTray}
             onChange={setCloseToTray}
+            recommendation={copy.closeToTrayRec}
           />
           <ToggleRow
             checked={prefs.minimizeToTray}
             description={copy.minimizeToTrayDesc}
             label={copy.minimizeToTray}
             onChange={setMinimizeToTray}
+            recommendation={copy.minimizeToTrayRec}
           />
         </SettingsCard>
 
@@ -158,10 +184,16 @@ export function GeneralSettings() {
             disabled={!!wakeWordDepsMissing}
             label={copy.wakeWord}
             onChange={handleWakeWordToggle}
+            recommendation={copy.wakeWordRec}
           />
           {wakeWordDepsMissing && wakeWordDepsMissing.length > 0 && (
             <div className="px-4 py-2.5 text-xs text-amber-600 dark:text-amber-400">
               Missing dependencies: {wakeWordDepsMissing.join(', ')}. Install with: pip install SpeechRecognition PyAudio
+            </div>
+          )}
+          {wakeWordError && (
+            <div className="px-4 py-2.5 text-xs text-amber-600 dark:text-amber-400">
+              {wakeWordError}
             </div>
           )}
         </SettingsCard>
@@ -173,7 +205,37 @@ export function GeneralSettings() {
             description={copy.autoUpdatesDesc}
             label={copy.autoUpdates}
             onChange={setCheckForUpdatesAutomatically}
+            recommendation={copy.autoUpdatesRec}
           />
+          <div className="flex items-center justify-between gap-4 px-4 py-3">
+            <div className="min-w-0 flex-1 text-[length:var(--conversation-caption-font-size)] leading-(--conversation-caption-line-height) text-(--ui-text-tertiary)">
+              {updateChecking
+                ? copy.checking
+                : updateStatus?.error
+                  ? copy.checkFailed
+                  : (updateStatus?.behind ?? 0) > 0
+                    ? copy.updateAvailable(updateStatus!.behind!)
+                    : updateStatus
+                      ? copy.upToDate
+                      : ''}
+            </div>
+            <div className="flex items-center gap-2">
+              {(updateStatus?.behind ?? 0) > 0 && !updateChecking && (
+                <Button onClick={() => openUpdatesWindow()} size="sm" variant="textStrong">
+                  {t.settings.about.seeWhatsNew}
+                </Button>
+              )}
+              <Button
+                disabled={updateChecking}
+                onClick={() => void checkUpdates()}
+                size="sm"
+                variant="text"
+              >
+                {updateChecking ? <Loader2 className="size-3 animate-spin" /> : <RefreshCw className="size-3" />}
+                {copy.checkNow}
+              </Button>
+            </div>
+          </div>
         </SettingsCard>
       </div>
     </SettingsContent>

@@ -10,6 +10,7 @@ import {
   type IntervalUnit,
   type ScheduleBuilderState,
   type ScheduleMode,
+  validateCustomSchedule,
   type Weekday,
   WEEKDAY_INDEXES,
 } from "@/lib/schedule";
@@ -215,9 +216,19 @@ export function ScheduleBuilder({ onChange, value }: ScheduleBuilderProps) {
             onChange={(e) => update({ custom: e.target.value })}
             className="font-mono-ui"
           />
-          <p className="text-xs text-muted-foreground">
-            {modeStrings.customHint}
-          </p>
+          {(() => {
+            const validation = validateCustomSchedule(value.custom);
+            if (validation.error) {
+              return (
+                <p className="text-xs text-destructive">{validation.error}</p>
+              );
+            }
+            return (
+              <p className="text-xs text-muted-foreground">
+                {modeStrings.customHint}
+              </p>
+            );
+          })()}
         </div>
       )}
 

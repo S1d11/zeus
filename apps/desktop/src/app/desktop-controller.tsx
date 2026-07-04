@@ -26,7 +26,7 @@ import {
 } from '../lib/session-source'
 import { latestSessionTodos } from '../lib/todos'
 import { setCronFocusJobId, setCronJobs } from '../store/cron'
-import { autoStartWakeWord, syncAllPrefsToMain } from '../store/general-settings'
+import { $generalPrefs, autoStartWakeWord, syncAllPrefsToMain } from '../store/general-settings'
 import {
   $fileBrowserOpen,
   $panesFlipped,
@@ -58,6 +58,7 @@ import {
 } from '../store/profile'
 import { $startWorkSessionRequest, followActiveSessionCwd, resolveNewSessionCwd } from '../store/projects'
 import { $reviewOpen, REVIEW_PANE_ID } from '../store/review'
+import { $terminalPosition } from '../store/terminal-position'
 import {
   $activeSessionId,
   $attentionSessionIds,
@@ -252,6 +253,7 @@ export function DesktopController() {
     currentView,
     openAgents,
     openCommandCenterSection,
+    openCron,
     profilesOpen,
     settingsOpen,
     toggleCommandCenter
@@ -331,7 +333,10 @@ export function DesktopController() {
 
   // Restore that chat once, on cold start only (we're at the new-chat route and
   // haven't navigated yet). A dead/deleted id self-clears via the exhausted latch
-  // below, so we never boot-loop into an error screen.
+  // below, so we never boot-loop into an error screen. Gated behind the
+  // "Reopen last chat on launch" preference — off by default so a relaunch
+  // opens a fresh new chat unless the user opts in.
+  const relaunchLastSession = useStore($generalPrefs).relaunchLastSession
   const restoredLastSessionRef = useRef(false)
   useEffect(() => {
     if (restoredLastSessionRef.current) {
@@ -339,12 +344,17 @@ export function DesktopController() {
     }
 
     restoredLastSessionRef.current = true
+
+    if (!relaunchLastSession) {
+      return
+    }
+
     const last = getRememberedSessionId()
 
     if (last && location.pathname === NEW_CHAT_ROUTE) {
       navigate(sessionRoute(last), { replace: true })
     }
-  }, [location.pathname, navigate])
+  }, [location.pathname, navigate, relaunchLastSession])
 
   useEffect(() => {
     if (resumeExhaustedSessionId && getRememberedSessionId() === resumeExhaustedSessionId) {
@@ -620,7 +630,7 @@ export function DesktopController() {
     [activeSessionIdRef, updateSessionState]
   )
 
-  const { refreshProjectBranch } = useCwdActions({
+  const { changeSessionCwd, refreshProjectBranch } = useCwdActions({
     activeSessionId,
     activeSessionIdRef,
     onSessionRuntimeInfo: updateActiveSessionRuntimeInfo,
@@ -943,8 +953,10 @@ export function DesktopController() {
     activeSessionIdRef,
     branchCurrentSession: branchInNewChat,
     busyRef,
+    changeSessionCwd,
     createBackendSessionForSend,
     handleSkinCommand,
+    openCronOverlay: openCron,
     refreshSessions,
     requestGateway,
     resumeStoredSession: resumeSession,
@@ -1201,7 +1213,14 @@ export function DesktopController() {
 
   // Once the terminal would share its rail with another sidebar, drop it to a
   // full-width row beneath them rather than cramming in one more skinny column.
-  const terminalAsRow = terminalSidebarOpen && railColumnOpen
+  // The user's terminal-position preference overrides the automatic logic:
+  //  - auto   → bottom row only when the rail is crowded (original behaviour)
+  //  - side   → always a side column, even when the rail is crowded
+  //  - bottom → always a bottom row, even when the rail is empty
+  const terminalPosition = useStore($terminalPosition)
+  const terminalAsRow =
+    terminalSidebarOpen &&
+    (terminalPosition === 'bottom' || (terminalPosition === 'auto' && railColumnOpen))
 
   const previewPane = (
     <Pane

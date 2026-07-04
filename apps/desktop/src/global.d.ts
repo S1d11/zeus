@@ -180,6 +180,7 @@ declare global {
         getWakeWordStatus: () => Promise<{ listening: boolean }>
         checkWakeWordDeps: () => Promise<{ available: boolean; pythonPath: string | null; missing: string[] }>
         onWakeWordDetected: (callback: () => void) => () => void
+        onWakeWordError: (callback: (msg: string) => void) => () => void
         showFromTray: () => Promise<{ shown: boolean }>
         checkForUpdates: () => Promise<{ ok: boolean; error?: string; status?: any }>
         downloadUpdate: () => Promise<{ ok: boolean; error?: string }>

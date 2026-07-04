@@ -31,6 +31,8 @@ export interface DesktopThemeCommandOption {
 export type DesktopActionId =
   | 'branch'
   | 'browser'
+  | 'cd'
+  | 'cron'
   | 'handoff'
   | 'help'
   | 'new'
@@ -42,7 +44,7 @@ export type DesktopActionId =
 /** A command fulfilled by opening a desktop overlay picker. */
 export type DesktopPickerId = 'model' | 'session'
 
-/** Why a known Hermes command has no desktop UI surface. */
+/** Why a known Zeus command has no desktop UI surface. */
 export type DesktopUnavailableReason = 'advanced' | 'messaging' | 'settings' | 'terminal'
 
 /**
@@ -113,11 +115,24 @@ const DESKTOP_COMMAND_SPECS: readonly DesktopCommandSpec[] = [
   { name: '/profile', description: 'Switch the active Zeus profile', surface: action('profile') },
   { name: '/skin', description: 'Switch desktop theme or cycle to the next one', surface: action('skin'), args: true },
   { name: '/title', description: 'Rename the current session', surface: action('title') },
+  {
+    name: '/cd',
+    description: 'Change the working directory the agent can see',
+    aliases: ['/cwd'],
+    surface: action('cd'),
+    args: true
+  },
   { name: '/help', description: 'Show desktop slash commands', aliases: ['/commands'], surface: action('help') },
   {
     name: '/browser',
     description: 'Manage browser CDP connection [connect|disconnect|status] (local gateway only)',
     surface: action('browser'),
+    args: true
+  },
+  {
+    name: '/cron',
+    description: 'Open the cron jobs overlay [list|trigger|pause|resume]',
+    surface: action('cron'),
     args: true
   },
 
@@ -169,7 +184,6 @@ const NO_DESKTOP_SURFACE: Record<DesktopUnavailableReason, readonly string[]> = 
     '/compact',
     '/config',
     '/copy',
-    '/cron',
     '/details',
     '/exit',
     '/footer',
@@ -253,7 +267,7 @@ function isKnownHermesSlashCommand(command: string): boolean {
 
 /**
  * An "extension" command is anything the backend surfaces that is NOT one of
- * Hermes' built-in slash commands — i.e. skill commands (`/gif-search`,
+ * Zeus' built-in slash commands — i.e. skill commands (`/gif-search`,
  * `/codex`, …) and user-defined quick commands. These are user-activated, so
  * they appear in the desktop slash palette and execute when typed.
  */

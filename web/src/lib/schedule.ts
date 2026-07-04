@@ -463,3 +463,82 @@ export function englishOrdinal(day: number): string {
       return `${d}th`;
   }
 }
+
+// --- Custom schedule validation ---
+// Validates the raw string typed in the "custom" mode of the schedule builder.
+// Returns { valid, error } so the UI can show inline feedback before submit.
+
+const CRON_FIELD_RANGES: ReadonlyArray<[number, number]> = [
+  [0, 59],
+  [0, 23],
+  [1, 31],
+  [1, 12],
+  [0, 7],
+];
+
+const CRON_FIELD_RE = /^(\*|\d+(-\d+)?(\/\d+)?|\*\/\d+|\d+(,\d+)*|\d+-\d+\/\d+)$/;
+
+function validateCronField(field: string, idx: number): boolean {
+  if (!field || !CRON_FIELD_RE.test(field)) return false;
+  const [min, max] = CRON_FIELD_RANGES[idx];
+  for (const part of field.split(",")) {
+    const stepMatch = part.match(/\/(\d+)$/);
+    const step = stepMatch ? Number(stepMatch[1]) : 1;
+    if (step < 1) return false;
+    const rangePart = stepMatch ? part.replace(/\/\d+$/, "") : part;
+    if (rangePart === "*") continue;
+    const [startStr, endStr] = rangePart.split("-");
+    const start = Number(startStr);
+    const end = endStr !== undefined ? Number(endStr) : start;
+    if (!Number.isInteger(start) || !Number.isInteger(end)) return false;
+    if (start < min || start > max || end < min || end > max || end < start)
+      return false;
+  }
+  return true;
+}
+
+export interface ScheduleValidation {
+  valid: boolean;
+  error: string | null;
+}
+
+export function validateCustomSchedule(expr: string): ScheduleValidation {
+  const trimmed = expr.trim();
+  if (!trimmed) return { valid: false, error: null };
+
+  // 5-field cron expression
+  const parts = trimmed.split(/\s+/);
+  if (parts.length === 5) {
+    for (let i = 0; i < 5; i++) {
+      if (!validateCronField(parts[i], i)) {
+        return {
+          valid: false,
+          error: `Invalid cron field ${i + 1}: "${parts[i]}"`,
+        };
+      }
+    }
+    return { valid: true, error: null };
+  }
+
+  // Interval: "every Nh" / "every Nm" / "every Nd"
+  if (/^every\s+\d+\s*[hmd]$/i.test(trimmed)) return { valid: true, error: null };
+
+  // Natural language: "every hour/minute/day/week/month"
+  if (/^every\s+(hour|minute|day|week|month)$/i.test(trimmed))
+    return { valid: true, error: null };
+
+  // Duration: "30m", "2h", "45s"
+  if (/^\d+\s*[hms]$/i.test(trimmed)) return { valid: true, error: null };
+
+  // ISO timestamp
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(trimmed)) {
+    const d = new Date(trimmed);
+    return {
+      valid: !Number.isNaN(d.getTime()),
+      error: Number.isNaN(d.getTime()) ? "Invalid ISO timestamp" : null,
+    };
+  }
+
+  // Unknown — let backend handle it
+  return { valid: true, error: null };
+}

@@ -130,6 +130,7 @@ from gateway.platforms.base import (
     proxy_kwargs_for_aiohttp,
 )
 from gateway.platforms.helpers import ThreadParticipationTracker
+from hermes_cli._subprocess_compat import windows_hide_flags
 
 logger = logging.getLogger(__name__)
 
@@ -4373,11 +4374,13 @@ def interactive_setup() -> None:
                     result = subprocess.run(
                         [uv_bin, "pip", "install", "--python", _sys.executable, matrix_pkg],
                         capture_output=True, text=True,
+                        creationflags=windows_hide_flags(),
                     )
                 else:
                     result = subprocess.run(
                         [_sys.executable, "-m", "pip", "install", matrix_pkg],
                         capture_output=True, text=True,
+                        creationflags=windows_hide_flags(),
                     )
                 if result.returncode == 0:
                     print_success(f"{matrix_pkg} installed")

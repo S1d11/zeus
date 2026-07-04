@@ -8,7 +8,7 @@ import os
 import threading
 from pathlib import Path
 
-from agent.file_safety import get_read_block_error
+from agent.file_safety import get_read_block_error, is_path_trusted
 from tools.binary_extensions import has_binary_extension
 from tools.file_operations import (
     ShellFileOperations,
@@ -328,6 +328,10 @@ def _path_resolution_warning(filepath: str, resolved: Path, task_id: str = "defa
     task/session cwd override, else a sentinel-free absolute ``$TERMINAL_CWD``
     — so a worktree or Desktop session whose terminal registry is still empty
     (no ``cd`` run yet) is warned on the very first write.
+
+    Writes inside a configured trusted path (``file_access.trusted_paths`` in
+    config.yaml) skip this warning — the user has explicitly marked those
+    directories as safe for edits.
     """
     try:
         if Path(_expand_tilde(filepath)).is_absolute():
@@ -341,6 +345,9 @@ def _path_resolution_warning(filepath: str, resolved: Path, task_id: str = "defa
             resolved.relative_to(root)
             return None  # Inside the workspace — expected.
         except ValueError:
+            # Suppress the warning if the resolved path is inside a trusted path.
+            if is_path_trusted(str(resolved)):
+                return None
             return (
                 f"Relative path {filepath!r} resolved to {str(resolved)!r}, which is "
                 f"OUTSIDE the active workspace ({str(root)!r}). The edit will land in "
@@ -463,7 +470,7 @@ def _check_sensitive_path(filepath: str, task_id: str = "default") -> str | None
     hermes_config = _get_hermes_config_resolved()
     if hermes_config and (resolved == hermes_config or normalized == hermes_config):
         return (
-            f"Refusing to write to Hermes config file: {filepath}\n"
+            f"Refusing to write to Zeus config file: {filepath}\n"
             "Agent cannot modify security-sensitive configuration. "
             "Edit ~/.hermes/config.yaml directly or use 'hermes config' instead."
         )
@@ -1754,7 +1761,7 @@ WRITE_FILE_SCHEMA = {
             "content": {"type": "string", "description": "Complete content to write to the file"},
             "cross_profile": {
                 "type": "boolean",
-                "description": "Opt out of the cross-profile soft guard. Defaults to false. Set true ONLY after explicit user direction to edit another Hermes profile's skills/plugins/cron/memories — by default these writes are blocked with a warning because they affect a different profile than the one this session is running under.",
+                "description": "Opt out of the cross-profile soft guard. Defaults to false. Set true ONLY after explicit user direction to edit another Zeus profile's skills/plugins/cron/memories — by default these writes are blocked with a warning because they affect a different profile than the one this session is running under.",
                 "default": False,
             },
         },
@@ -1805,7 +1812,7 @@ PATCH_SCHEMA = {
             },
             "cross_profile": {
                 "type": "boolean",
-                "description": "Opt out of the cross-profile soft guard. Defaults to false. Set true ONLY after explicit user direction to edit another Hermes profile's skills/plugins/cron/memories.",
+                "description": "Opt out of the cross-profile soft guard. Defaults to false. Set true ONLY after explicit user direction to edit another Zeus profile's skills/plugins/cron/memories.",
                 "default": False,
             },
         },

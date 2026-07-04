@@ -47,6 +47,7 @@ import { clearAllPrompts } from '@/store/prompts'
 import {
   $busy,
   $connection,
+  $currentCwd,
   $messages,
   $sessions,
   $yoloActive,
@@ -319,8 +320,10 @@ interface PromptActionsOptions {
   activeSessionIdRef: MutableRefObject<string | null>
   busyRef: MutableRefObject<boolean>
   branchCurrentSession: () => Promise<boolean>
+  changeSessionCwd: (cwd: string) => Promise<void>
   createBackendSessionForSend: (preview?: string | null) => Promise<string | null>
   handleSkinCommand: (arg: string) => string
+  openCronOverlay: () => void
   refreshSessions: () => Promise<void>
   requestGateway: <T>(method: string, params?: Record<string, unknown>) => Promise<T>
   resumeStoredSession: (storedSessionId: string) => Promise<void> | void
@@ -419,8 +422,10 @@ export function usePromptActions({
   activeSessionIdRef,
   busyRef,
   branchCurrentSession,
+  changeSessionCwd,
   createBackendSessionForSend,
   handleSkinCommand,
+  openCronOverlay,
   refreshSessions,
   requestGateway,
   resumeStoredSession,
@@ -1321,6 +1326,55 @@ export function usePromptActions({
           } catch (err) {
             renderSlashOutput(`error: ${err instanceof Error ? err.message : String(err)}`)
           }
+        },
+        // /cd <path> changes the working directory the agent can see, mirroring
+        // the sidebar's "Change working directory" action. It routes through
+        // changeSessionCwd, which notifies the backend (session.cwd.set) for an
+        // active session or stages the cwd locally for the next new chat. Bare
+        // /cd prints the current working directory.
+        cd: async ctx => {
+          const target = ctx.arg.trim()
+
+          if (!target) {
+            const current = $currentCwd.get().trim()
+
+            // No session yet — surface as a toast instead of spinning up a
+            // backend session just to print the cwd.
+            if (!ctx.sessionHint && !activeSessionIdRef.current) {
+              notify({ kind: 'success', message: current ? copy.cwdCurrent(current) : copy.cwdUnset })
+
+              return
+            }
+
+            const resolved = await withSlashOutput(ctx)
+
+            if (!resolved) {
+              return
+            }
+
+            resolved.render(current ? copy.cwdCurrent(current) : copy.cwdUnset)
+
+            return
+          }
+
+          await changeSessionCwd(target)
+
+          // If there's a live session, render the confirmation inline; else
+          // toast it so the user knows the staged cwd was applied.
+          if (ctx.sessionHint || activeSessionIdRef.current) {
+            const resolved = await withSlashOutput(ctx)
+
+            resolved?.render(copy.cwdChanged($currentCwd.get().trim() || target))
+          } else {
+            notify({ kind: 'success', message: copy.cwdChanged($currentCwd.get().trim() || target) })
+          }
+        },
+        // /cron opens the cron management overlay. With no arg it opens the
+        // overlay directly; with list/trigger/pause/resume it still opens the
+        // overlay (the overlay has full management capabilities — inline
+        // listing would duplicate the overlay's own list).
+        cron: async ctx => {
+          openCronOverlay()
         }
       }
 

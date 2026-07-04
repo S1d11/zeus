@@ -34,6 +34,7 @@ function ToggleRow(props: {
   disabled?: boolean
   label: string
   onChange: (on: boolean) => void
+  recommendation?: string
 }) {
   return (
     <ListRow
@@ -49,6 +50,7 @@ function ToggleRow(props: {
         />
       }
       description={props.description}
+      recommendation={props.recommendation}
       title={props.label}
     />
   )
@@ -76,6 +78,7 @@ export function NotificationsSettings() {
         description={copy.enableAllDesc}
         label={copy.enableAll}
         onChange={setNativeNotifyEnabled}
+        recommendation={copy.enableAllRec}
       />
 
       <div className="my-1 h-px bg-border/30" />
@@ -88,6 +91,7 @@ export function NotificationsSettings() {
           key={kind}
           label={copy.kinds[kind].label}
           onChange={on => setNativeNotifyKind(kind, on)}
+          recommendation={copy.kinds[kind].rec}
         />
       ))}
 
@@ -135,6 +139,7 @@ export function NotificationsSettings() {
           </div>
         }
         description={copy.completionSoundDesc}
+        recommendation={copy.completionSoundRec}
         title={copy.completionSoundTitle}
       />
 

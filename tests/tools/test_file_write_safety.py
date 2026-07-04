@@ -368,5 +368,187 @@ class TestBomHandling:
         assert raw == self.BOM.encode("utf-8") + b"import os, json\nimport sys\n"
 
 
+class TestTrustedPathsFromConfig:
+    """file_access.trusted_paths from config.yaml — allow-by-default path
+    suppression of the workspace-divergence warning.
+
+    Unlike HERMES_WRITE_SAFE_ROOT (deny-by-default), trusted paths do NOT
+    block writes outside the list. They only mark paths as "no warning needed".
+    The static deny list always wins.
+    """
+
+    def test_is_path_trusted_inside_listed_dir(self, tmp_path: Path, monkeypatch):
+        trusted = tmp_path / "projects"
+        child = trusted / "subdir" / "file.txt"
+        os.makedirs(child.parent, exist_ok=True)
+
+        monkeypatch.setattr(
+            "agent.file_safety.get_trusted_paths",
+            lambda: {os.path.realpath(str(trusted))},
+        )
+        from agent.file_safety import is_path_trusted
+
+        assert is_path_trusted(str(child)) is True
+
+    def test_is_path_trusted_outside_listed_dir(self, tmp_path: Path, monkeypatch):
+        trusted = tmp_path / "projects"
+        outside = tmp_path / "other" / "file.txt"
+        os.makedirs(trusted, exist_ok=True)
+        os.makedirs(outside.parent, exist_ok=True)
+
+        monkeypatch.setattr(
+            "agent.file_safety.get_trusted_paths",
+            lambda: {os.path.realpath(str(trusted))},
+        )
+        from agent.file_safety import is_path_trusted
+
+        assert is_path_trusted(str(outside)) is False
+
+    def test_is_path_trusted_empty_list(self, tmp_path: Path, monkeypatch):
+        target = tmp_path / "file.txt"
+        monkeypatch.setattr("agent.file_safety.get_trusted_paths", lambda: set())
+        from agent.file_safety import is_path_trusted
+
+        assert is_path_trusted(str(target)) is False
+
+    def test_is_path_trusted_exact_root_match(self, tmp_path: Path, monkeypatch):
+        trusted = tmp_path / "workspace"
+        os.makedirs(trusted, exist_ok=True)
+
+        monkeypatch.setattr(
+            "agent.file_safety.get_trusted_paths",
+            lambda: {os.path.realpath(str(trusted))},
+        )
+        from agent.file_safety import is_path_trusted
+
+        assert is_path_trusted(str(trusted)) is True
+
+    def test_is_path_trusted_tilde_expansion(self, monkeypatch):
+        """~ in trusted paths should be expanded."""
+        monkeypatch.setattr(
+            "agent.file_safety.get_trusted_paths",
+            lambda: {os.path.realpath(os.path.expanduser("~"))},
+        )
+        from agent.file_safety import is_path_trusted
+
+        assert is_path_trusted("~/projects/test.txt") is True
+
+    def test_trusted_paths_do_not_override_static_deny(self, tmp_path: Path, monkeypatch):
+        """Even if a trusted path includes home, SSH keys are still denied."""
+        monkeypatch.setattr(
+            "agent.file_safety.get_trusted_paths",
+            lambda: {os.path.realpath(os.path.expanduser("~"))},
+        )
+        # is_write_denied checks the static deny list independently.
+        assert _is_write_denied(os.path.expanduser("~/.ssh/id_rsa")) is True
+
+    def test_trusted_paths_do_not_enable_safe_root_deny(self, tmp_path: Path, monkeypatch):
+        """Trusted paths should NOT cause writes outside the list to be denied
+        (unlike HERMES_WRITE_SAFE_ROOT which is deny-by-default)."""
+        trusted = tmp_path / "projects"
+        outside = tmp_path / "other" / "file.txt"
+        os.makedirs(trusted, exist_ok=True)
+        os.makedirs(outside.parent, exist_ok=True)
+
+        monkeypatch.delenv("HERMES_WRITE_SAFE_ROOT", raising=False)
+        monkeypatch.setattr(
+            "agent.file_safety.get_trusted_paths",
+            lambda: {os.path.realpath(str(trusted))},
+        )
+        # Write outside trusted path is still allowed (no deny-by-default).
+        assert _is_write_denied(str(outside)) is False
+
+    def test_get_trusted_paths_reads_config(self, tmp_path: Path, monkeypatch):
+        """get_trusted_paths() reads from config.yaml via load_config_readonly."""
+        from agent import file_safety
+
+        dir_a = tmp_path / "dir_a"
+        dir_b = tmp_path / "dir_b"
+        os.makedirs(dir_a, exist_ok=True)
+        os.makedirs(dir_b, exist_ok=True)
+
+        fake_config = {
+            "file_access": {
+                "trusted_paths": [str(dir_a), str(dir_b)],
+            }
+        }
+
+        monkeypatch.setattr(
+            "hermes_cli.config.load_config_readonly",
+            lambda: fake_config,
+        )
+        # Force re-import to pick up the patched function
+        import importlib
+
+        importlib.reload(file_safety)
+
+        roots = file_safety.get_trusted_paths()
+        assert os.path.realpath(str(dir_a)) in roots
+        assert os.path.realpath(str(dir_b)) in roots
+
+    def test_get_trusted_paths_empty_config(self, monkeypatch):
+        """Empty trusted_paths in config returns empty set."""
+        from agent import file_safety
+
+        monkeypatch.setattr(
+            "hermes_cli.config.load_config_readonly",
+            lambda: {"file_access": {"trusted_paths": []}},
+        )
+        import importlib
+
+        importlib.reload(file_safety)
+
+        assert file_safety.get_trusted_paths() == set()
+
+    def test_get_trusted_paths_missing_file_access_key(self, monkeypatch):
+        """Config without file_access key returns empty set."""
+        from agent import file_safety
+
+        monkeypatch.setattr(
+            "hermes_cli.config.load_config_readonly",
+            lambda: {"model": "test"},
+        )
+        import importlib
+
+        importlib.reload(file_safety)
+
+        assert file_safety.get_trusted_paths() == set()
+
+    def test_get_trusted_paths_strips_whitespace(self, tmp_path: Path, monkeypatch):
+        """Paths with leading/trailing whitespace are trimmed."""
+        from agent import file_safety
+
+        target = tmp_path / "workspace"
+        os.makedirs(target, exist_ok=True)
+
+        monkeypatch.setattr(
+            "hermes_cli.config.load_config_readonly",
+            lambda: {"file_access": {"trusted_paths": [f"  {target}  "]}},
+        )
+        import importlib
+
+        importlib.reload(file_safety)
+
+        roots = file_safety.get_trusted_paths()
+        assert os.path.realpath(str(target)) in roots
+
+    def test_get_trusted_paths_ignores_non_string_entries(self, monkeypatch):
+        """Non-string entries in trusted_paths are silently ignored."""
+        from agent import file_safety
+
+        monkeypatch.setattr(
+            "hermes_cli.config.load_config_readonly",
+            lambda: {"file_access": {"trusted_paths": [123, None, "/tmp"]}},
+        )
+        import importlib
+
+        importlib.reload(file_safety)
+
+        roots = file_safety.get_trusted_paths()
+        # Only the valid string entry should be present
+        assert os.path.realpath("/tmp") in roots
+        assert len(roots) == 1
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

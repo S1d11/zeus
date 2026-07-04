@@ -30810,7 +30810,12 @@ ipcMain.handle("zeus:wake-word:toggle", () => {
         }, 1500);
       }
     },
-    onError: (msg) => console.error("[wake-word]", msg),
+    onError: (msg) => {
+      console.error("[wake-word]", msg);
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send("zeus:wake-word:error", msg);
+      }
+    },
     onStatus: () => {
     }
   });
@@ -30974,8 +30979,14 @@ app.whenReady().then(() => {
                 if (mainWindow.isMinimized()) mainWindow.restore();
                 if (!mainWindow.isVisible()) mainWindow.show();
                 mainWindow.focus();
+                mainWindow.webContents.send("zeus:wake-word:detected");
               } else if (!mainWindow || mainWindow.isDestroyed()) {
                 createWindow();
+                setTimeout(() => {
+                  if (mainWindow && !mainWindow.isDestroyed()) {
+                    mainWindow.webContents.send("zeus:wake-word:detected");
+                  }
+                }, 1500);
               }
               trayModule?.updateTrayTooltip("Zeus \u2014 wake word detected!");
               setTimeout(() => {
@@ -30985,6 +30996,9 @@ app.whenReady().then(() => {
             onError: (msg) => {
               console.error("[wake-word]", msg);
               trayModule?.updateTrayTooltip("Zeus \u2014 wake word error");
+              if (mainWindow && !mainWindow.isDestroyed()) {
+                mainWindow.webContents.send("zeus:wake-word:error", msg);
+              }
             },
             onStatus: (msg) => {
             }

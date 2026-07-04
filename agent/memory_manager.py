@@ -497,21 +497,50 @@ class MemoryManager:
 
         Returns merged context text labeled by provider. Empty providers
         are skipped. Failures in one provider don't block others.
+
+        Each provider's prefetch runs with a timeout (default 3s) so a slow
+        or wedged external provider can never block the turn. This is critical
+        for simple queries like "hello" where memory prefetch isn't needed
+        but was previously blocking the entire turn.
         """
         clean_query = self._strip_skill_scaffolding(query)
         if not clean_query:
             return ""
-        parts = []
-        for provider in self._providers:
+        providers = list(self._providers)
+        if not providers:
+            return ""
+
+        # Run all provider prefetches concurrently with a timeout.
+        # A slow provider returns "" instead of blocking the turn.
+        PREFETCH_TIMEOUT = 3.0  # seconds — max wait per provider
+
+        def _do_prefetch(prov):
             try:
-                result = provider.prefetch(clean_query, session_id=session_id)
-                if result and result.strip():
-                    parts.append(result)
+                return prov, prov.prefetch(clean_query, session_id=session_id)
             except Exception as e:
                 logger.debug(
                     "Memory provider '%s' prefetch failed (non-fatal): %s",
-                    provider.name, e,
+                    prov.name, e,
                 )
+                return prov, None
+
+        parts = []
+        with ThreadPoolExecutor(max_workers=len(providers)) as pool:
+            futures = {pool.submit(_do_prefetch, p): p for p in providers}
+            for future in futures:
+                try:
+                    prov, result = future.result(timeout=PREFETCH_TIMEOUT)
+                    if result and result.strip():
+                        parts.append(result)
+                except TimeoutError:
+                    prov = futures[future]
+                    logger.warning(
+                        "Memory provider '%s' prefetch timed out after %ss — skipping",
+                        prov.name, PREFETCH_TIMEOUT,
+                    )
+                except Exception as e:
+                    logger.debug("Memory provider prefetch error (non-fatal): %s", e)
+
         return "\n\n".join(parts)
 
     def queue_prefetch_all(self, query: str, *, session_id: str = "") -> None:

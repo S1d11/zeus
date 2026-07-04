@@ -307,46 +307,66 @@ export const zh: Translations = {
       startupSection: '??',
       autoLaunch: '???? Zeus',
       autoLaunchDesc: '?????????? Zeus?',
+      autoLaunchRec: '如果你每天都用 Zeus，建议开启。否则可以手动启动。',
       startMinimized: '?????????',
       startMinimizedDesc: '?????,? Zeus ????????,????????',
+      startMinimizedRec: '与开机启动搭配使用最佳 — Zeus 随时待命，不打扰你。',
       windowSection: '??',
       closeToTray: '?????',
       closeToTrayDesc: '???,?????? Zeus ????????????????????????',
+      closeToTrayRec: '建议开启 — Zeus 保持后台运行，语音和后台任务随时可用。',
       minimizeToTray: '??????',
       minimizeToTrayDesc: '???,??????? Zeus ??????????????',
+      minimizeToTrayRec: '个人偏好。托盘不占任务栏；任务栏更容易找到。',
       voiceSection: '??',
       wakeWord: '??"Hey Zeus"???',
       wakeWordDesc: '说"Zeus"或"Hey Zeus"即可将应用置于前台并自动启动语音模式。需要麦克风以及安装了 SpeechRecognition + PyAudio 的 Python。',
+      wakeWordRec: '如果你经常腾不出手，可以试试。大多数用户在常用语音后再开启。',
       updatesSection: '??',
       autoUpdates: '??????',
-      autoUpdatesDesc: 'Zeus ??????4?????????????,??????????'
+      autoUpdatesDesc: 'Zeus ??????4?????????????,??????????',
+      autoUpdatesRec: '建议开启 — 无需操心即可获得最新修复和功能。',
+      checkNow: '检查更新',
+      checking: '检查中…',
+      upToDate: '已是最新版本。',
+      updateAvailable: (count: number) => `有可用更新 — 落后 ${count} 个提交。`,
+      checkFailed: '无法检查更新。',
+      relaunchLastSession: '启动时重新打开上次对话',
+      relaunchLastSessionDesc: '重新启动 Zeus 时，重新打开上次打开的对话，而不是新建一个对话。',
+      relaunchLastSessionRec: '如果你经常回到正在进行的项目，建议开启。关闭则每次全新开始。'
     },
     notifications: {
       title: '通知',
       intro: '原生桌面通知，区别于应用内提示。设置按设备保存，每台电脑各自独立。',
       enableAll: '启用通知',
       enableAllDesc: '总开关。关闭后将静音下方所有通知。',
+      enableAllRec: '建议开启 — 在其他应用中也能知道 Zeus 何时需要你或完成了任务。',
       focusedHint: '完成提醒仅在 Zeus 处于后台时触发。',
       kinds: {
         approval: {
           label: '需要批准',
-          description: '有命令正在等待你批准或拒绝。'
+          description: '有命令正在等待你批准或拒绝。',
+          rec: '建议开启 — 错过批准提示会让 Zeus 一直等待直到超时。'
         },
         input: {
           label: '需要输入',
-          description: 'Zeus 提出了问题，或需要密码或密钥。'
+          description: 'Zeus 提出了问题，或需要密码或密钥。',
+          rec: '建议开启 — 没有你的回答 Zeus 无法继续。'
         },
         turnDone: {
           label: '回复就绪',
-          description: 'Zeus 在后台时完成了一轮对话。'
+          description: 'Zeus 在后台时完成了一轮对话。',
+          rec: '多任务时建议开启 — 不用切窗口就知道 Zeus 完成了。'
         },
         turnError: {
           label: '本轮失败',
-          description: '本轮以错误结束。'
+          description: '本轮以错误结束。',
+          rec: '建议开启 — 错误通常需要你关注并修复。'
         },
         backgroundDone: {
           label: '后台任务完成',
-          description: '后台终端命令已完成。'
+          description: '后台终端命令已完成。',
+          rec: '如果你运行耗时任务，建议开启 — 任务完成即刻通知。'
         }
       },
       test: '发送测试通知',
@@ -356,6 +376,7 @@ export const zh: Translations = {
       testUnsupported: '此系统不支持原生通知。',
       completionSoundTitle: '完成提示音',
       completionSoundDesc: '智能体回合结束时播放。可在此选择预设并预览。',
+      completionSoundRec: '选你喜欢的声音即可 — 纯个人偏好。觉得吵就静音。',
       completionSoundPreview: '预览'
     },
     sections: {
@@ -403,10 +424,19 @@ export const zh: Translations = {
       colorModeDesc: '选择固定模式，或让 Zeus 跟随系统设置。',
       toolViewTitle: '工具调用显示',
       toolViewDesc: '产品模式隐藏原始工具数据；技术模式显示完整输入/输出。',
+      toolViewRec: '建议使用产品模式，界面更简洁。仅在调试工具行为时切换到技术模式。',
+      terminalPositionTitle: '终端位置',
+      terminalPositionDesc: '自动模式下默认停靠在侧边，当侧栏拥挤时自动切换到底部。侧边和底部可强制固定位置。',
+      terminalPositionRec: '自动模式适合大多数场景。想要固定布局可选侧边或底部。',
+      terminalPositionAuto: '自动',
+      terminalPositionSide: '侧边',
+      terminalPositionBottom: '底部',
       translucencyTitle: '窗口透明',
       translucencyDesc: '让整个窗口透出桌面。仅支持 macOS 和 Windows。',
+      translucencyRec: '觉得分心就设为 0%。10-20% 有轻微磨砂效果。',
       embedsTitle: '内嵌预览',
       embedsDesc: '富预览会从第三方网站（YouTube、X 等）加载。询问会在你允许前显示占位符；总是会自动加载；关闭则保留纯链接。',
+      embedsRec: '建议使用询问模式 — 信任的站点显示富预览，不会自动加载所有内容。',
       embedsAsk: '询问',
       embedsAlways: '总是',
       embedsOff: '关闭',
@@ -417,6 +447,7 @@ export const zh: Translations = {
       technicalDesc: '包含原始工具参数/结果及底层细节。',
       themeTitle: '主题',
       themeDesc: '仅桌面端调色板。所选模式叠加其上。',
+      themeRec: '选你喜欢的即可 — 主题纯粹是外观，不影响功能。',
       themeProfileNote: profile => `已为「${profile}」配置文件保存——每个配置文件保留各自的主题。`,
       installTitle: '从 VS Code 安装',
       installDesc: '粘贴 Marketplace 扩展 ID（例如 dracula-theme.theme-dracula），将其配色主题转换为桌面调色板。',
@@ -471,6 +502,9 @@ export const zh: Translations = {
         mcpReloadConfirm: '确认 MCP 重载'
       },
       commandAllowlist: '命令白名单',
+      fileAccess: {
+        trustedPaths: '受信任路径'
+      },
       security: {
         redactSecrets: '隐去密钥',
         allowPrivateUrls: '允许私有 URL'
@@ -605,6 +639,9 @@ export const zh: Translations = {
       approvals: {
         mode: 'Zeus 如何处理需要显式审批的命令。',
         timeout: '审批提示在超时前等待的时长。'
+      },
+      fileAccess: {
+        trustedPaths: 'Zeus 可在其中编辑文件而无需警告或审批提示的目录。每行一个路径。静态拒绝列表（SSH 密钥、凭据、系统路径）始终生效，即使对受信任路径也不例外。'
       },
       security: {
         redactSecrets: '尽可能从模型可见内容中隐藏检测到的密钥。'
@@ -808,10 +845,12 @@ export const zh: Translations = {
       auxiliaryTitle: '辅助模型',
       resetAllToMain: '全部重置为主模型',
       auxiliaryDesc: '辅助任务默认使用主模型。你可以为任意任务指定专用模型。',
+      auxiliaryRec: '除非有特殊需求，否则全部保持"自动" — 主模型能很好地处理所有辅助任务。',
       setToMain: '设为主模型',
       change: '更改',
       autoUseMain: '自动 · 使用主模型',
       providerDefault: '(提供方默认)',
+      mainModelRec: '选你能访问的最好的模型。不确定的话用 Nous Portal — 包含免费额度。',
       tasks: {
         vision: { label: '视觉', hint: '图片分析' },
         web_extract: { label: '网页提取', hint: '页面总结' },
@@ -1365,6 +1404,7 @@ export const zh: Translations = {
     customHint: 'Cron 表达式，或类似"每小时""工作日上午 9 点"的短语。',
     optional: '可选',
     promptScheduleRequired: '提示词和排程为必填项。',
+    invalidSchedule: '无效的排程表达式。请使用 cron 语法（5 个字段）或类似 "every 2h" 的短语。',
     saveChanges: '保存更改',
     createAction: '创建定时任务'
   },
@@ -2340,6 +2380,9 @@ export const zh: Translations = {
     cwdChangeFailed: '工作目录更改失败',
     cwdStagedTitle: '工作目录已暂存',
     cwdStagedMessage: '重启桌面后端后，工作目录更改才会应用到当前活跃会话。',
+    cwdCurrent: cwd => `工作目录：${cwd}`,
+    cwdUnset: '未设置工作目录。使用 /cd <路径> 来设置一个。',
+    cwdChanged: cwd => `工作目录已更改为 ${cwd}`,
     modelSwitchFailed: '模型切换失败',
     sessionExported: '会话已导出',
     sessionExportFailed: '无法导出会话',

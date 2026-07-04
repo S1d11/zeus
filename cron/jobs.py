@@ -260,6 +260,16 @@ def _normalize_job_record(job: Dict[str, Any]) -> Dict[str, Any]:
         state = "scheduled" if normalized.get("enabled", True) else "paused"
     normalized["state"] = state
 
+    # Migrate legacy jobs: ensure a retry config exists so mark_job_run and
+    # consumers never KeyError. Default is max_attempts=1 (no retry).
+    if not normalized.get("retry"):
+        normalized["retry"] = {
+            "max_attempts": 1,
+            "attempt": 0,
+            "backoff_base_seconds": 60,
+            "next_retry_at": None,
+        }
+
     return normalized
 
 
@@ -865,6 +875,8 @@ def create_job(
     workdir: Optional[str] = None,
     no_agent: bool = False,
     attach_to_session: Optional[bool] = None,
+    retry_max_attempts: Optional[int] = None,
+    retry_backoff_seconds: Optional[int] = None,
 ) -> Dict[str, Any]:
     """
     Create a new cron job.
@@ -909,6 +921,15 @@ def create_job(
                 and deliver its stdout directly. Empty stdout = silent (no
                 delivery). Requires ``script`` to be set. Ideal for classic
                 watchdogs and periodic alerts that don't need LLM reasoning.
+        retry_max_attempts: Total attempts per scheduled fire including the first
+                (1 = no retry, 3 = initial + 2 retries). None/0/1 all mean no
+                retry. When a job fails and attempts remain, the scheduler
+                re-fires it after an exponential backoff
+                (``retry_backoff_seconds * 2^attempt``) instead of waiting for
+                the next scheduled run.
+        retry_backoff_seconds: Base delay in seconds for exponential backoff
+                between retry attempts. Default 60. The n-th retry waits
+                ``backoff * 2^(n-1)`` seconds (60, 120, 240, ...).
 
     Returns:
         The created job dict
@@ -1007,6 +1028,17 @@ def create_job(
         "origin": origin,  # Tracks where job was created for "origin" delivery
         "enabled_toolsets": normalized_toolsets,
         "workdir": normalized_workdir,
+        # Retry with exponential backoff. max_attempts=1 (or None/0) means no
+        # retry — the job fires once per scheduled tick and failures wait for
+        # the next scheduled run. attempt is 0-indexed and reset to 0 on
+        # success. next_retry_at is set when waiting to retry so get_due_jobs
+        # picks it up naturally via next_run_at.
+        "retry": {
+            "max_attempts": max(1, int(retry_max_attempts)) if retry_max_attempts else 1,
+            "attempt": 0,
+            "backoff_base_seconds": max(1, int(retry_backoff_seconds)) if retry_backoff_seconds else 60,
+            "next_retry_at": None,
+        },
     }
     # Only persist attach_to_session when explicitly set, so existing jobs and
     # the common case stay byte-identical (absent key => fall back to the
@@ -1248,7 +1280,55 @@ def mark_job_run(job_id: str, success: bool, error: Optional[str] = None,
                 # Clear any external-fire claim so a re-armed recurring job can
                 # be claimed again on its next fire (Phase 4C CAS).
                 job["fire_claim"] = None
-                
+
+                # --- Retry with exponential backoff ---
+                # On success: reset the retry counter so the next scheduled fire
+                # starts fresh. On failure with attempts remaining: schedule a
+                # retry fire (backoff * 2^attempt) WITHOUT incrementing
+                # repeat.completed — a retry is not a new scheduled occurrence.
+                retry = job.get("retry") or {}
+                max_attempts = retry.get("max_attempts", 1) or 1
+                if success or max_attempts <= 1:
+                    if retry:
+                        retry["attempt"] = 0
+                        retry["next_retry_at"] = None
+                        job["retry"] = retry
+                else:
+                    attempt = retry.get("attempt", 0)
+                    if attempt + 1 < max_attempts:
+                        # Schedule a retry: increment attempt, compute backoff.
+                        retry["attempt"] = attempt + 1
+                        backoff_base = retry.get("backoff_base_seconds", 60) or 60
+                        delay = backoff_base * (2 ** attempt)
+                        retry_dt = _hermes_now() + timedelta(seconds=delay)
+                        retry_iso = retry_dt.isoformat()
+                        retry["next_retry_at"] = retry_iso
+                        job["retry"] = retry
+                        # Point next_run_at at the retry time so get_due_jobs
+                        # picks it up naturally on the next tick.
+                        job["next_run_at"] = retry_iso
+                        if job.get("state") != "paused":
+                            job["state"] = "scheduled"
+                        logger.info(
+                            "Job '%s' failed (attempt %d/%d) — retrying in %ds "
+                            "at %s",
+                            job.get("name", job["id"]),
+                            attempt + 1, max_attempts, delay, retry_iso,
+                        )
+                        save_jobs(jobs)
+                        return
+                    else:
+                        # Retries exhausted — reset and fall through to normal
+                        # failure handling (increment repeat, compute next run).
+                        retry["attempt"] = 0
+                        retry["next_retry_at"] = None
+                        job["retry"] = retry
+                        logger.info(
+                            "Job '%s' exhausted %d retry attempt(s) — falling "
+                            "through to normal failure handling",
+                            job.get("name", job["id"]), max_attempts,
+                        )
+
                 # Increment completed count
                 if job.get("repeat"):
                     job["repeat"]["completed"] = job["repeat"].get("completed", 0) + 1

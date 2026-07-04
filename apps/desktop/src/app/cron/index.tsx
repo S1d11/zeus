@@ -103,6 +103,162 @@ function cronParts(expr: string): null | string[] {
   return parts.length === 5 ? parts : null
 }
 
+// --- Schedule validation ---
+// Validates cron expressions, intervals, durations, and ISO timestamps so the
+// user gets immediate feedback in the form instead of a backend rejection.
+
+const CRON_FIELD_RANGES: ReadonlyArray<[number, number]> = [
+  [0, 59], // minute
+  [0, 23], // hour
+  [1, 31], // day of month
+  [1, 12], // month
+  [0, 7]   // day of week (0=Sun, 7=Sun)
+]
+
+const CRON_FIELD_PATTERN = /^(\*|\d+(-\d+)?(\/\d+)?|\*\/\d+|\d+(,\d+)*|\d+-\d+\/\d+)$/
+
+function validateCronField(field: string, idx: number): boolean {
+  if (!field || !CRON_FIELD_PATTERN.test(field)) {
+    return false
+  }
+
+  const [min, max] = CRON_FIELD_RANGES[idx]
+
+  // Check each number in the field is in range
+  for (const part of field.split(',')) {
+    const stepMatch = part.match(/\/(\d+)$/)
+    const step = stepMatch ? Number(stepMatch[1]) : 1
+    if (step < 1) return false
+
+    const rangePart = stepMatch ? part.replace(/\/\d+$/, '') : part
+    if (rangePart === '*') continue
+
+    const [startStr, endStr] = rangePart.split('-')
+    const start = Number(startStr)
+    const end = endStr !== undefined ? Number(endStr) : start
+
+    if (!Number.isInteger(start) || !Number.isInteger(end)) return false
+    if (start < min || start > max) return false
+    if (end < min || end > max) return false
+    if (end < start) return false
+  }
+
+  return true
+}
+
+function describeCronExpr(parts: string[]): string {
+  const [minute, hour, dayOfMonth, month, dayOfWeek] = parts
+  const parts2: string[] = []
+
+  // Time
+  if (hour === '*' && minute === '*') {
+    parts2.push('Every minute')
+  } else if (hour === '*' && minute.startsWith('*/')) {
+    parts2.push(`Every ${minute.slice(2)} minutes`)
+  } else if (hour === '*' && isIntegerToken(minute)) {
+    parts2.push(`Every hour at :${minute.padStart(2, '0')}`)
+  } else if (isIntegerToken(minute) && isIntegerToken(hour)) {
+    parts2.push(formatCronTime(minute, hour))
+  } else {
+    parts2.push(`${minute} ${hour} * * *`)
+  }
+
+  // Day of week
+  if (dayOfWeek !== '*') {
+    if (dayOfWeek === '1-5') {
+      parts2.push('weekdays')
+    } else if (isIntegerToken(dayOfWeek)) {
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      parts2.push(`on ${dayNames[Number(dayOfWeek)] ?? dayOfWeek}`)
+    } else {
+      parts2.push(`on ${dayOfWeek}`)
+    }
+  }
+
+  // Day of month
+  if (dayOfMonth !== '*' && isIntegerToken(dayOfMonth)) {
+    parts2.push(`on day ${dayOfMonth}`)
+  }
+
+  // Month
+  if (month !== '*' && isIntegerToken(month)) {
+    const monthNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    parts2.push(`in ${monthNames[Number(month)] ?? month}`)
+  }
+
+  return parts2.join(' ')
+}
+
+interface ScheduleValidation {
+  valid: boolean
+  description: string | null
+  error: string | null
+}
+
+function validateSchedule(expr: string): ScheduleValidation {
+  const trimmed = expr.trim()
+  if (!trimmed) {
+    return { valid: false, description: null, error: null }
+  }
+
+  // Try cron expression (5 fields)
+  const parts = cronParts(trimmed)
+  if (parts) {
+    for (let i = 0; i < 5; i++) {
+      if (!validateCronField(parts[i], i)) {
+        return { valid: false, description: null, error: `Invalid cron field ${i + 1}: "${parts[i]}"` }
+      }
+    }
+
+    return { valid: true, description: describeCronExpr(parts), error: null }
+  }
+
+  // Try interval: "every Nh" / "every Nm" / "every Nd"
+  const intervalMatch = trimmed.match(/^every\s+(\d+)\s*([hmd])$/i)
+  if (intervalMatch) {
+    const n = Number(intervalMatch[1])
+    const unit = intervalMatch[2].toLowerCase()
+    const unitName = unit === 'h' ? 'hour' : unit === 'm' ? 'minute' : 'day'
+    return {
+      valid: n > 0,
+      description: `Every ${n} ${unitName}${n > 1 ? 's' : ''}`,
+      error: n > 0 ? null : 'Interval must be > 0'
+    }
+  }
+
+  // Try natural language: "every hour", "every minute", "every day"
+  const naturalMatch = trimmed.match(/^every\s+(hour|minute|day|week|month)$/i)
+  if (naturalMatch) {
+    return { valid: true, description: `Every ${naturalMatch[1].toLowerCase()}`, error: null }
+  }
+
+  // Try duration: "30m", "2h", "45s"
+  const durationMatch = trimmed.match(/^(\d+)\s*([hms])$/i)
+  if (durationMatch) {
+    const n = Number(durationMatch[1])
+    const unit = durationMatch[2].toLowerCase()
+    const unitName = unit === 'h' ? 'hour' : unit === 'm' ? 'minute' : 'second'
+    return {
+      valid: n > 0,
+      description: `Once after ${n} ${unitName}${n > 1 ? 's' : ''}`,
+      error: n > 0 ? null : 'Duration must be > 0'
+    }
+  }
+
+  // Try ISO timestamp
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(trimmed)) {
+    const date = new Date(trimmed)
+    return {
+      valid: !isNaN(date.getTime()),
+      description: isNaN(date.getTime()) ? null : `Once at ${date.toLocaleString()}`,
+      error: isNaN(date.getTime()) ? 'Invalid ISO timestamp' : null
+    }
+  }
+
+  // Unknown format — let the backend handle it
+  return { valid: true, description: null, error: null }
+}
+
 function dayName(value: string, c: Translations['cron']): string {
   return c.days[value] ?? c.dayFallback(value)
 }
@@ -780,6 +936,7 @@ function CronEditorDialog({
   }
 
   const scheduleHint = scheduleSummary(selectedScheduleOption, schedule, c)
+  const scheduleValidation = schedulePreset === 'custom' ? validateSchedule(schedule) : null
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
@@ -790,6 +947,16 @@ function CronEditorDialog({
       setError(c.promptScheduleRequired)
 
       return
+    }
+
+    // Validate custom schedule before submission
+    if (schedulePreset === 'custom') {
+      const validation = validateSchedule(trimmedSchedule)
+      if (!validation.valid) {
+        setError(validation.error || c.invalidSchedule)
+
+        return
+      }
     }
 
     setSaving(true)
@@ -879,7 +1046,17 @@ function CronEditorDialog({
                 placeholder={c.customPlaceholder}
                 value={schedule}
               />
-              <FieldHint>{c.customHint}</FieldHint>
+              {scheduleValidation?.error ? (
+                <FieldHint className="text-destructive">
+                  {scheduleValidation.error}
+                </FieldHint>
+              ) : scheduleValidation?.description ? (
+                <FieldHint className="text-muted-foreground">
+                  {scheduleValidation.description}
+                </FieldHint>
+              ) : (
+                <FieldHint>{c.customHint}</FieldHint>
+              )}
             </Field>
           ) : (
             <div className="rounded-md bg-(--ui-bg-quinary) px-3 py-2">
@@ -935,8 +1112,8 @@ function Field({
   )
 }
 
-function FieldHint({ children }: { children: React.ReactNode }) {
-  return <p className="text-[0.66rem] leading-4 text-muted-foreground">{children}</p>
+function FieldHint({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <p className={cn('text-[0.66rem] leading-4 text-muted-foreground', className)}>{children}</p>
 }
 
 type EditorState = { mode: 'closed' } | { mode: 'create' } | { job: CronJob; mode: 'edit' }

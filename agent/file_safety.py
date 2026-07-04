@@ -95,6 +95,58 @@ def get_safe_write_roots() -> set[str]:
     return roots
 
 
+def get_trusted_paths() -> set[str]:
+    """Return resolved trusted-path directories from config.yaml
+    (``file_access.trusted_paths``).
+
+    Unlike ``HERMES_WRITE_SAFE_ROOT`` (which is deny-by-default: writes outside
+    the listed roots are blocked), trusted paths are allow-by-default: writes
+    anywhere are allowed, but writes inside trusted paths skip the
+    workspace-divergence warning and don't trigger an approval prompt.
+
+    The static deny list (SSH keys, credentials, system paths) always wins,
+    even for trusted paths — ``is_write_denied`` is checked independently.
+    """
+    try:
+        from hermes_cli.config import load_config_readonly
+
+        cfg = load_config_readonly()
+        raw = (cfg.get("file_access") or {}).get("trusted_paths") or []
+    except Exception:
+        return set()
+
+    if not isinstance(raw, list):
+        return set()
+
+    roots: set[str] = set()
+    for path in raw:
+        if isinstance(path, str) and path.strip():
+            try:
+                resolved = os.path.realpath(os.path.expanduser(path.strip()))
+                # Normalize trailing separators so startswith() comparisons
+                # in is_path_trusted() are consistent across platforms.
+                resolved = resolved.rstrip(os.sep) or os.sep
+                roots.add(resolved)
+            except (OSError, ValueError):
+                continue
+    return roots
+
+
+def is_path_trusted(path: str) -> bool:
+    """Return True if ``path`` falls under a configured trusted-path directory."""
+    trusted = get_trusted_paths()
+    if not trusted:
+        return False
+    try:
+        resolved = os.path.realpath(os.path.expanduser(str(path)))
+    except (OSError, ValueError):
+        return False
+    for root in trusted:
+        if resolved == root or resolved.startswith(root + os.sep):
+            return True
+    return False
+
+
 def is_write_denied(path: str) -> bool:
     """Return True if path is blocked by the write denylist or safe root."""
     home = os.path.realpath(os.path.expanduser("~"))
@@ -438,7 +490,7 @@ def get_cross_profile_warning(path: str) -> Optional[str]:
         return None
     return (
         f"Cross-profile write blocked by soft guard: {info['target_path']} "
-        f"belongs to Hermes profile {info['target_profile']!r}, but the "
+        f"belongs to Zeus profile {info['target_profile']!r}, but the "
         f"agent is running under profile {info['active_profile']!r}. "
         f"Editing another profile's {info['area']}/ will affect that "
         f"profile's future sessions, not the one you are currently in. "
@@ -548,7 +600,7 @@ def get_sandbox_mirror_warning(path: str) -> Optional[str]:
         f"Sandbox-mirror write blocked by soft guard: {info['target_path']} "
         f"sits under {info['mirror_root']!r}, which is a per-task mirror "
         f"created by a non-local terminal backend (docker/daytona/etc.). "
-        f"Writes here land on a copy that the host Hermes process never "
+        f"Writes here land on a copy that the host Zeus process never "
         f"reads — the authoritative file is likely {info['inner_path']!r} "
         f"under the real HERMES_HOME. Use the host-side tool for "
         f"authoritative state (e.g. ``memory`` for memories), or address "

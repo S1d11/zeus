@@ -312,19 +312,33 @@ export const en: Translations = {
       startupSection: 'Startup',
       autoLaunch: 'Launch Zeus on startup',
       autoLaunchDesc: 'Start Zeus automatically when you log in.',
+      autoLaunchRec: 'Turn on if you use Zeus every day. Skip if you prefer to launch it manually.',
       startMinimized: 'Start minimized to tray',
       startMinimizedDesc: 'Hide to the system tray on launch instead of showing the window.',
+      startMinimizedRec: 'Best paired with auto-launch — Zeus stays ready without getting in your way.',
       windowSection: 'Window',
       closeToTray: 'Close to tray',
       closeToTrayDesc: 'Keep Zeus running in the background when you close the window.',
+      closeToTrayRec: 'Keep on — Zeus stays ready for voice and background tasks without holding screen space.',
       minimizeToTray: 'Minimize to tray',
       minimizeToTrayDesc: 'Hide to the system tray instead of the taskbar when minimized.',
+      minimizeToTrayRec: 'Matter of preference. Tray keeps Zeus out of the taskbar; taskbar is easier to find.',
       voiceSection: 'Voice',
       wakeWord: 'Enable "Hey Zeus" wake word',
       wakeWordDesc: 'Say "Zeus" or "Hey Zeus" to bring the app forward and start voice mode. Requires a microphone and Python with SpeechRecognition + PyAudio.',
+      wakeWordRec: 'Try it if your hands are often busy. Most users leave it off until they use voice regularly.',
       updatesSection: 'Updates',
       autoUpdates: 'Check for updates automatically',
-      autoUpdatesDesc: 'Check for new versions on launch and every 4 hours.'
+      autoUpdatesDesc: 'Check for new versions on launch and every 4 hours.',
+      autoUpdatesRec: 'Keep on — you\'ll always have the latest fixes and features without thinking about it.',
+      checkNow: 'Check for updates',
+      checking: 'Checking…',
+      upToDate: 'You\'re on the latest version.',
+      updateAvailable: (count: number) => `Update available — ${count} ${count === 1 ? 'commit' : 'commits'} behind.`,
+      checkFailed: 'Could not check for updates.',
+      relaunchLastSession: 'Reopen last chat on launch',
+      relaunchLastSessionDesc: 'When relaunching Zeus, reopen the chat you last had open instead of starting a new one.',
+      relaunchLastSessionRec: 'Turn on if you often return to an ongoing project. Off gives you a fresh start each time.'
     },
     notifications: {
       title: 'Notifications',
@@ -332,27 +346,33 @@ export const en: Translations = {
         'Native desktop notifications, separate from in-app toasts. These are device-local — each computer keeps its own settings.',
       enableAll: 'Enable notifications',
       enableAllDesc: 'Master switch. Turn this off to silence every notification below.',
+      enableAllRec: 'Keep on — you\'ll know when Zeus needs you or finishes a task while you\'re in another app.',
       focusedHint: 'Completion alerts only fire while Zeus is in the background.',
       kinds: {
         approval: {
           label: 'Approval needed',
-          description: 'A command is waiting for you to approve or reject it.'
+          description: 'A command is waiting for you to approve or reject it.',
+          rec: 'Keep on — missing an approval prompt stalls Zeus until it times out.'
         },
         input: {
           label: 'Input needed',
-          description: 'Zeus asked a question or needs a password or secret.'
+          description: 'Zeus asked a question or needs a password or secret.',
+          rec: 'Keep on — Zeus can\'t proceed without your answer.'
         },
         turnDone: {
           label: 'Response ready',
-          description: 'A turn finished while Zeus was in the background.'
+          description: 'A turn finished while Zeus was in the background.',
+          rec: 'Keep on if you multi-task — you\'ll know when Zeus finishes without checking the window.'
         },
         turnError: {
           label: 'Turn failed',
-          description: 'A turn ended with an error.'
+          description: 'A turn ended with an error.',
+          rec: 'Keep on — errors often need your attention to fix and retry.'
         },
         backgroundDone: {
           label: 'Background task finished',
-          description: 'A backgrounded terminal command completed.'
+          description: 'A backgrounded terminal command completed.',
+          rec: 'Keep on if you run long jobs — you\'ll know the moment they finish.'
         }
       },
       test: 'Send test notification',
@@ -362,6 +382,7 @@ export const en: Translations = {
       testUnsupported: 'This system does not support native notifications.',
       completionSoundTitle: 'Completion Sound',
       completionSoundDesc: 'Plays when an agent turn finishes. Pick a preset and preview it here.',
+      completionSoundRec: 'Pick any sound you like — it\'s purely a personal preference. Mute if you find it distracting.',
       completionSoundPreview: 'Preview'
     },
     sections: {
@@ -410,11 +431,20 @@ export const en: Translations = {
       colorModeDesc: 'Pick a fixed mode or let Zeus follow your system setting.',
       toolViewTitle: 'Tool Call Display',
       toolViewDesc: 'Product hides raw tool payloads; Technical shows full input/output.',
+      toolViewRec: 'Use Product for a clean, chat-like view. Switch to Technical only if you\'re debugging tool behavior.',
+      terminalPositionTitle: 'Terminal Position',
+      terminalPositionDesc: 'Auto docks to the side, or drops to the bottom when the rail is crowded. Side and Bottom force the position.',
+      terminalPositionRec: 'Auto works well for most setups. Pick Side or Bottom if you want a consistent layout.',
+      terminalPositionAuto: 'Auto',
+      terminalPositionSide: 'Side',
+      terminalPositionBottom: 'Bottom',
       translucencyTitle: 'Window Translucency',
       translucencyDesc: 'See your desktop through the whole window. macOS and Windows only.',
+      translucencyRec: 'Set to 0% if you find translucency distracting. 10-20% gives a subtle frosted look.',
       embedsTitle: 'Inline Embeds',
       embedsDesc:
         'Rich previews load from third-party sites (YouTube, X, …). Ask shows a placeholder until you allow each one; Always loads them automatically; Off keeps plain links.',
+      embedsRec: 'Use Ask — you get rich previews for sites you trust, without auto-loading content from everywhere.',
       embedsAsk: 'Ask',
       embedsAlways: 'Always',
       embedsOff: 'Off',
@@ -425,6 +455,7 @@ export const en: Translations = {
       technicalDesc: 'Include raw tool args/results and low-level details.',
       themeTitle: 'Theme',
       themeDesc: 'Desktop palettes only. The selected mode is applied on top.',
+      themeRec: 'Pick whatever looks good to you — themes are purely cosmetic and don\'t affect functionality.',
       themeProfileNote: profile => `Saved for the ${profile} profile — each profile keeps its own theme.`,
       installTitle: 'Install from VS Code',
       installDesc:
@@ -615,10 +646,12 @@ export const en: Translations = {
       auxiliaryTitle: 'Auxiliary models',
       resetAllToMain: 'Reset all to main',
       auxiliaryDesc: 'Helper tasks run on the main model by default. Assign a dedicated model to any task to override.',
+      auxiliaryRec: 'Leave everything on "auto" unless you have a specific reason — the main model handles all auxiliary tasks well.',
       setToMain: 'Set to main',
       change: 'Change',
       autoUseMain: 'auto · use main model',
       providerDefault: '(provider default)',
+      mainModelRec: 'Pick the best model you have access to. If you\'re unsure, use Nous Portal — it includes a free tier.',
       tasks: {
         vision: { label: 'Vision', hint: 'Image analysis' },
         web_extract: { label: 'Web extract', hint: 'Page summarization' },
@@ -1180,6 +1213,7 @@ export const en: Translations = {
     customHint: 'Cron expression, or phrases like "every hour" or "weekdays at 9am".',
     optional: 'Optional',
     promptScheduleRequired: 'Prompt and schedule are required.',
+    invalidSchedule: 'Invalid schedule expression. Use cron syntax (5 fields) or a phrase like "every 2h".',
     saveChanges: 'Save changes',
     createAction: 'Create cron'
   },
@@ -2183,6 +2217,9 @@ export const en: Translations = {
     cwdChangeFailed: 'Working directory change failed',
     cwdStagedTitle: 'Working directory staged',
     cwdStagedMessage: 'Restart the desktop backend to apply cwd changes to this active session.',
+    cwdCurrent: cwd => `Working directory: ${cwd}`,
+    cwdUnset: 'No working directory set. Use /cd <path> to set one.',
+    cwdChanged: cwd => `Working directory changed to ${cwd}`,
     modelSwitchFailed: 'Model switch failed',
     sessionExported: 'Session exported',
     sessionExportFailed: 'Could not export session',

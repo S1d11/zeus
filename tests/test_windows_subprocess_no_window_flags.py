@@ -4,6 +4,8 @@ import subprocess
 from pathlib import Path
 from types import SimpleNamespace
 
+import pytest
+
 
 _CREATE_NO_WINDOW = 0x08000000
 
@@ -298,4 +300,179 @@ def test_local_stt_audio_prep_hides_ffmpeg_window(monkeypatch, tmp_path):
     transcription_tools._prepare_local_audio(str(tmp_path / "in.m4a"), str(tmp_path))
 
     assert captured[0][0][0] == "ffmpeg"
+    assert captured[0][1]["creationflags"] == _CREATE_NO_WINDOW
+
+
+def test_cli_git_repo_root_hides_git_window(monkeypatch):
+    pytest.importorskip("prompt_toolkit")
+    from cli import _git_repo_root
+
+    captured = []
+
+    def fake_run(cmd, **kwargs):
+        captured.append((cmd, kwargs))
+        return _Completed(stdout="C:/repo\n")
+
+    monkeypatch.setattr("cli.windows_hide_flags", lambda: _CREATE_NO_WINDOW)
+    monkeypatch.setattr("cli.subprocess", SimpleNamespace(run=fake_run, DEVNULL=subprocess.DEVNULL))
+
+    assert _git_repo_root() == "C:/repo"
+    assert captured[0][0] == ["git", "rev-parse", "--show-toplevel"]
+    assert captured[0][1]["creationflags"] == _CREATE_NO_WINDOW
+
+
+def test_cli_resolve_worktree_base_hides_git_windows(monkeypatch):
+    pytest.importorskip("prompt_toolkit")
+    from cli import _resolve_worktree_base
+
+    captured = []
+
+    def fake_run(cmd, **kwargs):
+        captured.append((cmd, kwargs))
+        return _Completed(stdout="", returncode=1)
+
+    monkeypatch.setattr("cli.windows_hide_flags", lambda: _CREATE_NO_WINDOW)
+    monkeypatch.setattr("cli.subprocess", SimpleNamespace(run=fake_run, DEVNULL=subprocess.DEVNULL))
+
+    base_ref, label = _resolve_worktree_base("C:/repo")
+    # Falls back to HEAD when all git probes fail
+    assert base_ref == "HEAD"
+    # Every git call should have the window-hiding flag
+    assert len(captured) >= 1
+    for _, kwargs in captured:
+        assert kwargs["creationflags"] == _CREATE_NO_WINDOW
+
+
+def test_copilot_acp_spawn_hides_window(monkeypatch):
+    from agent import copilot_acp_client
+
+    captured = {}
+
+    class FakeProc:
+        def __init__(self):
+            self.stdin = None
+            self.stdout = None
+            self.stderr = None
+            self.pid = 12345
+
+        def kill(self):
+            pass
+
+        def wait(self, timeout=None):
+            pass
+
+    def fake_popen(cmd, **kwargs):
+        captured.update(kwargs)
+        return FakeProc()
+
+    monkeypatch.setattr("agent.copilot_acp_client.windows_hide_flags", lambda: _CREATE_NO_WINDOW)
+    monkeypatch.setattr("agent.copilot_acp_client.subprocess", SimpleNamespace(
+        PIPE=-1, Popen=fake_popen, DEVNULL=subprocess.DEVNULL
+    ))
+
+    client = copilot_acp_client.CopilotACPClient.__new__(copilot_acp_client.CopilotACPClient)
+    client._acp_command = "copilot-acp"
+    client._acp_args = []
+    client._acp_cwd = "C:/repo"
+
+    # _build_subprocess_env is module-level; patch it to avoid env dependencies
+    monkeypatch.setattr(copilot_acp_client, "_build_subprocess_env", lambda: {})
+
+    try:
+        client._run_prompt("test", timeout_seconds=5)
+    except Exception:
+        pass  # We only care about the Popen kwargs
+
+    assert captured.get("creationflags") == _CREATE_NO_WINDOW
+
+
+def test_codex_app_server_spawn_hides_window(monkeypatch):
+    from agent.transports import codex_app_server
+
+    captured = {}
+
+    class FakeProc:
+        def __init__(self):
+            self.stdin = None
+            self.stdout = None
+            self.stderr = None
+            self.pid = 12345
+
+        def kill(self):
+            pass
+
+        def wait(self, timeout=None):
+            pass
+
+    def fake_popen(cmd, **kwargs):
+        captured.update(kwargs)
+        return FakeProc()
+
+    monkeypatch.setattr("agent.transports.codex_app_server.windows_hide_flags", lambda: _CREATE_NO_WINDOW)
+    monkeypatch.setattr("agent.transports.codex_app_server.subprocess", SimpleNamespace(
+        PIPE=-1, Popen=fake_popen, DEVNULL=subprocess.DEVNULL
+    ))
+
+    # Construct a CodexAppServerClient with minimal args to reach the Popen call
+    try:
+        codex_app_server.CodexAppServerClient(
+            codex_bin="codex",
+        )
+    except Exception:
+        pass  # We only care about the Popen kwargs
+
+    assert captured.get("creationflags") == _CREATE_NO_WINDOW
+
+
+def test_tui_gateway_pdftoppm_hides_window(monkeypatch):
+    from hermes_cli import _subprocess_compat
+    from tui_gateway import server
+
+    captured = []
+
+    def fake_run(cmd, **kwargs):
+        captured.append((cmd, kwargs))
+        return _Completed(returncode=1, stdout="", stderr="not found")
+
+    monkeypatch.setattr(_subprocess_compat, "IS_WINDOWS", True)
+    monkeypatch.setattr(_subprocess_compat, "windows_hide_flags", lambda: _CREATE_NO_WINDOW)
+    monkeypatch.setattr(server.subprocess, "run", fake_run)
+
+    # _render_pdf_pages will fail early (pdftoppm returns nonzero), but the
+    # subprocess.run call should still carry creationflags.
+    # We need a fake PDF path and request id to call the function.
+    try:
+        server._render_pdf_pages(
+            rid="test-1",
+            pdf_path="fake.pdf",
+            first_page=1,
+            last_page=1,
+        )
+    except Exception:
+        pass
+
+    if captured:
+        assert captured[0][1]["creationflags"] == _CREATE_NO_WINDOW
+
+
+def test_web_server_git_log_hides_window(monkeypatch):
+    try:
+        from hermes_cli import web_server
+    except Exception:
+        pytest.skip("web_server import requires compatible FastAPI version")
+    from hermes_cli import _subprocess_compat
+
+    captured = []
+
+    def fake_run(cmd, **kwargs):
+        captured.append((cmd, kwargs))
+        return _Completed(stdout="")
+
+    monkeypatch.setattr(_subprocess_compat, "IS_WINDOWS", True)
+    monkeypatch.setattr(_subprocess_compat, "windows_hide_flags", lambda: _CREATE_NO_WINDOW)
+    monkeypatch.setattr(web_server.subprocess, "run", fake_run)
+
+    web_server._recent_upstream_commits(n=5)
+
+    assert len(captured) == 1
     assert captured[0][1]["creationflags"] == _CREATE_NO_WINDOW

@@ -276,7 +276,7 @@ export function ConnectionsView({ setStatusbarItemGroup: _setStatusbarItemGroup,
               </div>
 
               {visibleServers.length === 0 ? (
-                <p className="text-sm text-(--ui-text-tertiary)">{m.noServers}</p>
+                <p className="text-sm text-(--ui-text-secondary)">{m.noServers}</p>
               ) : (
                 <ul className="space-y-2">
                   {visibleServers.map(server => (
@@ -303,7 +303,7 @@ export function ConnectionsView({ setStatusbarItemGroup: _setStatusbarItemGroup,
               </div>
 
               {visibleEntries.length === 0 ? (
-                <p className="text-sm text-(--ui-text-tertiary)">{m.noCatalogEntries}</p>
+                <p className="text-sm text-(--ui-text-secondary)">{m.noCatalogEntries}</p>
               ) : (
                 <div className="grid gap-3 sm:grid-cols-2">
                   {visibleEntries.map(entry => (
@@ -427,7 +427,7 @@ function InstalledServerRow({
   }, [server.name, labels])
 
   return (
-    <li className="flex items-center gap-3 rounded-lg border border-(--ui-stroke-secondary) bg-(--ui-chat-surface-background) px-3 py-2.5">
+    <li className="flex items-center gap-3 rounded-lg border border-(--ui-stroke-primary) bg-(--ui-bg-editor) px-3 py-2.5">
       <div className="flex min-w-0 flex-1 items-center gap-3">
         <StatusDot tone={server.enabled ? 'good' : 'muted'} />
         <div className="min-w-0 flex-1">
@@ -440,7 +440,7 @@ function InstalledServerRow({
               </Badge>
             )}
             {isOAuth && authStatusLoading && (
-              <Codicon name="loading" size="0.75rem" spinning className="text-(--ui-text-tertiary)" />
+              <Codicon name="loading" size="0.75rem" spinning className="text-(--ui-text-secondary)" />
             )}
             {isOAuth && authStatusError && !authStatusLoading && (
               <span className="text-xs text-amber-600 dark:text-amber-400" title="Could not check auth status">
@@ -450,10 +450,10 @@ function InstalledServerRow({
             {toolCount > 0 && <Badge variant="outline">{labels.toolsCount(toolCount)}</Badge>}
           </div>
           {server.url && (
-            <p className="mt-0.5 truncate text-xs text-(--ui-text-tertiary)">{server.url}</p>
+            <p className="mt-0.5 truncate text-xs text-(--ui-text-secondary)">{server.url}</p>
           )}
           {server.command && (
-            <p className="mt-0.5 truncate text-xs text-(--ui-text-tertiary)">
+            <p className="mt-0.5 truncate font-mono text-xs text-(--ui-text-secondary)">
               {server.command}
               {server.args.length > 0 ? ` ${server.args.join(' ')}` : ''}
             </p>
@@ -500,7 +500,7 @@ function InstalledServerRow({
             {authStatus?.authenticated && (
               <Button
                 aria-label={labels.oauthDisconnect}
-                className="size-7 p-0 text-(--ui-text-tertiary) hover:text-destructive"
+                className="size-7 p-0 text-(--ui-text-secondary) hover:text-destructive"
                 disabled={logoutInProgress}
                 onClick={() => void handleLogout()}
                 size="icon"
@@ -519,7 +519,7 @@ function InstalledServerRow({
         <Switch aria-label={server.enabled ? 'Disable server' : 'Enable server'} checked={server.enabled} disabled={toggling} onCheckedChange={onToggle} />
         <Button
           aria-label={labels.remove}
-          className="size-7 p-0 text-(--ui-text-tertiary) hover:text-destructive"
+          className="size-7 p-0 text-(--ui-text-secondary) hover:text-destructive"
           disabled={removing}
           onClick={onRemove}
           size="icon"
@@ -554,7 +554,7 @@ function CatalogEntryCard({
   const tone = transportTone(entry)
 
   return (
-    <div className="flex flex-col gap-2 rounded-lg border border-(--ui-stroke-secondary) bg-(--ui-chat-surface-background) p-3 transition-colors hover:border-(--ui-stroke-primary)">
+    <div className="flex flex-col gap-2 rounded-lg border border-(--ui-stroke-primary) bg-(--ui-bg-editor) p-3 transition-colors hover:border-(--ui-accent-secondary)">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
@@ -575,7 +575,7 @@ function CatalogEntryCard({
       <div className="flex items-center justify-between gap-2 pt-1">
         {entry.source ? (
           <button
-            className="flex items-center gap-1 text-xs text-(--ui-text-tertiary) transition-colors hover:text-foreground"
+            className="flex items-center gap-1 text-xs text-(--ui-text-secondary) transition-colors hover:text-foreground"
             onClick={() => void openExternalLink(entry.source)}
             type="button"
           >
@@ -633,7 +633,7 @@ function InstallModal({
       onClick={onCancel}
     >
       <div
-        className="w-full max-w-lg rounded-xl border border-(--ui-stroke-secondary) bg-(--ui-chat-surface-background) p-5 shadow-xl"
+        className="w-full max-w-lg rounded-xl border border-(--ui-stroke-primary) bg-(--ui-bg-elevated) p-5 shadow-xl"
         onClick={e => e.stopPropagation()}
       >
         <div className="mb-4 flex items-start justify-between gap-3">
@@ -642,7 +642,7 @@ function InstallModal({
             <p className="mt-1 text-sm text-(--ui-text-secondary)">{entry.description}</p>
           </div>
           <button
-            className="shrink-0 text-(--ui-text-tertiary) hover:text-foreground"
+            className="shrink-0 text-(--ui-text-secondary) hover:text-foreground"
             onClick={onCancel}
             type="button"
           >
@@ -688,14 +688,14 @@ function InstallModal({
 
         {entry.post_install && (
           <div className="mb-4 rounded-md bg-muted/50 p-3">
-            <p className="whitespace-pre-line text-xs text-(--ui-text-secondary)">
+            <p className="whitespace-pre-line text-xs text-(--ui-text-primary)">
               {entry.post_install}
             </p>
           </div>
         )}
 
         {entry.auth_type === 'oauth' && (
-          <p className="mb-4 text-xs text-(--ui-text-tertiary)">{labels.oauthHint}</p>
+          <p className="mb-4 text-xs text-(--ui-text-secondary)">{labels.oauthHint}</p>
         )}
 
         <div className="flex justify-end gap-2">

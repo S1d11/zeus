@@ -404,6 +404,9 @@ export const FIELD_LABELS: Record<string, string> = defineFieldCopy({
     mcpReloadConfirm: 'Confirm MCP Reloads'
   },
   commandAllowlist: 'Command Allowlist',
+  fileAccess: {
+    trustedPaths: 'Trusted Paths'
+  },
   security: {
     redactSecrets: 'Redact Secrets',
     allowPrivateUrls: 'Allow Private URLs'
@@ -545,6 +548,9 @@ export const FIELD_DESCRIPTIONS: Record<string, string> = defineFieldCopy({
     mode: 'How Zeus handles commands that need explicit approval.',
     timeout: 'How long approval prompts wait before timing out.'
   },
+  fileAccess: {
+    trustedPaths: 'Directories where Zeus can edit files without warnings or approval prompts. One path per line. The static deny list (SSH keys, credentials, system paths) always applies, even for trusted paths.'
+  },
   security: {
     redactSecrets: 'Hide detected secrets from model-visible content when possible.'
   },
@@ -585,6 +591,81 @@ export const FIELD_DESCRIPTIONS: Record<string, string> = defineFieldCopy({
   updates: {
     nonInteractiveLocalChanges:
       'When Zeus updates itself from the app (no terminal prompt), keep local source edits (stash) or throw them away (discard). Terminal updates always ask.'
+  }
+})
+
+// Plain-text recommendations for each config field, shown as a "Recommended"
+// badge + explanation below the description. Helps average users pick sensible
+// defaults without reading docs. Omitted fields have no recommendation.
+export const FIELD_RECOMMENDATIONS: Record<string, string> = defineFieldCopy({
+  modelContextLength: 'Leave at 0 — Zeus auto-detects the correct context window for your model.',
+  fallbackProviders: 'Add 1-2 backup providers so chats keep working if your main provider has an outage.',
+  display: {
+    personality: 'Pick the personality that matches how you want Zeus to talk. "concise" is great for quick answers.',
+    showReasoning: 'Keep on if you want to see how Zeus thinks. Turn off for a cleaner, chat-only view.'
+  },
+  timezone: 'Leave blank to use your system timezone — correct in almost all cases.',
+  agent: {
+    imageInputMode: 'Use "auto" — Zeus sends images when the model supports them and skips them otherwise.',
+    maxTurns: 'Leave at the default. Raise it only if Zeus stops mid-task on complex jobs.',
+    serviceTier: 'Use "auto" unless you have a specific need for "flex" (cheaper but slower) or "priority" (faster but pricier).',
+    toolUseEnforcement: 'Leave at the default — stricter modes can reject valid tool calls on some models.'
+  },
+  terminal: {
+    cwd: 'Set this to your main project folder so Zeus starts in the right place.',
+    backend: 'Use "local" — runs commands on your machine. Switch to Docker only if you need isolation.',
+    persistentShell: 'Keep on — it preserves environment variables and working directory between commands.',
+    envPassthrough: 'Leave empty unless you need specific env vars (like PATH additions) available to tools.'
+  },
+  fileReadMaxChars: 'Leave at the default — large enough for most source files, small enough to avoid token waste.',
+  codeExecution: {
+    mode: 'Use "workspace" — limits code execution to your project folder, balancing safety and flexibility.'
+  },
+  approvals: {
+    mode: 'Use "whitelist" — auto-approves safe commands and asks before anything risky. "always" is safest but slower.',
+    timeout: 'Leave at the default — long enough to notice the prompt, short enough to not stall long jobs.',
+    mcpReloadConfirm: 'Keep on — prevents accidental MCP server reloads that could disrupt active sessions.'
+  },
+  commandAllowlist: 'Leave empty to use the built-in safe-command list. Add entries only if you need extra commands auto-approved.',
+  fileAccess: {
+    trustedPaths: 'Add directories you work in frequently (e.g. your home folder, project trees). Edits inside these paths skip the "outside workspace" warning. Leave empty if you only work in one project folder at a time.'
+  },
+  security: {
+    redactSecrets: 'Keep on — hides API keys and tokens from the model so they don\'t leak into responses.',
+    allowPrivateUrls: 'Keep off — prevents Zeus from fetching internal/localhost URLs unless you explicitly allow it.'
+  },
+  browser: {
+    allowPrivateUrls: 'Keep off — prevents the browser tool from navigating to internal/localhost URLs.',
+    autoLocalForPrivateUrls: 'Keep off unless you specifically want Zeus to open a local browser for private URLs.'
+  },
+  checkpoints: {
+    enabled: 'Keep on — lets you undo file changes Zeus makes. Uses minimal disk space.'
+  },
+  memory: {
+    memoryEnabled: 'Keep on — lets Zeus remember facts across sessions, making it more helpful over time.',
+    userProfileEnabled: 'Keep on — Zeus builds a compact profile of your preferences for more relevant responses.',
+    provider: 'Use "local" — memories stay on your device. Switch to a cloud provider only if you want sync across devices.'
+  },
+  context: {
+    engine: 'Use "compress" — summarizes old context when conversations get long, keeping the most important parts.'
+  },
+  compression: {
+    enabled: 'Keep on — prevents "context too long" errors in long conversations by summarizing older messages.'
+  },
+  voice: {
+    autoTts: 'Turn on if you want Zeus to read responses aloud. Most users prefer off and read instead.',
+    recordKey: 'Set a key combo (e.g. Ctrl+Shift+R) to hold-to-talk without clicking the mic button.',
+    maxRecordingSeconds: 'Leave at the default — long enough for detailed voice prompts.'
+  },
+  tts: {
+    provider: 'Use "edge" — built into Windows, no API key needed, good quality. Use "openai" for the most natural voices.'
+  },
+  stt: {
+    enabled: 'Turn on if you want to dictate prompts. Use "local" provider to keep audio on your device.',
+    provider: 'Use "local" — runs on your device, no API key, no audio sent to the cloud. Use "openai" for highest accuracy.'
+  },
+  updates: {
+    nonInteractiveLocalChanges: 'Use "stash" — preserves your local edits when updating. "discard" wipes them.'
   }
 })
 
@@ -629,6 +710,7 @@ export const SECTIONS: DesktopConfigSection[] = [
       'approvals.timeout',
       'approvals.mcp_reload_confirm',
       'command_allowlist',
+      'file_access.trusted_paths',
       'security.redact_secrets',
       'security.allow_private_urls',
       'browser.allow_private_urls',

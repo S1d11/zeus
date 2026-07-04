@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 from hermes_constants import get_hermes_home
+from hermes_cli._subprocess_compat import windows_hide_flags
 
 # File + directory layout (under $HERMES_HOME):
 #
@@ -168,6 +169,7 @@ def start(
             env=env,
             start_new_session=True,
             close_fds=True,
+            creationflags=windows_hide_flags(),
         )
     finally:
         # The subprocess now owns the log fd; we can close ours.

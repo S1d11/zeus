@@ -25,6 +25,11 @@ const fs = require("fs");
 
 let wakeWordProcess = null;
 let listening = false;
+let currentOpts = null;
+let restartTimer = null;
+let restartAttempts = 0;
+const MAX_RESTART_ATTEMPTS = 5;
+const RESTART_DELAY_MS = 3000;
 
 // ---------------------------------------------------------------------------
 // Path resolution
@@ -106,6 +111,29 @@ function startWakeWordListener(opts = {}) {
     return false;
   }
 
+  // Store opts for auto-restart, reset crash counter
+  currentOpts = { ...opts, pythonPath, scriptPath };
+  restartAttempts = 0;
+  if (restartTimer) {
+    clearTimeout(restartTimer);
+    restartTimer = null;
+  }
+
+  return _spawnListener(currentOpts);
+}
+
+// Internal: spawn the Python process and wire up stdout/stderr handlers.
+// Factored out so auto-restart can call it without re-running dependency checks.
+function _spawnListener(opts) {
+  const pythonPath = opts.pythonPath || resolvePythonPath();
+  const scriptPath = opts.scriptPath || resolveScriptPath();
+
+  if (!pythonPath || !scriptPath) {
+    opts.onError?.("Python or wake_word.py not found on restart.");
+    currentOpts = null;
+    return false;
+  }
+
   try {
     wakeWordProcess = spawn(pythonPath, [scriptPath], {
       stdio: ["pipe", "pipe", "pipe"],
@@ -119,7 +147,6 @@ function startWakeWordListener(opts = {}) {
   listening = true;
   let buffer = "";
 
-  // Read stdout line-by-line (JSON events)
   wakeWordProcess.stdout.on("data", (data) => {
     buffer += data.toString("utf8");
     let newlineIdx;
@@ -130,6 +157,8 @@ function startWakeWordListener(opts = {}) {
       try {
         const event = JSON.parse(line);
         if (event.detected) {
+          // Reset restart counter on successful detection — the process is healthy
+          restartAttempts = 0;
           opts.onDetected?.(event.phrase, event.full_text || event.phrase);
         } else if (event.status) {
           opts.onStatus?.(event.status);
@@ -142,12 +171,9 @@ function startWakeWordListener(opts = {}) {
     }
   });
 
-  // Log stderr for debugging
   wakeWordProcess.stderr.on("data", (data) => {
     const msg = data.toString("utf8").trim();
     if (msg) {
-      // Wake word stderr is informational (logging), not an error
-      // Only forward to onStatus for visibility
       opts.onStatus?.(msg);
     }
   });
@@ -159,9 +185,31 @@ function startWakeWordListener(opts = {}) {
 
   wakeWordProcess.on("exit", (code, signal) => {
     listening = false;
+
+    if (!currentOpts) {
+      return;
+    }
+
     if (code !== 0 && code !== null) {
       opts.onError?.(`Wake word process exited with code ${code}`);
     }
+
+    restartAttempts++;
+    if (restartAttempts > MAX_RESTART_ATTEMPTS) {
+      opts.onError?.(
+        `Wake word process crashed ${MAX_RESTART_ATTEMPTS} times — giving up. ` +
+        "Toggle off and back on to retry."
+      );
+      currentOpts = null;
+      return;
+    }
+
+    if (restartTimer) clearTimeout(restartTimer);
+    restartTimer = setTimeout(() => {
+      if (!currentOpts) return;
+      opts.onStatus?.(`Restarting wake word listener (attempt ${restartAttempts})...`);
+      _spawnListener(currentOpts);
+    }, RESTART_DELAY_MS);
   });
 
   return true;
@@ -171,6 +219,14 @@ function startWakeWordListener(opts = {}) {
  * Stop the wake word listener.
  */
 function stopWakeWordListener() {
+  // Clear opts first so the exit handler doesn't auto-restart
+  currentOpts = null;
+  if (restartTimer) {
+    clearTimeout(restartTimer);
+    restartTimer = null;
+  }
+  restartAttempts = 0;
+
   if (!wakeWordProcess) return;
   try {
     // Send stop command via stdin

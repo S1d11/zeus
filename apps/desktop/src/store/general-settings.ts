@@ -7,6 +7,8 @@
 //   - minimizeToTrayOnMinimize: whether minimizing also hides to tray
 //   - startMinimized: whether auto-launch starts Zeus minimized to tray
 //   - checkForUpdatesAutomatically: whether to auto-check for app updates
+//   - relaunchLastSession: whether a relaunch reopens the last-open chat (true)
+//     or lands on a fresh new chat (false, the default)
 //
 // Preferences are persisted to localStorage and synced with the main process
 // via IPC (the main process handles the actual auto-launch registration and
@@ -23,6 +25,7 @@ export interface GeneralPrefs {
   minimizeToTray: boolean
   startMinimized: boolean
   checkForUpdatesAutomatically: boolean
+  relaunchLastSession: boolean
 }
 
 const STORAGE_KEY = 'zeus:general-settings'
@@ -34,6 +37,9 @@ const DEFAULT_PREFS: GeneralPrefs = {
   minimizeToTray: false,
   startMinimized: false,
   checkForUpdatesAutomatically: true,
+  // Default off: a relaunch opens a fresh new chat instead of reopening the
+  // last one. Users who prefer to pick up where they left off can opt in.
+  relaunchLastSession: false,
 }
 
 function readPrefs(): GeneralPrefs {
@@ -48,6 +54,7 @@ function readPrefs(): GeneralPrefs {
       minimizeToTray: parsed.minimizeToTray ?? DEFAULT_PREFS.minimizeToTray,
       startMinimized: parsed.startMinimized ?? DEFAULT_PREFS.startMinimized,
       checkForUpdatesAutomatically: parsed.checkForUpdatesAutomatically ?? DEFAULT_PREFS.checkForUpdatesAutomatically,
+      relaunchLastSession: parsed.relaunchLastSession ?? DEFAULT_PREFS.relaunchLastSession,
     }
   } catch {
     return DEFAULT_PREFS
@@ -126,6 +133,12 @@ export function setStartMinimized(enabled: boolean) {
 export function setCheckForUpdatesAutomatically(enabled: boolean) {
   writePrefs({ ...$generalPrefs.get(), checkForUpdatesAutomatically: enabled })
   void syncToMain('checkForUpdatesAutomatically', enabled)
+}
+
+// Renderer-only preference (no main-process mirror): controls whether the
+// desktop controller restores the last-open chat on relaunch.
+export function setRelaunchLastSession(enabled: boolean) {
+  writePrefs({ ...$generalPrefs.get(), relaunchLastSession: enabled })
 }
 
 // Sync all prefs to the main process on app launch (called from the controller)
