@@ -2,7 +2,7 @@
 name: github-auth
 description: "GitHub auth setup: HTTPS tokens, SSH keys, gh CLI login."
 version: 1.1.0
-author: Zeus
+author: Hermes
 license: MIT
 platforms: [linux, macos, windows]
 metadata:

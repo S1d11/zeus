@@ -514,7 +514,7 @@ def get_cross_profile_warning(path: str) -> Optional[str]:
         return None
     return (
         f"Cross-profile write blocked by soft guard: {info['target_path']} "
-        f"belongs to Zeus profile {info['target_profile']!r}, but the "
+        f"belongs to Hermes profile {info['target_profile']!r}, but the "
         f"agent is running under profile {info['active_profile']!r}. "
         f"Editing another profile's {info['area']}/ will affect that "
         f"profile's future sessions, not the one you are currently in. "
@@ -624,7 +624,7 @@ def get_sandbox_mirror_warning(path: str) -> Optional[str]:
         f"Sandbox-mirror write blocked by soft guard: {info['target_path']} "
         f"sits under {info['mirror_root']!r}, which is a per-task mirror "
         f"created by a non-local terminal backend (docker/daytona/etc.). "
-        f"Writes here land on a copy that the host Zeus process never "
+        f"Writes here land on a copy that the host Hermes process never "
         f"reads — the authoritative file is likely {info['inner_path']!r} "
         f"under the real HERMES_HOME. Use the host-side tool for "
         f"authoritative state (e.g. ``memory`` for memories), or address "

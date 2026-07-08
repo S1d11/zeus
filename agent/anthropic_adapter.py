@@ -1,4 +1,4 @@
-"""Anthropic Messages API adapter for Zeus.
+"""Anthropic Messages API adapter for Hermes.
 
 Translates between Hermes's internal OpenAI-style message format and
 Anthropic's Messages API. Follows the same pattern as the codex_responses
@@ -1431,7 +1431,7 @@ def run_hermes_oauth_login_pure() -> Optional[Dict[str, Any]]:
     auth_url = f"https://claude.ai/oauth/authorize?{urlencode(params)}"
 
     print()
-    print("Authorize Zeus with your Claude Pro/Max subscription.")
+    print("Authorize Hermes with your Claude Pro/Max subscription.")
     print()
     print("╭─ Claude Pro/Max Authorization ────────────────────╮")
     print("│                                                   │")
@@ -2542,8 +2542,8 @@ def build_anthropic_kwargs(
         for block in system:
             if isinstance(block, dict) and block.get("type") == "text":
                 text = block.get("text", "")
-                text = text.replace("Zeus", "Claude Code")
-                text = text.replace("Zeus", "Claude Code")
+                text = text.replace("Hermes", "Claude Code")
+                text = text.replace("Hermes", "Claude Code")
                 text = text.replace("hermes-agent", "claude-code")
                 text = text.replace("Nous Research", "Anthropic")
                 block["text"] = text

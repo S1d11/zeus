@@ -39,7 +39,7 @@ class HermesAgent < Formula
   end
 
   test do
-    assert_match "Zeus v#{version}", shell_output("#{bin}/hermes version")
+    assert_match "Hermes v#{version}", shell_output("#{bin}/hermes version")
 
     managed = shell_output("#{bin}/hermes update 2>&1")
     assert_match "managed by Homebrew", managed

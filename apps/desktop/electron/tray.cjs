@@ -1,8 +1,8 @@
-// tray.cjs — System tray integration for Zeus desktop.
+// tray.cjs — System tray integration for Hermes desktop.
 //
 // Creates a system tray icon with a context menu that lets the user:
 //   - Show/hide the main window
-//   - Toggle the wake word listener ("Hey Zeus")
+//   - Toggle the wake word listener ("Hey Hermes")
 //   - Quit the app
 //
 // When the tray is active, closing the main window hides it to the tray
@@ -160,7 +160,7 @@ function buildContextMenu() {
 
   return Menu.buildFromTemplate([
     {
-      label: isVisible ? "Hide Zeus" : "Show Zeus",
+      label: isVisible ? "Hide Hermes" : "Show Hermes",
       click: () => {
         if (isVisible) {
           hideWindowToTray();
@@ -171,7 +171,7 @@ function buildContextMenu() {
     },
     { type: "separator" },
     {
-      label: "Wake Word (\"Hey Zeus\")",
+      label: "Wake Word (\"Hey Hermes\")",
       type: "checkbox",
       checked: wakeWordEnabled,
       click: () => {
@@ -186,7 +186,7 @@ function buildContextMenu() {
     },
     { type: "separator" },
     {
-      label: "Quit Zeus",
+      label: "Quit Hermes",
       click: () => {
         if (onQuitCallback) onQuitCallback();
         // Force quit — the app.on("before-quit") handler cleans up
@@ -223,7 +223,7 @@ function createTray(ref, opts = {}) {
   listeningIcon = createListeningIcon(icon);
 
   tray = new Tray(icon);
-  tray.setToolTip("Zeus — click to show/hide");
+  tray.setToolTip("Hermes — click to show/hide");
 
   tray.on("click", () => {
     toggleWindowVisibility();

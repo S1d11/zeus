@@ -338,7 +338,7 @@ class OpenRouterCompatImageProvider(ImageGenProvider):
             "Content-Type": "application/json",
             # OpenRouter attribution headers (harmless against Nous Portal).
             "HTTP-Referer": "https://github.com/S1d11/zeus",
-            "X-Title": "Zeus",
+            "X-Title": "Hermes",
         }
         last_error: Optional[Dict[str, Any]] = None
         for i, model_id in enumerate(model_chain):

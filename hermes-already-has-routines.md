@@ -1,4 +1,4 @@
-# Zeus Has Had "Routines" Since March
+# Hermes Has Had "Routines" Since March
 
 Anthropic just announced [Claude Code Routines](https://claude.com/blog/introducing-routines-in-claude-code) — scheduled tasks, GitHub event triggers, and API-triggered agent runs. Bundled prompt + repo + connectors, running on their infrastructure.
 
@@ -48,7 +48,7 @@ Every use case in their blog post — backlog triage, docs drift, deploy verific
 
 ## What's Different
 
-| | Claude Code Routines | Zeus |
+| | Claude Code Routines | Hermes |
 |---|---|---|
 | **Scheduled tasks** | ✅ Schedule-based | ✅ Any cron expression + human-readable intervals |
 | **GitHub triggers** | ✅ PR, issue, push events | ✅ Any GitHub event via webhook subscriptions |
@@ -124,7 +124,7 @@ A nightly backlog triage on Sonnet costs roughly $0.02-0.05. A monitoring check 
 
 ## Get Started
 
-Zeus is open source and free. The automation infrastructure — cron scheduler, webhook platform, skill system, multi-platform delivery — is built in.
+Hermes is open source and free. The automation infrastructure — cron scheduler, webhook platform, skill system, multi-platform delivery — is built in.
 
 ```bash
 curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
@@ -157,4 +157,4 @@ GitHub: [github.com/NousResearch/hermes-agent](https://github.com/NousResearch/h
 
 ---
 
-*Zeus is built by [Nous Research](https://nousresearch.com). Open source, model-agnostic, runs on your infrastructure.*
+*Hermes is built by [Nous Research](https://nousresearch.com). Open source, model-agnostic, runs on your infrastructure.*

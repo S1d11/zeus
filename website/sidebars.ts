@@ -19,7 +19,7 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: 'category',
-      label: 'Using Zeus',
+      label: 'Using Hermes',
       collapsed: true,
       items: [
         'user-guide/cli',

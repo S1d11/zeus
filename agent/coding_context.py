@@ -600,7 +600,7 @@ def is_coding_context(
     cwd: Optional[str | Path] = None,
     config: Optional[dict[str, Any]] = None,
 ) -> bool:
-    """Whether Zeus should operate in its coding posture right now."""
+    """Whether Hermes should operate in its coding posture right now."""
     return resolve_runtime_mode(platform=platform, cwd=cwd, config=config).is_coding
 
 

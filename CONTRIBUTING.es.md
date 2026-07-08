@@ -1,6 +1,6 @@
-# Contribuir a Zeus
+# Contribuir a Hermes
 
-¡Gracias por contribuir a Zeus! Esta guía cubre todo lo que necesitas: configurar tu entorno de desarrollo, entender la arquitectura, decidir qué construir y conseguir que tu PR sea aceptado.
+¡Gracias por contribuir a Hermes! Esta guía cubre todo lo que necesitas: configurar tu entorno de desarrollo, entender la arquitectura, decidir qué construir y conseguir que tu PR sea aceptado.
 
 ---
 

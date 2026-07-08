@@ -1,12 +1,12 @@
 ---
 sidebar_position: 4
 title: "Contributing"
-description: "How to contribute to Zeus — dev setup, code style, PR process"
+description: "How to contribute to Hermes — dev setup, code style, PR process"
 ---
 
 # Contributing
 
-Thank you for contributing to Zeus! This guide covers setting up your dev environment, understanding the codebase, and getting your PR merged.
+Thank you for contributing to Hermes! This guide covers setting up your dev environment, understanding the codebase, and getting your PR merged.
 
 ## Contribution Priorities
 

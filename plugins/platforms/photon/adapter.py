@@ -1,5 +1,5 @@
 """
-Photon Spectrum (iMessage) platform adapter for Zeus.
+Photon Spectrum (iMessage) platform adapter for Hermes.
 
 Both directions of traffic flow through a small supervised Node sidecar
 (see ``sidecar/index.mjs``) that runs the ``spectrum-ts`` SDK — the SDK is

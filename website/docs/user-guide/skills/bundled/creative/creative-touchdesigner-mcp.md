@@ -42,7 +42,7 @@ The following is the complete skill definition that Hermes loads when this skill
 ## Architecture
 
 ```
-Zeus -> MCP (Streamable HTTP) -> twozero.tox (port 40404) -> TD Python
+Hermes -> MCP (Streamable HTTP) -> twozero.tox (port 40404) -> TD Python
 ```
 
 36 native tools. Free plugin (no payment/license — confirmed April 2026).

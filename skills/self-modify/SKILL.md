@@ -1,6 +1,6 @@
 ---
 name: self-modify
-description: "Add or remove Zeus features: skills, tools, prompt sections, CLI commands."
+description: "Add or remove Hermes features: skills, tools, prompt sections, CLI commands."
 version: 1.0.0
 platforms: [linux, macos, windows]
 metadata:
@@ -9,11 +9,11 @@ metadata:
     related_skills: [self-improvement]
 ---
 
-# Self-Modify: Add and Remove Zeus Features
+# Self-Modify: Add and Remove Hermes Features
 
 ## Overview
 
-This skill lets you directly modify Zeus itself — add new skills, remove
+This skill lets you directly modify Hermes itself — add new skills, remove
 old ones, create new tools, change prompt sections, or add CLI commands.
 You already have the tools for this (terminal, write_file, patch, read_file);
 this skill provides the structured workflow and knowledge of where
@@ -25,7 +25,7 @@ user being able to review and roll back.
 
 ## Repository Layout
 
-The Zeus agent repo is at the path returned by `hermes evolve status`
+The Hermes agent repo is at the path returned by `hermes evolve status`
 (typically `~/.hermes/hermes-agent` or a sibling directory). Key locations:
 
 ```
@@ -90,7 +90,7 @@ When the user says "add a skill for X" or "create a skill that does Y":
    python -c "import yaml; yaml.safe_load(open('skills/<category>/<skill-name>/SKILL.md').read().split('---')[1])"
    ```
 
-6. **Test:** Tell the user to restart Zeus or run `hermes skills list` to
+6. **Test:** Tell the user to restart Hermes or run `hermes skills list` to
    verify the skill appears.
 
 7. **Commit:**
@@ -125,7 +125,7 @@ When the user says "remove the X skill" or "delete the Y skill":
    git commit -m "Remove skill: <skill-name>"
    ```
 
-5. **Tell the user** it's removed and they should restart Zeus.
+5. **Tell the user** it's removed and they should restart Hermes.
 
 ## Workflow: Adding a Tool
 
@@ -304,7 +304,7 @@ When the user says "add a hermes command for X":
 4. **Never change function signatures** of registered tools
 5. **Never modify `registry.register()` calls** for existing tools
 6. **Keep prompt section changes within 20% growth** — prompt caching
-7. **Tell the user to restart Zeus** after changes take effect
+7. **Tell the user to restart Hermes** after changes take effect
 8. **If something breaks:** `git checkout main` to revert, or
    `git diff main feature/<branch>` to review
 

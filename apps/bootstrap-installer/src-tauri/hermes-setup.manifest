@@ -19,7 +19,7 @@
     <assemblyIdentity
         version="0.0.1.0"
         processorArchitecture="*"
-        name="S1d11.Zeus.Setup"
+        name="S1d11.Hermes.Setup"
         type="win32"
     />
     <description>Hermes Setup</description>

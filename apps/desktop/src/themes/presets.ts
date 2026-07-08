@@ -24,44 +24,44 @@ const ZEUS_BLUE = '#0053FD'
 const PSYCHE_BLUE = '#1540B1'
 const PSYCHE_WARM = '#FFE6CB'
 
-const zeusTint = (pct: number) => `color-mix(in srgb, ${ZEUS_BLUE} ${pct}%, #FFFFFF)`
-const zeusTintTransparent = (pct: number) => `color-mix(in srgb, ${ZEUS_BLUE} ${pct}%, transparent)`
+const hermesTint = (pct: number) => `color-mix(in srgb, ${ZEUS_BLUE} ${pct}%, #FFFFFF)`
+const hermesTintTransparent = (pct: number) => `color-mix(in srgb, ${ZEUS_BLUE} ${pct}%, transparent)`
 
 /**
- * Zeus — canonical Zeus desktop identity. The palette keeps the current
+ * Hermes — canonical Hermes desktop identity. The palette keeps the current
  * glass geometry neutral, then lets the old bb/gui blue and psyche cream
  * return as accent seeds.
  */
 export const nousTheme: DesktopTheme = {
   name: 'nous',
-  label: 'Zeus',
-  description: 'Glass neutrals with Zeus blue accents',
+  label: 'Hermes',
+  description: 'Glass neutrals with Hermes blue accents',
   colors: {
     background: '#F8FAFF',
     foreground: '#17171A',
     card: '#FFFFFF',
     cardForeground: '#17171A',
-    muted: zeusTint(5),
+    muted: hermesTint(5),
     mutedForeground: '#666678',
     popover: '#FFFFFF',
     popoverForeground: '#17171A',
     primary: ZEUS_BLUE,
     primaryForeground: '#FCFCFC',
-    secondary: zeusTint(7),
+    secondary: hermesTint(7),
     secondaryForeground: '#242432',
-    accent: zeusTint(10),
+    accent: hermesTint(10),
     accentForeground: '#202030',
-    border: zeusTintTransparent(22),
-    input: zeusTintTransparent(30),
+    border: hermesTintTransparent(22),
+    input: hermesTintTransparent(30),
     ring: ZEUS_BLUE,
     midground: ZEUS_BLUE,
     composerRing: ZEUS_BLUE,
     destructive: '#C72E4D',
     destructiveForeground: '#FFFFFF',
     sidebarBackground: '#F3F7FF',
-    sidebarBorder: zeusTintTransparent(18),
-    userBubble: zeusTint(6),
-    userBubbleBorder: zeusTintTransparent(24)
+    sidebarBorder: hermesTintTransparent(18),
+    userBubble: hermesTint(6),
+    userBubbleBorder: hermesTintTransparent(24)
   },
   darkColors: {
     background: '#0D2F86',

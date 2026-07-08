@@ -16,7 +16,7 @@ Limits come from three sources, in priority order:
 
 For GitHub Copilot (which doesn't expose usage via the ACP CLI), users can
 configure their known monthly premium request limit in ``config.yaml`` and
-Zeus will track usage against it from SessionDB data.
+Hermes will track usage against it from SessionDB data.
 """
 
 from __future__ import annotations

@@ -1,7 +1,7 @@
 ---
 sidebar_position: 2
 title: "配置"
-description: "配置 Zeus — config.yaml、providers、模型、API 密钥等"
+description: "配置 Hermes — config.yaml、providers、模型、API 密钥等"
 ---
 
 # 配置
@@ -748,7 +748,7 @@ $ hermes model
 <div style={{position: 'relative', width: '100%', aspectRatio: '16 / 9', marginBottom: '1.5rem'}}>
   <iframe
     src="https://www.youtube.com/embed/NoF-YajElIM"
-    title="Zeus — Auxiliary Models Tutorial"
+    title="Hermes — Auxiliary Models Tutorial"
     style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0}}
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
     allowFullScreen

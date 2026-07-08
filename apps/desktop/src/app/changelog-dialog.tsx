@@ -17,7 +17,7 @@ interface ReleaseInfo {
 }
 
 const RELEASES_API = 'https://api.github.com/repos/S1d11/zeus/releases'
-const CACHE_KEY = 'zeus:changelog-cache'
+const CACHE_KEY = 'hermes:changelog-cache'
 const CACHE_TTL_MS = 5 * 60 * 1000 // 5 minutes
 
 interface CachedReleases {

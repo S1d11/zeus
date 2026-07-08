@@ -1,12 +1,12 @@
 ---
 sidebar_position: 2
 title: "Installation"
-description: "Install Zeus on Linux, macOS, WSL2, native Windows, or Android via Termux"
+description: "Install Hermes on Linux, macOS, WSL2, native Windows, or Android via Termux"
 ---
 
 # Installation
 
-Get Zeus up and running in under two minutes!
+Get Hermes up and running in under two minutes!
 
 :::tip Platform Support
 For the full platform support matrix (which OSes, distribution methods, and

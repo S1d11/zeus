@@ -29,7 +29,7 @@ def build_monitor_parser(subparsers, *, cmd_monitor: Callable) -> None:
         "add",
         help="Add a new monitor",
         description=(
-            "Create a real-time monitor. Zeus will periodically check the "
+            "Create a real-time monitor. Hermes will periodically check the "
             "query and alert you when conditions are met or values change."
         ),
     )

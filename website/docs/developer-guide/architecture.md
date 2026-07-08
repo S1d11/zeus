@@ -1,12 +1,12 @@
 ---
 sidebar_position: 1
 title: "Architecture"
-description: "Zeus internals — major subsystems, execution paths, data flow, and where to read next"
+description: "Hermes internals — major subsystems, execution paths, data flow, and where to read next"
 ---
 
 # Architecture
 
-This page is the top-level map of Zeus internals. Use it to orient yourself in the codebase, then dive into subsystem-specific docs for implementation details.
+This page is the top-level map of Hermes internals. Use it to orient yourself in the codebase, then dive into subsystem-specific docs for implementation details.
 
 ## System Overview
 

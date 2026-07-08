@@ -1,4 +1,4 @@
-# Release script for Zeus Desktop
+# Release script for Hermes Desktop
 # Usage: powershell -ExecutionPolicy Bypass -File _release.ps1 <version>
 # Example: powershell -ExecutionPolicy Bypass -File _release.ps1 0.21.2
 
@@ -24,12 +24,12 @@ $headers = @{
 }
 
 $TagName = "v$Version"
-$ReleaseDir = "C:\Users\kotas\zeus\hermes-agent\apps\desktop\release"
+$ReleaseDir = "C:\Users\kotas\hermes\hermes-agent\apps\desktop\release"
 
 # Check required files exist
 $requiredFiles = @(
-    "$ReleaseDir\Zeus-$Version-win-x64.exe",
-    "$ReleaseDir\Zeus-$Version-win-x64.exe.blockmap",
+    "$ReleaseDir\Hermes-$Version-win-x64.exe",
+    "$ReleaseDir\Hermes-$Version-win-x64.exe.blockmap",
     "$ReleaseDir\latest.yml"
 )
 
@@ -45,7 +45,7 @@ Write-Output "Creating release $TagName..."
 $bodyJson = @{
     tag_name = $TagName
     target_commitish = "main"
-    name = "Zeus $TagName"
+    name = "Hermes $TagName"
     body = "See commit history for details."
     draft = $false
     prerelease = $false
@@ -57,8 +57,8 @@ Write-Output "Release created: $($resp.html_url)"
 
 # Upload all assets
 $assets = @(
-    @{ path = "$ReleaseDir\Zeus-$Version-win-x64.exe"; name = "Zeus-$Version-win-x64.exe"; contentType = "application/octet-stream" },
-    @{ path = "$ReleaseDir\Zeus-$Version-win-x64.exe.blockmap"; name = "Zeus-$Version-win-x64.exe.blockmap"; contentType = "application/octet-stream" },
+    @{ path = "$ReleaseDir\Hermes-$Version-win-x64.exe"; name = "Hermes-$Version-win-x64.exe"; contentType = "application/octet-stream" },
+    @{ path = "$ReleaseDir\Hermes-$Version-win-x64.exe.blockmap"; name = "Hermes-$Version-win-x64.exe.blockmap"; contentType = "application/octet-stream" },
     @{ path = "$ReleaseDir\latest.yml"; name = "latest.yml"; contentType = "application/octet-stream" }
 )
 

@@ -129,7 +129,7 @@ class PtyBridge:
             if sys.platform.startswith("win"):
                 raise PtyUnavailableError(
                     "Pseudo-terminals are unavailable on this platform. "
-                    "Zeus supports Windows only via WSL."
+                    "Hermes supports Windows only via WSL."
                 )
             if ptyprocess is None:
                 raise PtyUnavailableError(

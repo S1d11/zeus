@@ -15759,7 +15759,7 @@ var require_auto_updater = __commonJS({
       if (mainWindowRef) {
         const win = mainWindowRef.get?.();
         if (win && !win.isDestroyed() && win.webContents) {
-          win.webContents.send("zeus:auto-updater:event", event);
+          win.webContents.send("hermes:auto-updater:event", event);
         }
       }
     }
@@ -15893,14 +15893,14 @@ var require_auto_updater = __commonJS({
       return true;
     }
     function showUpdateAvailableNotification(info) {
-      const title = "Zeus Update Available";
+      const title = "Hermes Update Available";
       const body = `Version ${info.version} is available. Click to download.`;
       if (Notification2.isSupported()) {
         const notif = new Notification2({ title, body, silent: false });
         notif.on("click", () => {
           const win = mainWindowRef?.get?.();
           if (win && !win.isDestroyed()) {
-            win.webContents.send("zeus:auto-updater:notification-clicked", {
+            win.webContents.send("hermes:auto-updater:notification-clicked", {
               action: "download",
               version: info.version
             });
@@ -15912,7 +15912,7 @@ var require_auto_updater = __commonJS({
       }
     }
     function showUpdateDownloadedNotification(info) {
-      const title = "Zeus Update Ready";
+      const title = "Hermes Update Ready";
       const body = `Version ${info.version} is downloaded. Click to restart and install.`;
       if (Notification2.isSupported()) {
         const notif = new Notification2({ title, body, silent: false });
@@ -16014,7 +16014,7 @@ var require_tray = __commonJS2({
       const isVisible = win && !win.isDestroyed() && win.isVisible();
       return Menu2.buildFromTemplate([
         {
-          label: isVisible ? "Hide Zeus" : "Show Zeus",
+          label: isVisible ? "Hide Hermes" : "Show Hermes",
           click: () => {
             if (isVisible) {
               hideWindowToTray();
@@ -16025,7 +16025,7 @@ var require_tray = __commonJS2({
         },
         { type: "separator" },
         {
-          label: 'Wake Word ("Hey Zeus")',
+          label: 'Wake Word ("Hey Hermes")',
           type: "checkbox",
           checked: wakeWordEnabled,
           click: () => {
@@ -16039,7 +16039,7 @@ var require_tray = __commonJS2({
         },
         { type: "separator" },
         {
-          label: "Quit Zeus",
+          label: "Quit Hermes",
           click: () => {
             if (onQuitCallback) onQuitCallback();
             const { app: app2 } = require("electron");
@@ -16058,7 +16058,7 @@ var require_tray = __commonJS2({
         return null;
       }
       tray = new Tray(icon);
-      tray.setToolTip("Zeus \u2014 click to show/hide");
+      tray.setToolTip("Hermes \u2014 click to show/hide");
       tray.on("click", () => {
         toggleWindowVisibility();
       });
@@ -17213,12 +17213,12 @@ var require_dashboard_token = __commonJS22({
     async function fetchPublicText(url, options = {}) {
       const { protocol: protocol2 } = new URL(url);
       if (protocol2 !== "http:" && protocol2 !== "https:") {
-        throw new Error(`Unsupported Zeus backend URL protocol: ${protocol2}`);
+        throw new Error(`Unsupported Hermes backend URL protocol: ${protocol2}`);
       }
       const timeoutMs = options.timeoutMs ?? DEFAULT_TOKEN_FETCH_TIMEOUT_MS;
       const res = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) }).catch((error) => {
         if (error.name === "TimeoutError") {
-          throw new Error(`Timed out connecting to Zeus backend after ${timeoutMs}ms`);
+          throw new Error(`Timed out connecting to Hermes backend after ${timeoutMs}ms`);
         }
         throw error;
       });
@@ -17252,7 +17252,7 @@ var require_dashboard_token = __commonJS22({
     function isForeignBackendToken({ servedToken, spawnToken, childAlive }) {
       return Boolean(servedToken) && servedToken !== spawnToken && !childAlive;
     }
-    async function adoptServedDashboardToken2(baseUrl, spawnToken, { childAlive, label = "Zeus backend", ...options }) {
+    async function adoptServedDashboardToken2(baseUrl, spawnToken, { childAlive, label = "Hermes backend", ...options }) {
       const servedToken = await resolveServedDashboardToken(baseUrl, spawnToken, options).catch((error) => {
         options.rememberLog?.(`[boot] could not read served dashboard token (${label}): ${error.message}`);
         return spawnToken;
@@ -17317,7 +17317,7 @@ var require_backend_ready = __commonJS22({
         }
         function onExit(code, signal) {
           cleanup();
-          reject(new Error(`Zeus backend: exited before port announcement (${signal || code})`));
+          reject(new Error(`Hermes backend: exited before port announcement (${signal || code})`));
         }
         function onError(err) {
           cleanup();
@@ -17325,7 +17325,7 @@ var require_backend_ready = __commonJS22({
         }
         const timer = setTimeout(() => {
           cleanup();
-          reject(new Error(`Timed out waiting for Zeus backend port announcement (${timeoutMs}ms)`));
+          reject(new Error(`Timed out waiting for Hermes backend port announcement (${timeoutMs}ms)`));
         }, timeoutMs);
         child.stdout.on("data", onData);
         child.on("exit", onExit);
@@ -17363,7 +17363,7 @@ var require_backend_ready = __commonJS22({
         }
         function onExit(code, signal) {
           cleanup();
-          reject(new Error(`Zeus backend: exited before port announcement (${signal || code})`));
+          reject(new Error(`Hermes backend: exited before port announcement (${signal || code})`));
         }
         function onError(err) {
           cleanup();
@@ -17371,7 +17371,7 @@ var require_backend_ready = __commonJS22({
         }
         const timer = setTimeout(() => {
           cleanup();
-          reject(new Error(`Timed out waiting for Zeus backend port announcement (${timeoutMs}ms)`));
+          reject(new Error(`Timed out waiting for Hermes backend port announcement (${timeoutMs}ms)`));
         }, timeoutMs);
         child.on("exit", onExit);
         child.on("error", onError);
@@ -17502,7 +17502,7 @@ var require_vscode_marketplace = __commonJS22({
           Accept: "application/json;api-version=3.0-preview.1",
           "Content-Type": "application/json",
           "Content-Length": Buffer.byteLength(body),
-          "User-Agent": "Zeus-Desktop"
+          "User-Agent": "Hermes-Desktop"
         },
         body,
         maxBytes
@@ -17628,7 +17628,7 @@ var require_vscode_marketplace = __commonJS22({
         throw new Error('Expected a Marketplace id like "publisher.extension".');
       }
       const { displayName, vsixUrl } = await resolveExtension(trimmed);
-      const vsix = await request(vsixUrl, { headers: { "User-Agent": "Zeus-Desktop" } });
+      const vsix = await request(vsixUrl, { headers: { "User-Agent": "Hermes-Desktop" } });
       const themes = extractThemes(vsix);
       return { extensionId: trimmed, displayName, themes };
     }
@@ -17894,7 +17894,7 @@ var require_hardening = __commonJS22({
       }
       if (!encryptionAvailable) {
         throw new Error(
-          "Secure token storage is unavailable, so Zeus Desktop cannot save remote gateway tokens. Set HERMES_DESKTOP_REMOTE_URL and HERMES_DESKTOP_REMOTE_TOKEN in your environment, or enable OS keychain access and try again."
+          "Secure token storage is unavailable, so Hermes Desktop cannot save remote gateway tokens. Set HERMES_DESKTOP_REMOTE_URL and HERMES_DESKTOP_REMOTE_TOKEN in your environment, or enable OS keychain access and try again."
         );
       }
       try {
@@ -25123,7 +25123,7 @@ var require_update_remote = __commonJS22({
   "electron/update-remote.cjs"(exports2, module2) {
     "use strict";
     var OFFICIAL_REPO_HTTPS_URL2 = "https://github.com/S1d11/zeus.git";
-    var OFFICIAL_REPO_CANONICAL = "github.com/s1d11/zeus";
+    var OFFICIAL_REPO_CANONICAL = "github.com/s1d11/hermes";
     function canonicalGitHubRemote(url) {
       if (!url) return "";
       let value = String(url).trim();
@@ -25523,7 +25523,7 @@ var require_connection_config = __commonJS22({
       }
       let parsed;
       try {
-        parsed = new URL(rawPath, "http://Zeus.local");
+        parsed = new URL(rawPath, "http://Hermes.local");
       } catch {
         return path2;
       }
@@ -25880,7 +25880,7 @@ var BOOT_FAKE_STEP_MS = (() => {
   if (!Number.isFinite(raw) || raw <= 0) return 650;
   return Math.max(120, raw);
 })();
-var APP_NAME = "Zeus";
+var APP_NAME = "Hermes";
 var TITLEBAR_HEIGHT = 34;
 var MACOS_TRAFFIC_LIGHTS_HEIGHT = 14;
 var WINDOW_BUTTON_POSITION = {
@@ -26078,7 +26078,7 @@ function previewFileMetadata(filePath, mimeType) {
 }
 app.setName(APP_NAME);
 if (IS_WINDOWS) {
-  app.setAppUserModelId("com.zeus.agent");
+  app.setAppUserModelId("com.hermes.agent");
 }
 app.setAboutPanelOptions({
   applicationName: APP_NAME,
@@ -26182,7 +26182,7 @@ let nativeThemeListenerInstalled = false
 let bootProgressState = {
   error: null,
   fakeMode: BOOT_FAKE_MODE,
-  message: "Waiting to start Zeus backend",
+  message: "Waiting to start Hermes backend",
   phase: "idle",
   progress: 0,
   running: false,
@@ -26514,7 +26514,7 @@ async function waitForUpdateToFinish() {
   while (marker && Date.now() < deadline) {
     await advanceBootProgress(
       "backend.update-wait",
-      "An update is finishing \u2014 Zeus will start automatically when it completes\u2026",
+      "An update is finishing \u2014 Hermes will start automatically when it completes\u2026",
       12
     );
     await new Promise((r) => setTimeout(r, UPDATE_WAIT_POLL_MS));
@@ -27103,7 +27103,7 @@ function repairMacUpdaterHelper(updater) {
   }
 }
 function venvHermesShimPath(updateRoot) {
-  return IS_WINDOWS ? path.join(updateRoot, "venv", "Scripts", "Zeus.exe") : path.join(updateRoot, "venv", "bin", "hermes");
+  return IS_WINDOWS ? path.join(updateRoot, "venv", "Scripts", "Hermes.exe") : path.join(updateRoot, "venv", "bin", "hermes");
 }
 function isShimLocked(shimPath) {
   if (!IS_WINDOWS) return false;
@@ -27204,7 +27204,7 @@ async function applyUpdates(opts = {}) {
     }
     emitUpdateProgress({
       stage: "restart",
-      message: "Updating Zeus \u2014 this window will close and the updater will open. Don\u2019t reopen Zeus yourself; it restarts automatically when the update finishes.",
+      message: "Updating Hermes \u2014 this window will close and the updater will open. Don\u2019t reopen Hermes yourself; it restarts automatically when the update finishes.",
       percent: 100
     });
     repairMacUpdaterHelper(updater);
@@ -27420,7 +27420,7 @@ async function applyUpdatesPosixInApp() {
     }
   } catch {
   }
-  emitUpdateProgress({ stage: "update", message: "Updating Zeus (git + dependencies)\u2026", percent: 10 });
+  emitUpdateProgress({ stage: "update", message: "Updating Hermes (git + dependencies)\u2026", percent: 10 });
   const updated = await runStreamedUpdate(hermes, ["update", "--yes", ...branchArgs], {
     cwd: updateRoot,
     env: env22,
@@ -27440,7 +27440,7 @@ async function applyUpdatesPosixInApp() {
   if (rebuilt.code !== 0) {
     emitUpdateProgress({
       stage: "error",
-      message: "Backend updated, but the desktop rebuild failed. Restart Zeus to retry.",
+      message: "Backend updated, but the desktop rebuild failed. Restart Hermes to retry.",
       error: rebuilt.error || "rebuild-failed"
     });
     return { ok: false, backendUpdated: true, error: "desktop rebuild failed" };
@@ -27458,7 +27458,7 @@ async function applyUpdatesPosixInApp() {
     }
     const outcome = decideRelaunchOutcome({ underUnpacked, sandboxOk });
     if (outcome === "relaunch") {
-      emitUpdateProgress({ stage: "restart", message: "Restarting Zeus\u2026", percent: 100 });
+      emitUpdateProgress({ stage: "restart", message: "Restarting Hermes\u2026", percent: 100 });
       const relaunchArgs = collectRelaunchArgs(process.argv.slice(1));
       const relaunchEnv = collectRelaunchEnv(process.env);
       const relaunchScript = buildRelaunchScript({
@@ -27485,14 +27485,14 @@ async function applyUpdatesPosixInApp() {
           backendUpdated: true,
           guiUpdated: false,
           manualRestart: true,
-          message: "Backend updated. Quit and reopen Zeus to load the new version."
+          message: "Backend updated. Quit and reopen Hermes to load the new version."
         };
       }
     }
     if (outcome === "guiSkew") {
       emitUpdateProgress({
         stage: "guiSkew",
-        message: "Backend updated, but the desktop app package was not changed. Update or reinstall the Zeus Desktop app to match.",
+        message: "Backend updated, but the desktop app package was not changed. Update or reinstall the Hermes Desktop app to match.",
         percent: 100
       });
       rememberLog(
@@ -27509,18 +27509,18 @@ async function applyUpdatesPosixInApp() {
       guiUpdated: false,
       manualRestart: true,
       sandboxBlocked: true,
-      message: "Backend updated. The rebuilt app can\u2019t relaunch automatically (sandbox helper needs root). Quit and reopen Zeus to finish."
+      message: "Backend updated. The rebuilt app can\u2019t relaunch automatically (sandbox helper needs root). Quit and reopen Hermes to finish."
     };
   }
   const rebuiltApp = [
-    path.join(updateRoot, "apps", "desktop", "release", "mac-arm64", "Zeus.app"),
-    path.join(updateRoot, "apps", "desktop", "release", "mac", "Zeus.app")
+    path.join(updateRoot, "apps", "desktop", "release", "mac-arm64", "Hermes.app"),
+    path.join(updateRoot, "apps", "desktop", "release", "mac", "Hermes.app")
   ].find(directoryExists);
   const targetApp = runningAppBundle();
   if (!rebuiltApp || !targetApp) {
     emitUpdateProgress({
       stage: "done",
-      message: "Backend updated. Restart Zeus to load the new version.",
+      message: "Backend updated. Restart Hermes to load the new version.",
       percent: 100
     });
     return { ok: true, backendUpdated: true, rebuiltApp: rebuiltApp || null };
@@ -27552,7 +27552,7 @@ fi
   } catch (err) {
     emitUpdateProgress({
       stage: "done",
-      message: "Backend + app updated. Restart Zeus to load the new version.",
+      message: "Backend + app updated. Restart Hermes to load the new version.",
       percent: 100
     });
     rememberLog(`[updates] could not write swap script: ${err.message}; rebuilt app at ${rebuiltApp}`);
@@ -27611,7 +27611,7 @@ function resolveRendererIndex() {
   const found = candidates.find(fileExists);
   if (found) return found;
   rememberLog(
-    `[renderer] index.html not found \u2014 the desktop app was packaged without a renderer bundle. Tried: ${candidates.join(", ")}. Rebuild with: Zeus Desktop --force-build`
+    `[renderer] index.html not found \u2014 the desktop app was packaged without a renderer bundle. Tried: ${candidates.join(", ")}. Rebuild with: Hermes Desktop --force-build`
   );
   return candidates[0];
 }
@@ -27767,7 +27767,7 @@ function resolveHermesBackend(backendArgs) {
     }
     if (hermesCommand) {
       if (looksLikeDesktopAppBinary(hermesCommand)) {
-        rememberLog(`Ignoring desktop app executable on PATH while resolving Zeus CLI: ${hermesCommand}`);
+        rememberLog(`Ignoring desktop app executable on PATH while resolving Hermes CLI: ${hermesCommand}`);
         hermesCommand = null;
       }
     }
@@ -27791,7 +27791,7 @@ function resolveHermesBackend(backendArgs) {
         )
       }
       rememberLog(
-        `Ignoring existing Zeus CLI at ${hermesCommand}: --version probe failed; falling through to bootstrap.`
+        `Ignoring existing Hermes CLI at ${hermesCommand}: --version probe failed; falling through to bootstrap.`
       );
     }
   }
@@ -27812,7 +27812,7 @@ function resolveHermesBackend(backendArgs) {
   }
   return {
     kind: "bootstrap-needed",
-    label: "Zeus not installed yet; bootstrap required",
+    label: "Hermes not installed yet; bootstrap required",
     command: null,
     args: backendArgs,
     bootstrap: true,
@@ -27832,10 +27832,10 @@ async function ensureRuntime(backend) {
     return backend
   }
   if (backend.kind === "bootstrap-needed") {
-    rememberLog("[bootstrap] no Zeus install found; starting first-launch bootstrap");
+    rememberLog("[bootstrap] no Hermes install found; starting first-launch bootstrap");
     if (await handOffWindowsBootstrapRecovery("bootstrap-needed")) {
       const handoffError = new Error(
-        "Zeus recovery was handed off to Zeus Setup. The desktop will restart when recovery completes."
+        "Hermes recovery was handed off to Hermes Setup. The desktop will restart when recovery completes."
       );
       handoffError.isBootstrapFailure = true;
       handoffError.bootstrapHandedOff = true;
@@ -27872,7 +27872,7 @@ async function ensureRuntime(backend) {
     });
     bootstrapAbortController = null;
     if (bootstrapResult.cancelled) {
-      const cancelledError = new Error("Zeus install was cancelled.");
+      const cancelledError = new Error("Hermes install was cancelled.");
       cancelledError.isBootstrapFailure = true;
       cancelledError.bootstrapCancelled = true;
       bootstrapFailure = cancelledError;
@@ -27880,7 +27880,7 @@ async function ensureRuntime(backend) {
     }
     if (!bootstrapResult.ok) {
       const bootstrapError = new Error(
-        `Zeus bootstrap failed${bootstrapResult.failedStage ? ` at stage '${bootstrapResult.failedStage}'` : ""}: ${bootstrapResult.error || "unknown error"}. Check ${path.join(HERMES_HOME, "logs", "desktop.log")} for the full transcript.`
+        `Hermes bootstrap failed${bootstrapResult.failedStage ? ` at stage '${bootstrapResult.failedStage}'` : ""}: ${bootstrapResult.error || "unknown error"}. Check ${path.join(HERMES_HOME, "logs", "desktop.log")} for the full transcript.`
       );
       bootstrapError.isBootstrapFailure = true;
       bootstrapError.failedStage = bootstrapResult.failedStage || null;
@@ -27892,18 +27892,18 @@ async function ensureRuntime(backend) {
   }
   if (!isHermesSourceRoot(ACTIVE_HERMES_ROOT)) {
     throw new Error(
-      `Zeus install at ${ACTIVE_HERMES_ROOT} is missing or incomplete. Reinstall via the desktop installer or scripts/install.ps1.`
+      `Hermes install at ${ACTIVE_HERMES_ROOT} is missing or incomplete. Reinstall via the desktop installer or scripts/install.ps1.`
     );
   }
   if (IS_WINDOWS && !findGitBash()) {
     throw new Error(
-      "Git for Windows is required for Zeus on Windows (provides Git Bash, which the agent's terminal tool uses). Install it from https://git-scm.com/download/win or run `winget install -e --id Git.Git`, then relaunch Zeus."
+      "Git for Windows is required for Hermes on Windows (provides Git Bash, which the agent's terminal tool uses). Install it from https://git-scm.com/download/win or run `winget install -e --id Git.Git`, then relaunch Hermes."
     );
   }
   const venvPython = getVenvPython(VENV_ROOT);
   if (!fileExists(venvPython)) {
     throw new Error(
-      `Zeus venv missing at ${VENV_ROOT}. Re-run the desktop installer or \`scripts/install.ps1\` to rebuild it.`
+      `Hermes venv missing at ${VENV_ROOT}. Re-run the desktop installer or \`scripts/install.ps1\` to rebuild it.`
     );
   }
 
@@ -27911,7 +27911,7 @@ async function ensureRuntime(backend) {
   backend.label = `Hermes at ${ACTIVE_HERMES_ROOT} (venv: ${VENV_ROOT})`
   updateBootProgress({
     phase: "runtime.ready",
-    message: "Zeus runtime is ready",
+    message: "Hermes runtime is ready",
     progress: 82,
     running: true,
     error: null
@@ -27925,7 +27925,7 @@ function fetchJson(url, token, options = {}) {
     const client = parsed.protocol === "https:" ? https : http;
     const timeoutMs = resolveTimeoutMs(options.timeoutMs, DEFAULT_FETCH_TIMEOUT_MS);
     if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-      reject(new Error(`Unsupported Zeus backend URL protocol: ${parsed.protocol}`));
+      reject(new Error(`Unsupported Hermes backend URL protocol: ${parsed.protocol}`));
       return;
     }
     const req = client.request(
@@ -27957,7 +27957,7 @@ function fetchJson(url, token, options = {}) {
           if (looksHtml || contentType.includes("text/html")) {
             reject(
               new Error(
-                `Expected JSON from ${url} but got HTML (status ${res.statusCode}). The endpoint is likely missing on the Zeus backend.`
+                `Expected JSON from ${url} but got HTML (status ${res.statusCode}). The endpoint is likely missing on the Hermes backend.`
               )
             );
             return;
@@ -27972,7 +27972,7 @@ function fetchJson(url, token, options = {}) {
     );
     req.on("error", reject);
     req.setTimeout(timeoutMs, () => {
-      req.destroy(new Error(`Timed out connecting to Zeus backend after ${timeoutMs}ms`));
+      req.destroy(new Error(`Timed out connecting to Hermes backend after ${timeoutMs}ms`));
     });
     if (body) req.write(body);
     req.end();
@@ -27991,7 +27991,7 @@ function fetchPublicJson(url, options = {}) {
     const client = parsed.protocol === "https:" ? https : http;
     const timeoutMs = resolveTimeoutMs(options.timeoutMs, DEFAULT_FETCH_TIMEOUT_MS);
     if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-      reject(new Error(`Unsupported Zeus backend URL protocol: ${parsed.protocol}`));
+      reject(new Error(`Unsupported Hermes backend URL protocol: ${parsed.protocol}`));
       return;
     }
     const req = client.request(
@@ -28021,7 +28021,7 @@ function fetchPublicJson(url, options = {}) {
           if (looksHtml || contentType.includes("text/html")) {
             reject(
               new Error(
-                `Expected JSON from ${url} but got HTML (status ${res.statusCode}). The endpoint is likely missing on the Zeus backend.`
+                `Expected JSON from ${url} but got HTML (status ${res.statusCode}). The endpoint is likely missing on the Hermes backend.`
               )
             );
             return;
@@ -28036,7 +28036,7 @@ function fetchPublicJson(url, options = {}) {
     );
     req.on("error", reject);
     req.setTimeout(timeoutMs, () => {
-      req.destroy(new Error(`Timed out connecting to Zeus backend after ${timeoutMs}ms`));
+      req.destroy(new Error(`Timed out connecting to Hermes backend after ${timeoutMs}ms`));
     });
     if (body) req.write(body);
     req.end();
@@ -28458,7 +28458,7 @@ async function waitForHermes(baseUrl, token) {
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
   }
-  throw new Error(`Zeus backend did not become ready: ${lastError?.message || "timeout"}`);
+  throw new Error(`Hermes backend did not become ready: ${lastError?.message || "timeout"}`);
 }
 function getWindowButtonPosition() {
   if (!IS_MAC) return null;
@@ -28904,7 +28904,7 @@ function openOauthLoginWindow(baseUrl) {
       win = new BrowserWindow({
         width: 520,
         height: 720,
-        title: "Sign in to Zeus gateway",
+        title: "Sign in to Hermes gateway",
         autoHideMenuBar: true,
         webPreferences: {
           contextIsolation: true,
@@ -28949,7 +28949,7 @@ function fetchJsonViaOauthSession(url, options = {}) {
       return;
     }
     if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-      reject(new Error(`Unsupported Zeus backend URL protocol: ${parsed.protocol}`));
+      reject(new Error(`Unsupported Hermes backend URL protocol: ${parsed.protocol}`));
       return;
     }
     const body = serializeJsonBody(options.body);
@@ -28969,7 +28969,7 @@ function fetchJsonViaOauthSession(url, options = {}) {
         request.abort();
       } catch {
       }
-      reject(new Error(`Timed out connecting to Zeus backend after ${timeoutMs}ms`));
+      reject(new Error(`Timed out connecting to Hermes backend after ${timeoutMs}ms`));
     }, timeoutMs);
     request.on("response", (res) => {
       const chunks = [];
@@ -29197,7 +29197,7 @@ async function buildRemoteConnection(rawUrl, authMode, token, source) {
   if (authMode === "oauth") {
     if (!await hasLiveOauthSession(baseUrl)) {
       const err = new Error(
-        'Remote Zeus gateway uses OAuth, but you are not signed in. Open Settings \u2192 Gateway and click "Sign in", or switch back to Local.'
+        'Remote Hermes gateway uses OAuth, but you are not signed in. Open Settings \u2192 Gateway and click "Sign in", or switch back to Local.'
       );
       err.needsOauthLogin = true;
       throw err;
@@ -29225,7 +29225,7 @@ async function buildRemoteConnection(rawUrl, authMode, token, source) {
   }
   if (!token) {
     throw new Error(
-      "Remote Zeus gateway is selected, but no session token is saved. Open Settings \u2192 Gateway and save a token, or switch back to Local."
+      "Remote Hermes gateway is selected, but no session token is saved. Open Settings \u2192 Gateway and save a token, or switch back to Local."
     );
   }
   return {
@@ -29249,7 +29249,7 @@ async function resolveRemoteBackend(profile) {
   if (rawEnvUrl) {
     if (!rawEnvToken) {
       throw new Error(
-        "HERMES_DESKTOP_REMOTE_URL is set but HERMES_DESKTOP_REMOTE_TOKEN is not. Both must be provided to connect to a remote Zeus backend."
+        "HERMES_DESKTOP_REMOTE_URL is set but HERMES_DESKTOP_REMOTE_TOKEN is not. Both must be provided to connect to a remote Hermes backend."
       );
     }
     return buildRemoteConnection(rawEnvUrl, "token", rawEnvToken, "env");
@@ -29541,16 +29541,16 @@ async function spawnPoolBackend(profile, entry) {
     rejectStart = reject;
   });
   child.once("error", (error) => {
-    rememberLog(`Zeus backend for profile "${profile}" failed to start: ${error.message}`);
+    rememberLog(`Hermes backend for profile "${profile}" failed to start: ${error.message}`);
     backendPool.delete(profile);
     rejectStart?.(error);
   });
   child.once("exit", (code, signal) => {
-    rememberLog(`Zeus backend for profile "${profile}" exited (${signal || code})`);
+    rememberLog(`Hermes backend for profile "${profile}" exited (${signal || code})`);
     backendPool.delete(profile);
     if (!ready) {
       rejectStart?.(
-        new Error(`Zeus backend for profile "${profile}" exited before it became ready (${signal || code}).`)
+        new Error(`Hermes backend for profile "${profile}" exited before it became ready (${signal || code}).`)
       );
     }
   });
@@ -29565,7 +29565,7 @@ async function spawnPoolBackend(profile, entry) {
   ready = true;
   const authToken = await adoptServedDashboardToken(baseUrl, token, {
     childAlive: () => child.exitCode === null && !child.killed,
-    label: `Zeus backend for profile "${profile}"`,
+    label: `Hermes backend for profile "${profile}"`,
     rememberLog
   });
   entry.token = authToken;
@@ -29652,14 +29652,14 @@ async function startHermes() {
   }
   if (connectionPromise) return connectionPromise;
   connectionPromise = (async () => {
-    await advanceBootProgress("backend.resolve", "Resolving Zeus backend", 8);
+    await advanceBootProgress("backend.resolve", "Resolving Hermes backend", 8);
     const remote = await resolveRemoteBackend(primaryProfileKey());
     if (remote) {
-      await advanceBootProgress("backend.remote", `Connecting to remote Zeus backend at ${remote.baseUrl}`, 24);
+      await advanceBootProgress("backend.remote", `Connecting to remote Hermes backend at ${remote.baseUrl}`, 24);
       await waitForHermes(remote.baseUrl, remote.token);
       updateBootProgress({
         phase: "backend.ready",
-        message: "Remote Zeus backend is ready",
+        message: "Remote Hermes backend is ready",
         progress: 94,
         running: true,
         error: null
@@ -29718,7 +29718,7 @@ async function startHermes() {
           // resolves to the SAME location our resolveHermesHome() picked. Without
           // this pin, Python falls back to ~/.hermes on every platform — fine on
           // mac/linux (where our default matches), but on Windows our default is
-          // %LOCALAPPDATA%\hermes, which differs from C:\Users\<u>\.Zeus.
+          // %LOCALAPPDATA%\hermes, which differs from C:\Users\<u>\.Hermes.
           // Mismatch would split config / sessions / .env / logs across two
           // directories. install.ps1 sets HERMES_HOME via setx; the desktop
           // can't reliably do that, so we set it inline for every spawn.
@@ -29750,11 +29750,11 @@ async function startHermes() {
       rejectBackendStart = reject;
     });
     hermesProcess.once("error", (error) => {
-      rememberLog(`Zeus backend failed to start: ${error.message}`);
+      rememberLog(`Hermes backend failed to start: ${error.message}`);
       updateBootProgress(
         {
           error: error.message,
-          message: `Zeus backend failed to start: ${error.message}`,
+          message: `Hermes backend failed to start: ${error.message}`,
           phase: "backend.error",
           running: false
         },
@@ -29766,12 +29766,12 @@ async function startHermes() {
       rejectBackendStart?.(error);
     });
     hermesProcess.once("exit", (code, signal) => {
-      rememberLog(`Zeus backend exited (${signal || code})`);
+      rememberLog(`Hermes backend exited (${signal || code})`);
       hermesProcess = null;
       connectionPromise = null;
       sendBackendExit({ code, signal });
       if (!backendReady) {
-        const message = `Zeus backend exited before it became ready (${signal || code}).`;
+        const message = `Hermes backend exited before it became ready (${signal || code}).`;
         updateBootProgress(
           {
             error: message,
@@ -29783,13 +29783,13 @@ async function startHermes() {
         );
         rejectBackendStart?.(
           new Error(
-            `Zeus backend exited before it became ready (${signal || code}). Log: ${DESKTOP_LOG_PATH}
+            `Hermes backend exited before it became ready (${signal || code}). Log: ${DESKTOP_LOG_PATH}
 ${recentHermesLog()}`
           )
         );
       }
     });
-    await advanceBootProgress("backend.port", "Waiting for Zeus backend to launch", 86);
+    await advanceBootProgress("backend.port", "Waiting for Hermes backend to launch", 86);
     const port = await Promise.race([
       waitForDashboardPortAnnouncement(hermesProcess, { readyFile }),
       backendStartFailed
@@ -29799,7 +29799,7 @@ ${recentHermesLog()}`
       });
     }
     const baseUrl = `http://127.0.0.1:${port}`;
-    await advanceBootProgress("backend.wait", "Waiting for Zeus backend to become ready", 90);
+    await advanceBootProgress("backend.wait", "Waiting for Hermes backend to become ready", 90);
     await Promise.race([waitForHermes(baseUrl, token), backendStartFailed]);
     backendReady = true;
     backendStartFailure = null;
@@ -29810,7 +29810,7 @@ ${recentHermesLog()}`
     });
     updateBootProgress({
       phase: "backend.ready",
-      message: "Zeus backend is ready. Finalizing desktop startup",
+      message: "Hermes backend is ready. Finalizing desktop startup",
       progress: 94,
       running: true,
       error: null
@@ -29873,7 +29873,7 @@ function spawnSecondaryWindow({ sessionId, watch, newSession } = {}) {
     height: SESSION_WINDOW_MIN_HEIGHT,
     minWidth: SESSION_WINDOW_MIN_WIDTH,
     minHeight: SESSION_WINDOW_MIN_HEIGHT,
-    title: "Zeus",
+    title: "Hermes",
     titleBarStyle: "hidden",
     titleBarOverlay: getTitleBarOverlayOptions(),
     trafficLightPosition: IS_MAC ? WINDOW_BUTTON_POSITION : void 0,
@@ -29924,7 +29924,7 @@ function createWindow() {
     ...computeWindowOptions(savedWindowState, screen.getAllDisplays()),
     minWidth: WINDOW_MIN_WIDTH,
     minHeight: WINDOW_MIN_HEIGHT,
-    title: "Zeus",
+    title: "Hermes",
     // Frameless title bar on every platform so the renderer can paint the
     // "hide sidebar" button (and other left-side titlebar tools) flush with
     // the top edge — matching the macOS layout where the traffic lights sit
@@ -29976,13 +29976,13 @@ function createWindow() {
   mainWindow.on("unmaximize", schedulePersistWindowState);
   mainWindow.on("close", (e) => {
     schedulePersistWindowState.flush();
-    if (trayModule && !app.isQuitting && zeusGeneralPrefs.closeToTray) {
+    if (trayModule && !app.isQuitting && hermesGeneralPrefs.closeToTray) {
       e.preventDefault();
       mainWindow.hide();
     }
   });
   mainWindow.on("minimize", () => {
-    if (trayModule && zeusGeneralPrefs.minimizeToTray) {
+    if (trayModule && hermesGeneralPrefs.minimizeToTray) {
       mainWindow.hide();
     }
   });
@@ -30050,7 +30050,7 @@ ipcMain.handle("hermes:connection:revalidate", async () => {
     await fetchPublicJson(`${base}/api/status`, { timeoutMs: 2500 });
     return { ok: true, rebuilt: false };
   } catch {
-    rememberLog("Cached remote Zeus backend failed liveness probe; dropping stale connection.");
+    rememberLog("Cached remote Hermes backend failed liveness probe; dropping stale connection.");
     resetHermesConnection();
     return { ok: true, rebuilt: true };
   }
@@ -30460,7 +30460,7 @@ ipcMain.handle("hermes:notify", (_event, payload) => {
   if (!Notification.isSupported()) return false;
   const actions = Array.isArray(payload?.actions) ? payload.actions : [];
   const notification = new Notification({
-    title: payload?.title || "Zeus",
+    title: payload?.title || "Hermes",
     body: payload?.body || "",
     silent: Boolean(payload?.silent),
     actions: actions.map((action) => ({ type: "button", text: String(action?.text || "") }))
@@ -30739,7 +30739,7 @@ function terminalShellEnv() {
   env22.COLORTERM = "truecolor";
   env22.LC_CTYPE = env22.LC_CTYPE || "UTF-8";
   env22.TERM = "xterm-256color";
-  env22.TERM_PROGRAM = "Zeus";
+  env22.TERM_PROGRAM = "Hermes";
   env22.TERM_PROGRAM_VERSION = app.getVersion();
   env22.HERMES_DESKTOP_TERMINAL = "1";
   return env22;
@@ -30879,7 +30879,7 @@ ipcMain.handle("hermes:git:scanRepos", async (_event, roots, options) => {
 });
 ipcMain.handle("hermes:terminal:start", async (event, payload = {}) => {
   if (!nodePty) {
-    throw new Error("PTY support is unavailable. Reinstall desktop dependencies and Restart Zeus.");
+    throw new Error("PTY support is unavailable. Reinstall desktop dependencies and Restart Hermes.");
   }
   ensureSpawnHelperExecutable();
   const id = crypto.randomUUID();
@@ -31057,7 +31057,7 @@ async function runDesktopUninstall(mode) {
     return {
       ok: false,
       error: "agent-missing",
-      message: `Can't run the uninstaller: no Zeus venv at ${VENV_ROOT}.`
+      message: `Can't run the uninstaller: no Hermes venv at ${VENV_ROOT}.`
     };
   }
   let py = venvPy;
@@ -31208,12 +31208,12 @@ if (!_gotSingleInstanceLock) {
     }
   });
 }
-ipcMain.handle("zeus:wake-word:toggle", () => {
+ipcMain.handle("hermes:wake-word:toggle", () => {
   if (!wakeWordModule) return { enabled: false, error: "wake-word module not loaded" };
   if (wakeWordModule.isWakeWordListening()) {
     wakeWordModule.stopWakeWordListener();
     trayModule?.setWakeWordMenuItemEnabled(false);
-    trayModule?.updateTrayTooltip("Zeus \u2014 wake word off");
+    trayModule?.updateTrayTooltip("Hermes \u2014 wake word off");
     return { enabled: false };
   }
   const started = wakeWordModule.startWakeWordListener({
@@ -31222,12 +31222,12 @@ ipcMain.handle("zeus:wake-word:toggle", () => {
         if (mainWindow.isMinimized()) mainWindow.restore();
         if (!mainWindow.isVisible()) mainWindow.show();
         mainWindow.focus();
-        mainWindow.webContents.send("zeus:wake-word:detected");
+        mainWindow.webContents.send("hermes:wake-word:detected");
       } else if (!mainWindow || mainWindow.isDestroyed()) {
         createWindow();
         setTimeout(() => {
           if (mainWindow && !mainWindow.isDestroyed()) {
-            mainWindow.webContents.send("zeus:wake-word:detected");
+            mainWindow.webContents.send("hermes:wake-word:detected");
           }
         }, 1500);
       }
@@ -31235,7 +31235,7 @@ ipcMain.handle("zeus:wake-word:toggle", () => {
     onError: (msg) => {
       console.error("[wake-word]", msg);
       if (mainWindow && !mainWindow.isDestroyed()) {
-        mainWindow.webContents.send("zeus:wake-word:error", msg);
+        mainWindow.webContents.send("hermes:wake-word:error", msg);
       }
     },
     onStatus: () => {
@@ -31243,95 +31243,95 @@ ipcMain.handle("zeus:wake-word:toggle", () => {
   });
   trayModule?.setWakeWordMenuItemEnabled(started);
   if (started) {
-    trayModule?.updateTrayTooltip('Zeus \u2014 listening for "Hey Zeus"');
+    trayModule?.updateTrayTooltip('Hermes \u2014 listening for "Hey Hermes"');
   }
   return { enabled: started };
 });
-ipcMain.handle("zeus:wake-word:status", () => {
+ipcMain.handle("hermes:wake-word:status", () => {
   return { listening: wakeWordModule ? wakeWordModule.isWakeWordListening() : false };
 });
-ipcMain.handle("zeus:wake-word:check-deps", () => {
+ipcMain.handle("hermes:wake-word:check-deps", () => {
   if (!wakeWordModule) return { available: false, pythonPath: null, missing: ["wake-word module not loaded"] };
   return wakeWordModule.checkWakeWordDependencies();
 });
-ipcMain.handle("zeus:tray:show", () => {
+ipcMain.handle("hermes:tray:show", () => {
   trayModule?.showWindowFromTray();
   return { shown: true };
 });
-ipcMain.handle("zeus:auto-updater:check", async () => {
+ipcMain.handle("hermes:auto-updater:check", async () => {
   if (!autoUpdaterModule) return { ok: false, error: "auto-updater not loaded" };
   return autoUpdaterModule.checkForUpdatesNow();
 });
-ipcMain.handle("zeus:auto-updater:download", async () => {
+ipcMain.handle("hermes:auto-updater:download", async () => {
   if (!autoUpdaterModule) return { ok: false, error: "auto-updater not loaded" };
   return autoUpdaterModule.downloadUpdate();
 });
-ipcMain.handle("zeus:auto-updater:install", () => {
+ipcMain.handle("hermes:auto-updater:install", () => {
   if (!autoUpdaterModule) return { ok: false, error: "auto-updater not loaded" };
   return { ok: autoUpdaterModule.installUpdateAndRestart() };
 });
-ipcMain.handle("zeus:auto-updater:status", () => {
+ipcMain.handle("hermes:auto-updater:status", () => {
   if (!autoUpdaterModule) return { initialized: false };
   return autoUpdaterModule.getUpdateStatus();
 });
-var zeusGeneralPrefsDefaults = {
+var hermesGeneralPrefsDefaults = {
   closeToTray: true,
   minimizeToTray: false,
   startMinimized: false,
   checkForUpdatesAutomatically: true
 };
-var zeusGeneralPrefs = { ...zeusGeneralPrefsDefaults };
-var zeusPrefsFile = null;
+var hermesGeneralPrefs = { ...hermesGeneralPrefsDefaults };
+var hermesPrefsFile = null;
 try {
-  zeusPrefsFile = path.join(app.getPath("userData"), "general-prefs.json");
+  hermesPrefsFile = path.join(app.getPath("userData"), "general-prefs.json");
 } catch {
 }
-function loadZeusPrefsFromDisk() {
-  if (!zeusPrefsFile) return;
+function loadHermesPrefsFromDisk() {
+  if (!hermesPrefsFile) return;
   try {
     const fs2 = require("fs");
-    const raw = fs2.readFileSync(zeusPrefsFile, "utf-8");
+    const raw = fs2.readFileSync(hermesPrefsFile, "utf-8");
     const parsed = JSON.parse(raw);
     if (parsed && typeof parsed === "object") {
-      zeusGeneralPrefs = { ...zeusGeneralPrefsDefaults, ...parsed };
+      hermesGeneralPrefs = { ...hermesGeneralPrefsDefaults, ...parsed };
     }
   } catch {
   }
 }
-function saveZeusPrefsToDisk() {
-  if (!zeusPrefsFile) return;
+function saveHermesPrefsToDisk() {
+  if (!hermesPrefsFile) return;
   try {
     const fs2 = require("fs");
-    fs2.writeFileSync(zeusPrefsFile, JSON.stringify(zeusGeneralPrefs), "utf-8");
+    fs2.writeFileSync(hermesPrefsFile, JSON.stringify(hermesGeneralPrefs), "utf-8");
   } catch (e) {
-    console.error("[zeus] Failed to save general prefs:", e.message);
+    console.error("[hermes] Failed to save general prefs:", e.message);
   }
 }
-loadZeusPrefsFromDisk();
-ipcMain.handle("zeus:general:set-pref", async (_event, key, value) => {
+loadHermesPrefsFromDisk();
+ipcMain.handle("hermes:general:set-pref", async (_event, key, value) => {
   if (typeof key !== "string" || typeof value !== "boolean") {
     return { ok: false, error: "invalid arguments" };
   }
-  zeusGeneralPrefs[key] = value;
-  saveZeusPrefsToDisk();
+  hermesGeneralPrefs[key] = value;
+  saveHermesPrefsToDisk();
   if (key === "autoLaunchOnStartup") {
     try {
       app.setLoginItemSettings({
         openAtLogin: value,
-        args: value && zeusGeneralPrefs.startMinimized ? ["--hidden"] : []
+        args: value && hermesGeneralPrefs.startMinimized ? ["--hidden"] : []
       });
     } catch (e) {
-      console.error("[zeus] Failed to set login item:", e.message);
+      console.error("[hermes] Failed to set login item:", e.message);
     }
   }
-  if (key === "startMinimized" && zeusGeneralPrefs.autoLaunchOnStartup) {
+  if (key === "startMinimized" && hermesGeneralPrefs.autoLaunchOnStartup) {
     try {
       app.setLoginItemSettings({
         openAtLogin: true,
         args: value ? ["--hidden"] : []
       });
     } catch (e) {
-      console.error("[zeus] Failed to update login item args:", e.message);
+      console.error("[hermes] Failed to update login item args:", e.message);
     }
   }
   if (key === "checkForUpdatesAutomatically") {
@@ -31343,7 +31343,7 @@ ipcMain.handle("zeus:general:set-pref", async (_event, key, value) => {
   }
   return { ok: true };
 });
-ipcMain.handle("zeus:general:get-pref", (_event, key) => {
+ipcMain.handle("hermes:general:get-pref", (_event, key) => {
   if (typeof key !== "string") return null;
   if (key === "autoLaunchOnStartup") {
     try {
@@ -31353,15 +31353,15 @@ ipcMain.handle("zeus:general:get-pref", (_event, key) => {
       return false;
     }
   }
-  return zeusGeneralPrefs[key] ?? null;
+  return hermesGeneralPrefs[key] ?? null;
 });
-ipcMain.handle("zeus:general:get-all-prefs", () => {
+ipcMain.handle("hermes:general:get-all-prefs", () => {
   let autoLaunch = false;
   try {
     autoLaunch = app.getLoginItemSettings().openAtLogin;
   } catch {
   }
-  return { ...zeusGeneralPrefs, autoLaunchOnStartup: autoLaunch };
+  return { ...hermesGeneralPrefs, autoLaunchOnStartup: autoLaunch };
 });
 app.on("open-url", (event, url) => {
   event.preventDefault();
@@ -31392,7 +31392,7 @@ app.whenReady().then(() => {
           if (!wakeWordModule) return false;
           if (wakeWordModule.isWakeWordListening()) {
             wakeWordModule.stopWakeWordListener();
-            trayModule?.updateTrayTooltip("Zeus \u2014 wake word off");
+            trayModule?.updateTrayTooltip("Hermes \u2014 wake word off");
             return false;
           }
           const started = wakeWordModule.startWakeWordListener({
@@ -31401,32 +31401,32 @@ app.whenReady().then(() => {
                 if (mainWindow.isMinimized()) mainWindow.restore();
                 if (!mainWindow.isVisible()) mainWindow.show();
                 mainWindow.focus();
-                mainWindow.webContents.send("zeus:wake-word:detected");
+                mainWindow.webContents.send("hermes:wake-word:detected");
               } else if (!mainWindow || mainWindow.isDestroyed()) {
                 createWindow();
                 setTimeout(() => {
                   if (mainWindow && !mainWindow.isDestroyed()) {
-                    mainWindow.webContents.send("zeus:wake-word:detected");
+                    mainWindow.webContents.send("hermes:wake-word:detected");
                   }
                 }, 1500);
               }
-              trayModule?.updateTrayTooltip("Zeus \u2014 wake word detected!");
+              trayModule?.updateTrayTooltip("Hermes \u2014 wake word detected!");
               setTimeout(() => {
-                trayModule?.updateTrayTooltip('Zeus \u2014 listening for "Hey Zeus"');
+                trayModule?.updateTrayTooltip('Hermes \u2014 listening for "Hey Hermes"');
               }, 3e3);
             },
             onError: (msg) => {
               console.error("[wake-word]", msg);
-              trayModule?.updateTrayTooltip("Zeus \u2014 wake word error");
+              trayModule?.updateTrayTooltip("Hermes \u2014 wake word error");
               if (mainWindow && !mainWindow.isDestroyed()) {
-                mainWindow.webContents.send("zeus:wake-word:error", msg);
+                mainWindow.webContents.send("hermes:wake-word:error", msg);
               }
             },
             onStatus: (msg) => {
             }
           });
           if (started) {
-            trayModule?.updateTrayTooltip('Zeus \u2014 listening for "Hey Zeus"');
+            trayModule?.updateTrayTooltip('Hermes \u2014 listening for "Hey Hermes"');
           }
           return started;
         }
@@ -31435,7 +31435,7 @@ app.whenReady().then(() => {
   }
   if (autoUpdaterModule) {
     autoUpdaterModule.initAutoUpdater({ get: () => mainWindow });
-    if (!zeusGeneralPrefs.checkForUpdatesAutomatically) {
+    if (!hermesGeneralPrefs.checkForUpdatesAutomatically) {
       autoUpdaterModule.stopPeriodicChecks?.();
     }
   }

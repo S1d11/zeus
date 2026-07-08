@@ -355,7 +355,7 @@ export function ChatView({
       }
 
       if (!gateway) {
-        throw new Error('Zeus gateway unavailable')
+        throw new Error('Hermes gateway unavailable')
       }
 
       return gateway.request<ModelOptionsResponse>('model.options', {

@@ -283,8 +283,8 @@ export function DesktopController() {
   // mode on, so the user can immediately start talking.
   useEffect(() => {
     const desktop = window.hermesDesktop as any
-    if (!desktop?.zeus?.onWakeWordDetected) return
-    const unsubscribe = desktop.zeus.onWakeWordDetected(() => {
+    if (!desktop?.hermes?.onWakeWordDetected) return
+    const unsubscribe = desktop.hermes.onWakeWordDetected(() => {
       // requestVoiceStart dispatches a window event the composer picks up
       // to activate voice conversation mode (idempotent — won't toggle off
       // if voice mode is already active).

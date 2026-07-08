@@ -3,7 +3,7 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'Zeus',
+  title: 'Hermes',
   tagline: 'The self-improving AI agent',
   favicon: 'img/favicon.ico',
 
@@ -119,9 +119,9 @@ const config: Config = {
       },
     },
     navbar: {
-      title: 'Zeus',
+      title: 'Hermes',
       logo: {
-        alt: 'Zeus',
+        alt: 'Hermes',
         src: 'img/logo.png',
       },
       items: [

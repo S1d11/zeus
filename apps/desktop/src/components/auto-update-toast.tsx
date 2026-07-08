@@ -1,4 +1,4 @@
-// auto-update-toast.tsx — Binary auto-update notification for Zeus desktop.
+// auto-update-toast.tsx — Binary auto-update notification for Hermes desktop.
 //
 // Shows a toast notification when a new app version is available from
 // GitHub releases. Lets the user download and install the update without
@@ -47,10 +47,10 @@ export function AutoUpdateToast() {
   // Listen to auto-updater events from the main process
   useEffect(() => {
     const desktop = window.hermesDesktop as any
-    if (!desktop?.zeus) return
+    if (!desktop?.hermes) return
 
     // Subscribe to update events
-    const unsubEvents = desktop.zeus.onUpdateEvent((event: any) => {
+    const unsubEvents = desktop.hermes.onUpdateEvent((event: any) => {
       switch (event.type) {
         case 'checking-for-update':
           setAutoUpdateInfo({ state: 'checking' })
@@ -77,14 +77,14 @@ export function AutoUpdateToast() {
     })
 
     // Listen for notification clicks (from OS notification)
-    const unsubNotif = desktop.zeus.onUpdateNotificationClicked((payload: any) => {
+    const unsubNotif = desktop.hermes.onUpdateNotificationClicked((payload: any) => {
       if (payload?.action === 'download') {
         handleDownload()
       }
     })
 
     // Check current status on mount
-    desktop.zeus.getUpdateStatus().then((status: any) => {
+    desktop.hermes.getUpdateStatus().then((status: any) => {
       if (status?.updateAvailable) {
         setAutoUpdateInfo({ state: 'available', version: status.updateAvailable.version })
       } else if (status?.updateDownloaded) {
@@ -102,23 +102,23 @@ export function AutoUpdateToast() {
 
   const handleDownload = useCallback(async () => {
     const desktop = window.hermesDesktop as any
-    if (!desktop?.zeus) return
+    if (!desktop?.hermes) return
     setAutoUpdateInfo({ state: 'downloading', downloadPercent: 0 })
-    await desktop.zeus.downloadUpdate()
+    await desktop.hermes.downloadUpdate()
   }, [])
 
   const handleInstall = useCallback(async () => {
     const desktop = window.hermesDesktop as any
-    if (!desktop?.zeus) return
-    await desktop.zeus.installUpdate()
+    if (!desktop?.hermes) return
+    await desktop.hermes.installUpdate()
     // The app will quit and restart — this code won't execute
   }, [])
 
   const handleCheckNow = useCallback(async () => {
     const desktop = window.hermesDesktop as any
-    if (!desktop?.zeus) return
+    if (!desktop?.hermes) return
     setDismissed(false)
-    await desktop.zeus.checkForUpdates()
+    await desktop.hermes.checkForUpdates()
   }, [])
 
   // Don't render if dismissed, idle, checking, or not-available
@@ -155,7 +155,7 @@ export function AutoUpdateToast() {
             <span className="font-semibold">Update Available</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            Zeus v{update.version} is ready to download. You're currently running v{update.currentVersion}.
+            Hermes v{update.version} is ready to download. You're currently running v{update.currentVersion}.
           </p>
           <div className="flex gap-2">
             <Button size="sm" onClick={handleDownload}>
@@ -194,7 +194,7 @@ export function AutoUpdateToast() {
             <span className="font-semibold">Update Ready</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            Zeus v{update.version} has been downloaded. Restart to install the update.
+            Hermes v{update.version} has been downloaded. Restart to install the update.
           </p>
           <div className="flex gap-2">
             <Button size="sm" onClick={handleInstall}>

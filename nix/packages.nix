@@ -1,4 +1,4 @@
-# nix/packages.nix — Zeus package built with uv2nix
+# nix/packages.nix — Hermes package built with uv2nix
 { inputs, ... }:
 {
   perSystem =

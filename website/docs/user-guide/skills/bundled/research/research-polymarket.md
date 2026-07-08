@@ -17,7 +17,7 @@ Query Polymarket: markets, prices, orderbooks, history.
 | Source | Bundled (installed by default) |
 | Path | `skills/research/polymarket` |
 | Version | `1.0.0` |
-| Author | Zeus + Teknium |
+| Author | Hermes + Teknium |
 | Platforms | linux, macos, windows |
 
 ## Reference: full SKILL.md

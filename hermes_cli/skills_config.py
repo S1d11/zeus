@@ -1,5 +1,5 @@
 """
-Skills configuration for Zeus.
+Skills configuration for Hermes.
 `hermes skills` enters this module.
 
 Toggle individual skills or categories on/off, globally or per-platform.

@@ -1,6 +1,6 @@
 """Validation helpers for self-modification.
 
-After Zeus adds/removes a skill, tool, or prompt section, these helpers
+After Hermes adds/removes a skill, tool, or prompt section, these helpers
 validate that the change is syntactically correct and doesn't break
 imports. Called by `hermes evolve validate`.
 """
@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 
 
-def validate_skill(zeus_repo: Path, skill_path: Path) -> Tuple[bool, List[str]]:
+def validate_skill(hermes_repo: Path, skill_path: Path) -> Tuple[bool, List[str]]:
     """Validate a skill file is well-formed.
 
     Returns (passed, messages).
@@ -69,15 +69,15 @@ def validate_skill(zeus_repo: Path, skill_path: Path) -> Tuple[bool, List[str]]:
     return False, messages
 
 
-def validate_tool(zeus_repo: Path, tool_name: str) -> Tuple[bool, List[str]]:
+def validate_tool(hermes_repo: Path, tool_name: str) -> Tuple[bool, List[str]]:
     """Validate a tool can be imported and registered.
 
     Returns (passed, messages).
     """
     messages = []
-    zeus_str = str(zeus_repo)
-    if zeus_str not in sys.path:
-        sys.path.insert(0, zeus_str)
+    hermes_str = str(hermes_repo)
+    if hermes_str not in sys.path:
+        sys.path.insert(0, hermes_str)
 
     # Try to import the tool module
     # Tool files are named <name>_tool.py
@@ -118,15 +118,15 @@ def validate_tool(zeus_repo: Path, tool_name: str) -> Tuple[bool, List[str]]:
     return True, messages
 
 
-def validate_prompt_section(zeus_repo: Path, section_name: str) -> Tuple[bool, List[str]]:
+def validate_prompt_section(hermes_repo: Path, section_name: str) -> Tuple[bool, List[str]]:
     """Validate a prompt section exists and is importable.
 
     Returns (passed, messages).
     """
     messages = []
-    zeus_str = str(zeus_repo)
-    if zeus_str not in sys.path:
-        sys.path.insert(0, zeus_str)
+    hermes_str = str(hermes_repo)
+    if hermes_str not in sys.path:
+        sys.path.insert(0, hermes_str)
 
     try:
         import importlib
@@ -149,15 +149,15 @@ def validate_prompt_section(zeus_repo: Path, section_name: str) -> Tuple[bool, L
         return False, messages
 
 
-def validate_imports(zeus_repo: Path) -> Tuple[bool, List[str]]:
+def validate_imports(hermes_repo: Path) -> Tuple[bool, List[str]]:
     """Quick smoke test: can we import the core modules?
 
     Returns (passed, messages).
     """
     messages = []
-    zeus_str = str(zeus_repo)
-    if zeus_str not in sys.path:
-        sys.path.insert(0, zeus_str)
+    hermes_str = str(hermes_repo)
+    if hermes_str not in sys.path:
+        sys.path.insert(0, hermes_str)
 
     core_modules = [
         "tools.registry",
@@ -178,12 +178,12 @@ def validate_imports(zeus_repo: Path) -> Tuple[bool, List[str]]:
     return all_ok, messages
 
 
-def validate_all(zeus_repo: Optional[str] = None) -> None:
+def validate_all(hermes_repo: Optional[str] = None) -> None:
     """Run all validation checks. Called by `hermes evolve validate`."""
-    from evolution.core.config import resolve_zeus_agent_path
+    from evolution.core.config import resolve_hermes_agent_path
 
-    repo = resolve_zeus_agent_path(zeus_repo)
-    print(f"Validating Zeus agent repo: {repo}\n")
+    repo = resolve_hermes_agent_path(hermes_repo)
+    print(f"Validating Hermes agent repo: {repo}\n")
 
     # 1. Core imports
     print("Core imports:")

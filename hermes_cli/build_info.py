@@ -1,5 +1,5 @@
 """
-Baked-in build metadata for Zeus.
+Baked-in build metadata for Hermes.
 
 Source installs report their git revision live via ``git rev-parse`` (see
 ``hermes_cli/dump.py`` and ``hermes_cli/banner.py``).  That doesn't work inside

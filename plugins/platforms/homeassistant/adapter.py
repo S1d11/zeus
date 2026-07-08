@@ -401,7 +401,7 @@ class HomeAssistantAdapter(BasePlatformAdapter):
             "Content-Type": "application/json",
         }
         payload = {
-            "title": "Zeus",
+            "title": "Hermes",
             "message": content[:self.MAX_MESSAGE_LENGTH],
         }
 

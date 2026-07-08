@@ -2,7 +2,7 @@
 name: pinggy-tunnel
 description: Zero-install localhost tunnels over SSH via Pinggy.
 version: 0.1.0
-author: Teknium (teknium1), Zeus
+author: Teknium (teknium1), Hermes
 license: MIT
 platforms: [linux, macos, windows]
 metadata:

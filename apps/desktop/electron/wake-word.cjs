@@ -1,7 +1,7 @@
-// wake-word.cjs — Wake word listener for Zeus desktop.
+// wake-word.cjs — Wake word listener for Hermes desktop.
 //
 // Spawns a Python subprocess (scripts/wake_word.py) that continuously
-// listens to the microphone for "zeus" or "hey zeus". When the wake
+// listens to the microphone for "hermes" or "hey hermes". When the wake
 // word is detected, the Python script prints a JSON line to stdout,
 // which this module reads and forwards to a callback.
 //

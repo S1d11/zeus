@@ -1,10 +1,10 @@
 <div dir="rtl">
 
 <p align="center">
-  <img src="assets/banner.png" alt="Zeus" width="100%">
+  <img src="assets/banner.png" alt="Hermes" width="100%">
 </p>
 
-# ہرمیس ایجنٹ ☤ (Zeus)
+# ہرمیس ایجنٹ ☤ (Hermes)
 
 <p align="center">
   <a href="https://hermes-agent.nousresearch.com/docs/"><img src="https://img.shields.io/badge/Docs-hermes--agent.nousresearch.com-FFD700?style=for-the-badge" alt="Documentation"></a>

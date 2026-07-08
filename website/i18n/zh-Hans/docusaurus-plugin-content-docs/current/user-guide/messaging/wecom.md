@@ -1,7 +1,7 @@
 ---
 sidebar_position: 14
 title: "WeCom（企业微信）"
-description: "通过 AI Bot WebSocket 网关将 Zeus 连接到 WeCom"
+description: "通过 AI Bot WebSocket 网关将 Hermes 连接到 WeCom"
 ---
 
 # WeCom（企业微信）

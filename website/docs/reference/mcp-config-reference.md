@@ -1,7 +1,7 @@
 ---
 sidebar_position: 8
 title: "MCP Config Reference"
-description: "Reference for Zeus MCP configuration keys, filtering semantics, and utility-tool policy"
+description: "Reference for Hermes MCP configuration keys, filtering semantics, and utility-tool policy"
 ---
 
 # MCP Config Reference

@@ -1,4 +1,4 @@
-"""AWS Bedrock Converse API adapter for Zeus.
+"""AWS Bedrock Converse API adapter for Hermes.
 
 Provides native integration with Amazon Bedrock using the Converse API,
 bypassing the OpenAI-compatible endpoint in favor of direct AWS SDK calls.
@@ -69,7 +69,7 @@ def _require_boto3():
         raise ImportError(
             "The 'boto3' package is required for the AWS Bedrock provider. "
             "Install it with: pip install boto3\n"
-            "Or install Zeus with Bedrock support: pip install -e '.[bedrock]'"
+            "Or install Hermes with Bedrock support: pip install -e '.[bedrock]'"
         )
     # converse() / converse_stream() were added in boto3 1.34.59.
     # When Hermes is installed editable into system Python, the system boto3

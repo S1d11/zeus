@@ -1,4 +1,4 @@
-// auto-updater.test.cjs — Tests for the Zeus binary auto-updater module.
+// auto-updater.test.cjs — Tests for the Hermes binary auto-updater module.
 // Verifies module structure and exports without requiring a running
 // Electron instance or network access.
 
@@ -95,7 +95,7 @@ describe('auto-updater module structure', () => {
     const modulePath = path.resolve(__dirname, '..', 'electron', 'auto-updater.cjs');
     const src = fs.readFileSync(modulePath, 'utf8');
 
-    assert.ok(src.includes('zeus:auto-updater:event'), 'should send events via IPC');
+    assert.ok(src.includes('hermes:auto-updater:event'), 'should send events via IPC');
     assert.ok(src.includes('webContents.send'), 'should use webContents.send');
   });
 });

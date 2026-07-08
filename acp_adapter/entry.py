@@ -116,7 +116,7 @@ def _load_env() -> None:
 def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="hermes-acp",
-        description="Run Zeus as an ACP stdio server.",
+        description="Run Hermes as an ACP stdio server.",
     )
     parser.add_argument("--version", action="store_true", help="Print Hermes version and exit")
     parser.add_argument(
@@ -156,7 +156,7 @@ def _run_check() -> None:
     import acp  # noqa: F401
     from acp_adapter.server import HermesACPAgent  # noqa: F401
 
-    print("Zeus ACP check OK")
+    print("Hermes ACP check OK")
 
 
 def _run_setup() -> None:

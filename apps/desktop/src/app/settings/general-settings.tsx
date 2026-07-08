@@ -1,11 +1,11 @@
-// general-settings.tsx — General settings tab for Zeus desktop.
+// general-settings.tsx — General settings tab for Hermes desktop.
 //
 // Houses app-wide preferences:
 //   - Auto-launch on startup
 //   - Start minimized to tray
 //   - Close to tray (vs fully quit)
 //   - Minimize to tray (vs taskbar)
-//   - Wake word ("Hey Zeus") enable/disable
+//   - Wake word ("Hey Hermes") enable/disable
 //   - Automatic update checks
 
 import { useStore } from '@nanostores/react'
@@ -99,18 +99,18 @@ export function GeneralSettings() {
   // Check actual wake word listener status and dependency availability on mount
   useEffect(() => {
     const desktop = window.hermesDesktop as any
-    if (!desktop?.zeus?.getWakeWordStatus) return
-    desktop.zeus.getWakeWordStatus().then((status: { listening: boolean }) => {
+    if (!desktop?.hermes?.getWakeWordStatus) return
+    desktop.hermes.getWakeWordStatus().then((status: { listening: boolean }) => {
       setWakeWordListening(status.listening)
     })
-    if (desktop.zeus.checkWakeWordDeps) {
-      desktop.zeus.checkWakeWordDeps().then((deps: { available: boolean; missing: string[] }) => {
+    if (desktop.hermes.checkWakeWordDeps) {
+      desktop.hermes.checkWakeWordDeps().then((deps: { available: boolean; missing: string[] }) => {
         if (!deps.available) setWakeWordDepsMissing(deps.missing)
       })
     }
     // Listen for runtime errors from the wake word process
-    if (desktop.zeus.onWakeWordError) {
-      const unsubscribe = desktop.zeus.onWakeWordError((msg: string) => {
+    if (desktop.hermes.onWakeWordError) {
+      const unsubscribe = desktop.hermes.onWakeWordError((msg: string) => {
         setWakeWordError(msg)
       })
       return unsubscribe

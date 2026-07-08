@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# GitHub environment detection helper for Zeus skills.
+# GitHub environment detection helper for Hermes skills.
 #
 # Usage (via terminal tool):
 #   source skills/github/github-auth/scripts/gh-env.sh

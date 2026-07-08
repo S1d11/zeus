@@ -179,8 +179,8 @@ declare global {
         // returns the most-installed themes.
         searchMarketplace: (query: string) => Promise<DesktopMarketplaceSearchItem[]>
       }
-      // Zeus: wake word, tray, and binary auto-updater controls
-      zeus: {
+      // Hermes: wake word, tray, and binary auto-updater controls
+      hermes: {
         toggleWakeWord: () => Promise<{ enabled: boolean; error?: string }>
         getWakeWordStatus: () => Promise<{ listening: boolean }>
         checkWakeWordDeps: () => Promise<{ available: boolean; pythonPath: string | null; missing: string[] }>

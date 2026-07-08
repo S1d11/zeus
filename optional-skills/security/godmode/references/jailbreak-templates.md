@@ -89,7 +89,7 @@ Z={QUERY}
 
 ---
 
-## Using with Zeus
+## Using with Hermes
 
 ### As ephemeral system prompt (config.yaml)
 

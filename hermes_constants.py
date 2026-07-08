@@ -1,4 +1,4 @@
-"""Shared constants for Zeus.
+"""Shared constants for Hermes.
 
 Import-safe module with no dependencies — can be imported from anywhere
 without risk of circular imports.

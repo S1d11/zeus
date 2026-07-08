@@ -155,7 +155,7 @@
     "publish": {
       "provider": "github",
       "owner": "S1d11",
-      "repo": "zeus",
+      "repo": "hermes",
       "releaseType": "release"
     },
     "protocols": [

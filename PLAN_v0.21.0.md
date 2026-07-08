@@ -1,4 +1,4 @@
-# Zeus v0.21.0 — Comprehensive Fix & Improvement Plan
+# Hermes v0.21.0 — Comprehensive Fix & Improvement Plan
 
 > **Status:** PLANNING — No code written yet. Awaiting approval.
 > **Scope:** 5 user-reported issues + 39 additional issues discovered during investigation.
@@ -12,11 +12,11 @@ Five parallel investigations were conducted across the codebase:
 
 | # | Investigation | Key Finding |
 |---|---|---|
-| 1 | README files | All 43 READMEs say "Hermes", zero say "Zeus". 5,452 "Hermes" references in website docs. |
+| 1 | README files | All 43 READMEs say "Hermes", zero say "Hermes". 5,452 "Hermes" references in website docs. |
 | 2 | AI identity | Hardcoded fallback identity in `agent/prompt_builder.py` still says "Hermes Agent". This is why the AI thinks it's Hermes. |
 | 3 | MCP integration | OAuth not available in desktop app (CLI-only). API key entry is manual. 48 catalog servers, 7 use OAuth, 35+ use API keys. |
 | 4 | Version display | `$desktopVersion` atom never populated on app boot. No refresh after auto-update completes. |
-| 5 | Desktop UI branding | Locale strings already say "Zeus". README.md still says "Hermes Desktop". Internal type names use "Hermes" (acceptable). |
+| 5 | Desktop UI branding | Locale strings already say "Hermes". README.md still says "Hermes Desktop". Internal type names use "Hermes" (acceptable). |
 | 6 | Deep "Hermes Agent" string search | Found **22 additional user-facing "Hermes Agent" strings** in CLI banner, `/version` command, `--version` output, skin engine (6 skins), setup wizard, uninstaller, FastAPI title, gateway service name, MCP OAuth client name, Matrix device name, OpenRouter headers, Discord/Telegram bot names, and 20+ test assertions. |
 
 ---
@@ -25,16 +25,16 @@ Five parallel investigations were conducted across the codebase:
 
 | ID | Category | Priority | Title | Files Affected | Effort | Risk |
 |----|----------|----------|-------|----------------|--------|------|
-| **F1** | AI Identity | CRITICAL | Replace hardcoded fallback identity "Hermes Agent" → "Zeus" | `agent/prompt_builder.py:123-131` | Low | Low |
-| **F2** | AI Identity | CRITICAL | Replace help guidance "You run on Hermes Agent" → "Zeus" | `agent/prompt_builder.py:133-142` | Low | Low |
-| **F3** | AI Identity | CRITICAL | Replace default SOUL.md template "Hermes Agent" → "Zeus" | `hermes_cli/default_soul.py:3-11` | Low | Low |
-| **F4** | AI Identity | HIGH | Update docker/SOUL.md "Hermes Agent" → "Zeus" | `docker/SOUL.md` | Low | Low |
-| **F5** | AI Identity | HIGH | Update install.sh SOUL.md heredoc → "Zeus" | `scripts/install.sh:1790` | Low | Low |
-| **F6** | AI Identity | HIGH | Update install.ps1 SOUL.md content → "Zeus" | `scripts/install.ps1:2067` | Low | Low |
-| **F7** | AI Identity | HIGH | Update doctor.py SOUL.md template → "Zeus" | `hermes_cli/doctor.py:1163-1167` | Low | Low |
-| **F8** | AI Identity | MEDIUM | Update legacy SOUL template strings for "Hermes" → "Zeus" | `hermes_cli/default_soul.py:23-56` | Low | Medium |
-| **F9** | Branding | HIGH | Rewrite main README.md: "Hermes Agent" → "Zeus" | `README.md` | Medium | Low |
-| **F10** | Branding | HIGH | Rewrite desktop README.md: "Hermes Desktop" → "Zeus Desktop" | `apps/desktop/README.md` | Medium | Low |
+| **F1** | AI Identity | CRITICAL | Replace hardcoded fallback identity "Hermes Agent" → "Hermes" | `agent/prompt_builder.py:123-131` | Low | Low |
+| **F2** | AI Identity | CRITICAL | Replace help guidance "You run on Hermes Agent" → "Hermes" | `agent/prompt_builder.py:133-142` | Low | Low |
+| **F3** | AI Identity | CRITICAL | Replace default SOUL.md template "Hermes Agent" → "Hermes" | `hermes_cli/default_soul.py:3-11` | Low | Low |
+| **F4** | AI Identity | HIGH | Update docker/SOUL.md "Hermes Agent" → "Hermes" | `docker/SOUL.md` | Low | Low |
+| **F5** | AI Identity | HIGH | Update install.sh SOUL.md heredoc → "Hermes" | `scripts/install.sh:1790` | Low | Low |
+| **F6** | AI Identity | HIGH | Update install.ps1 SOUL.md content → "Hermes" | `scripts/install.ps1:2067` | Low | Low |
+| **F7** | AI Identity | HIGH | Update doctor.py SOUL.md template → "Hermes" | `hermes_cli/doctor.py:1163-1167` | Low | Low |
+| **F8** | AI Identity | MEDIUM | Update legacy SOUL template strings for "Hermes" → "Hermes" | `hermes_cli/default_soul.py:23-56` | Low | Medium |
+| **F9** | Branding | HIGH | Rewrite main README.md: "Hermes Agent" → "Hermes" | `README.md` | Medium | Low |
+| **F10** | Branding | HIGH | Rewrite desktop README.md: "Hermes Desktop" → "Hermes Desktop" | `apps/desktop/README.md` | Medium | Low |
 | **F11** | Branding | MEDIUM | Update translated READMEs (es, zh-CN, ur-pk) | `README.es.md`, `README.zh-CN.md`, `README.ur-pk.md` | Medium | Low |
 | **F12** | Branding | MEDIUM | Update subdirectory READMEs (providers, docs, plugins, skills) | ~35 README files | High | Low |
 | **F13** | Branding | LOW | Update website Docusaurus docs (662 .md files, 5,452 "Hermes" refs) | `website/docs/**` | Very High | Low |
@@ -50,31 +50,31 @@ Five parallel investigations were conducted across the codebase:
 | **F23** | MCP: UX | MEDIUM | Surface dynamic tool refresh failures as notifications | `tools/mcp_tool.py`, `tui_gateway/server.py` | Medium | Medium |
 | **F24** | MCP: UX | LOW | Add "Retry Now" button to bypass circuit breaker cooldown | `apps/desktop/src/app/connections/index.tsx`, `hermes_cli/web_server.py` | Medium | Medium |
 | **F25** | MCP: OAuth | MEDIUM | Add device code flow support for headless/desktop OAuth | `tools/mcp_oauth.py`, `hermes_cli/web_server.py` | High | Medium |
-| **F26** | Other | MEDIUM | Update AGENTS.md references from "Hermes" to "Zeus" | `AGENTS.md` | Medium | Low |
+| **F26** | Other | MEDIUM | Update AGENTS.md references from "Hermes" to "Hermes" | `AGENTS.md` | Medium | Low |
 | **F27** | Other | LOW | Update user-facing bot descriptions (Slack, Discord, IRC) | `plugins/platforms/slack/adapter.py`, `plugins/platforms/discord/adapter.py`, `plugins/platforms/irc/adapter.py` | Low | Low |
 | **F28** | Other | LOW | Update user-facing uninstall messages | `hermes_cli/uninstall.py` | Low | Low |
 | **F29** | Release | — | Version bump to 0.21.0, build NSIS, create GitHub release | `package.json`, `hermes_cli/__init__.py` | Low | Low |
-| **F30** | Hermes→Zeus | CRITICAL | Fix `/version` slash command: `format_banner_version_label()` says "Hermes Agent v..." | `hermes_cli/banner.py:509` | Low | Low |
-| **F31** | Hermes→Zeus | CRITICAL | Fix `hermes --version` CLI output: "Hermes Agent v..." | `hermes_cli/main.py:231` | Low | Low |
-| **F32** | Hermes→Zeus | CRITICAL | Fix CLI startup banner: "Hermes Agent v..." + "⚕ NOUS HERMES" | `cli.py:3243-3254` | Low | Low |
-| **F33** | Hermes→Zeus | CRITICAL | Fix CLI welcome text: "Welcome to Hermes Agent!" | `cli.py:12608,12611` | Low | Low |
-| **F34** | Hermes→Zeus | HIGH | Fix skin engine defaults: all 6 skins say "Hermes Agent" / "⚕ Hermes" | `hermes_cli/skin_engine.py:190,301,340,377,414` (+welcome+response_label) | Low | Low |
-| **F35** | Hermes→Zeus | HIGH | Fix CLI suspend message: "Hermes Agent has been suspended" | `cli.py:13455` | Low | Low |
-| **F36** | Hermes→Zeus | HIGH | Fix FastAPI title: `FastAPI(title="Hermes Agent")` | `hermes_cli/web_server.py:249` | Low | Low |
-| **F37** | Hermes→Zeus | HIGH | Fix Telegram onboarding bot_name default: "Hermes Agent" | `hermes_cli/web_server.py:5554` | Low | Low |
-| **F38** | Hermes→Zeus | HIGH | Fix setup wizard banner: "⚕ Hermes Agent Setup Wizard" | `hermes_cli/setup.py:2817,2828` | Low | Low |
-| **F39** | Hermes→Zeus | HIGH | Fix uninstaller banner: "⚕ Hermes Agent Uninstaller" | `hermes_cli/uninstall.py:606,884` | Low | Low |
-| **F40** | Hermes→Zeus | HIGH | Fix gateway service description: "Hermes Agent Gateway" | `hermes_cli/gateway.py:1662` | Low | Low |
-| **F41** | Hermes→Zeus | MEDIUM | Fix MCP OAuth client_name default: "Hermes Agent" | `tools/mcp_oauth.py:739` | Low | Low |
-| **F42** | Hermes→Zeus | MEDIUM | Fix Matrix device_name: "Hermes Agent" | `plugins/platforms/matrix/adapter.py:1209` | Low | Low |
-| **F43** | Hermes→Zeus | MEDIUM | Fix OpenRouter attribution headers: X-Title "Hermes Agent", HTTP-Referer | `agent/auxiliary_client.py:404-405` | Low | Low |
-| **F44** | Hermes→Zeus | MEDIUM | Fix CLI response label default: "⚕ Hermes" | `hermes_cli/cli_commands_mixin.py:1645` | Low | Low |
-| **F45** | Hermes→Zeus | MEDIUM | Fix WhatsApp/Telegram reply header default: "⚕ *Hermes Agent*" | `hermes_cli/config.py:2309` | Low | Low |
-| **F46** | Hermes→Zeus | LOW | Fix CLI /update message: "⚕ Updating Hermes Agent..." | `hermes_cli/main.py:8953` | Low | Low |
-| **F47** | Hermes→Zeus | LOW | Fix Discord /update command description | `plugins/platforms/discord/adapter.py:3707` | Low | Low |
-| **F48** | Hermes→Zeus | LOW | Fix Copilot ACP client title: "Hermes Agent" | `agent/copilot_acp_client.py:559` | Low | Low |
-| **F49** | Hermes→Zeus | LOW | Fix agent_init error message: "by Hermes Agent" | `agent/agent_init.py:1678` | Low | Low |
-| **F50** | Hermes→Zeus | LOW | Fix model_switch warning: "for use with Hermes Agent" | `hermes_cli/model_switch.py:78` | Low | Low |
+| **F30** | Hermes→Hermes | CRITICAL | Fix `/version` slash command: `format_banner_version_label()` says "Hermes Agent v..." | `hermes_cli/banner.py:509` | Low | Low |
+| **F31** | Hermes→Hermes | CRITICAL | Fix `hermes --version` CLI output: "Hermes Agent v..." | `hermes_cli/main.py:231` | Low | Low |
+| **F32** | Hermes→Hermes | CRITICAL | Fix CLI startup banner: "Hermes Agent v..." + "⚕ NOUS HERMES" | `cli.py:3243-3254` | Low | Low |
+| **F33** | Hermes→Hermes | CRITICAL | Fix CLI welcome text: "Welcome to Hermes Agent!" | `cli.py:12608,12611` | Low | Low |
+| **F34** | Hermes→Hermes | HIGH | Fix skin engine defaults: all 6 skins say "Hermes Agent" / "⚕ Hermes" | `hermes_cli/skin_engine.py:190,301,340,377,414` (+welcome+response_label) | Low | Low |
+| **F35** | Hermes→Hermes | HIGH | Fix CLI suspend message: "Hermes Agent has been suspended" | `cli.py:13455` | Low | Low |
+| **F36** | Hermes→Hermes | HIGH | Fix FastAPI title: `FastAPI(title="Hermes Agent")` | `hermes_cli/web_server.py:249` | Low | Low |
+| **F37** | Hermes→Hermes | HIGH | Fix Telegram onboarding bot_name default: "Hermes Agent" | `hermes_cli/web_server.py:5554` | Low | Low |
+| **F38** | Hermes→Hermes | HIGH | Fix setup wizard banner: "⚕ Hermes Agent Setup Wizard" | `hermes_cli/setup.py:2817,2828` | Low | Low |
+| **F39** | Hermes→Hermes | HIGH | Fix uninstaller banner: "⚕ Hermes Agent Uninstaller" | `hermes_cli/uninstall.py:606,884` | Low | Low |
+| **F40** | Hermes→Hermes | HIGH | Fix gateway service description: "Hermes Agent Gateway" | `hermes_cli/gateway.py:1662` | Low | Low |
+| **F41** | Hermes→Hermes | MEDIUM | Fix MCP OAuth client_name default: "Hermes Agent" | `tools/mcp_oauth.py:739` | Low | Low |
+| **F42** | Hermes→Hermes | MEDIUM | Fix Matrix device_name: "Hermes Agent" | `plugins/platforms/matrix/adapter.py:1209` | Low | Low |
+| **F43** | Hermes→Hermes | MEDIUM | Fix OpenRouter attribution headers: X-Title "Hermes Agent", HTTP-Referer | `agent/auxiliary_client.py:404-405` | Low | Low |
+| **F44** | Hermes→Hermes | MEDIUM | Fix CLI response label default: "⚕ Hermes" | `hermes_cli/cli_commands_mixin.py:1645` | Low | Low |
+| **F45** | Hermes→Hermes | MEDIUM | Fix WhatsApp/Telegram reply header default: "⚕ *Hermes Agent*" | `hermes_cli/config.py:2309` | Low | Low |
+| **F46** | Hermes→Hermes | LOW | Fix CLI /update message: "⚕ Updating Hermes Agent..." | `hermes_cli/main.py:8953` | Low | Low |
+| **F47** | Hermes→Hermes | LOW | Fix Discord /update command description | `plugins/platforms/discord/adapter.py:3707` | Low | Low |
+| **F48** | Hermes→Hermes | LOW | Fix Copilot ACP client title: "Hermes Agent" | `agent/copilot_acp_client.py:559` | Low | Low |
+| **F49** | Hermes→Hermes | LOW | Fix agent_init error message: "by Hermes Agent" | `agent/agent_init.py:1678` | Low | Low |
+| **F50** | Hermes→Hermes | LOW | Fix model_switch warning: "for use with Hermes Agent" | `hermes_cli/model_switch.py:78` | Low | Low |
 | **F51** | Tests | LOW | Update test assertions that check for "Hermes Agent" string | `tests/run_agent/test_run_agent.py:5813,5840`, `tests/hermes_cli/test_tui_resume_flow.py:409`, `tests/agent/test_prompt_builder.py:703`, `tests/cli/test_cli_init.py` (8 matches) | Medium | Low |
 
 ---
@@ -83,48 +83,48 @@ Five parallel investigations were conducted across the codebase:
 
 ### CATEGORY 1: AI Identity — "The AI thinks it's Hermes Agent"
 
-**Root Cause:** The user's `SOUL.md` at `~/.hermes/SOUL.md` was manually updated to "Zeus", but when SOUL.md fails to load, is skipped (cron mode, `skip_context_files`), or on a fresh install, the agent falls back to `DEFAULT_AGENT_IDENTITY` in `agent/prompt_builder.py` which still says "You are Hermes Agent, an intelligent AI assistant created by Nous Research."
+**Root Cause:** The user's `SOUL.md` at `~/.hermes/SOUL.md` was manually updated to "Hermes", but when SOUL.md fails to load, is skipped (cron mode, `skip_context_files`), or on a fresh install, the agent falls back to `DEFAULT_AGENT_IDENTITY` in `agent/prompt_builder.py` which still says "You are Hermes Agent, an intelligent AI assistant created by Nous Research."
 
 #### F1 — Replace DEFAULT_AGENT_IDENTITY (CRITICAL)
 - **File:** `agent/prompt_builder.py` lines 123-131
-- **Change:** Replace "Hermes Agent" → "Zeus" and "created by Nous Research" → "created by Zeus" (or remove the creator attribution per your preference)
+- **Change:** Replace "Hermes Agent" → "Hermes" and "created by Nous Research" → "created by Hermes" (or remove the creator attribution per your preference)
 - **New string:**
   ```
-  You are Zeus, an intelligent AI assistant. You are helpful, knowledgeable, and direct...
+  You are Hermes, an intelligent AI assistant. You are helpful, knowledgeable, and direct...
   ```
 - **Why critical:** This is THE string the AI sees when SOUL.md is not loaded. This is the #1 reason the AI still calls itself Hermes.
 
 #### F2 — Replace HERMES_AGENT_HELP_GUIDANCE (CRITICAL)
 - **File:** `agent/prompt_builder.py` lines 133-142
-- **Change:** Replace "You run on Hermes Agent (by Nous Research)" → "You run on Zeus". Replace "Hermes itself" → "Zeus itself". Update docs URL if changing.
+- **Change:** Replace "You run on Hermes Agent (by Nous Research)" → "You run on Hermes". Replace "Hermes itself" → "Hermes itself". Update docs URL if changing.
 - **Why critical:** This tells the AI what platform it's running on. If it says "Hermes Agent", the AI will tell users "I am Hermes Agent".
 
 #### F3 — Replace DEFAULT_SOUL_MD (CRITICAL)
 - **File:** `hermes_cli/default_soul.py` lines 3-11
-- **Change:** Replace "Hermes Agent" → "Zeus" in the default SOUL.md template
+- **Change:** Replace "Hermes Agent" → "Hermes" in the default SOUL.md template
 - **Why critical:** This is what gets written to `~/.hermes/SOUL.md` on fresh installs and repairs. New users will get "Hermes Agent" in their SOUL.md.
 
 #### F4 — Update docker/SOUL.md (HIGH)
 - **File:** `docker/SOUL.md`
-- **Change:** Replace "Hermes Agent" → "Zeus"
+- **Change:** Replace "Hermes Agent" → "Hermes"
 - **Why:** Docker deployments use this file as the identity.
 
 #### F5 — Update install.sh SOUL.md heredoc (HIGH)
 - **File:** `scripts/install.sh` line 1790
-- **Change:** Replace "Hermes Agent" → "Zeus" in the heredoc that writes SOUL.md
+- **Change:** Replace "Hermes Agent" → "Hermes" in the heredoc that writes SOUL.md
 
 #### F6 — Update install.ps1 SOUL.md content (HIGH)
 - **File:** `scripts/install.ps1` line 2067
-- **Change:** Replace "Hermes Agent" → "Zeus" in the PowerShell here-string
+- **Change:** Replace "Hermes Agent" → "Hermes" in the PowerShell here-string
 
 #### F7 — Update doctor.py SOUL.md template (HIGH)
 - **File:** `hermes_cli/doctor.py` lines 1163-1167
-- **Change:** Replace "# Hermes Agent Persona" → "# Zeus Persona", "how Hermes communicates" → "how Zeus communicates", "You are Hermes" → "You are Zeus"
+- **Change:** Replace "# Hermes Agent Persona" → "# Hermes Persona", "how Hermes communicates" → "how Hermes communicates", "You are Hermes" → "You are Hermes"
 
 #### F8 — Update legacy SOUL template strings (MEDIUM)
 - **File:** `hermes_cli/default_soul.py` lines 23-56
-- **Change:** Update `_LEGACY_TEMPLATE_SOULS` strings to say "Zeus" instead of "Hermes Agent". This is needed so `is_legacy_template_soul()` correctly identifies old templates that should be upgraded to the new Zeus default.
-- **Risk:** Medium — need to ensure the legacy detection logic still works for users who have old "Hermes" template SOUL.md files. May need to ADD Zeus variants while keeping Hermes variants for backward compatibility detection.
+- **Change:** Update `_LEGACY_TEMPLATE_SOULS` strings to say "Hermes" instead of "Hermes Agent". This is needed so `is_legacy_template_soul()` correctly identifies old templates that should be upgraded to the new Hermes default.
+- **Risk:** Medium — need to ensure the legacy detection logic still works for users who have old "Hermes" template SOUL.md files. May need to ADD Hermes variants while keeping Hermes variants for backward compatibility detection.
 
 ---
 
@@ -133,27 +133,27 @@ Five parallel investigations were conducted across the codebase:
 #### F9 — Rewrite main README.md (HIGH)
 - **File:** `README.md`
 - **Changes:**
-  - Line 2: `alt="Hermes Agent"` → `alt="Zeus"`
-  - Line 5: `# Hermes Agent ☤` → `# Zeus`
-  - Line 7: All "Hermes Agent" / "Hermes Desktop" links → "Zeus" / "Zeus Desktop"
+  - Line 2: `alt="Hermes Agent"` → `alt="Hermes"`
+  - Line 5: `# Hermes Agent ☤` → `# Hermes`
+  - Line 7: All "Hermes Agent" / "Hermes Desktop" links → "Hermes" / "Hermes Desktop"
   - Line 10: Badge text `hermes-agent.nousresearch.com` → update if domain is changing
   - Line 12: GitHub URL `NousResearch/hermes-agent` → `S1d11/zeus`
   - Line 19: "built by Nous Research" → keep or change per your preference
   - Line 21: `hermes model` → keep CLI command name (backward compat) OR rename
-  - All `hermes` CLI command references → decide: keep as `hermes` for backward compat or rename to `zeus`
+  - All `hermes` CLI command references → decide: keep as `hermes` for backward compat or rename to `hermes`
   - All install URLs → update to new domain/repo if changing
-- **Decision needed:** Should CLI commands (`hermes`, `hermes model`, `hermes mcp`) be renamed to `zeus`? This is a breaking change for existing users.
+- **Decision needed:** Should CLI commands (`hermes`, `hermes model`, `hermes mcp`) be renamed to `hermes`? This is a breaking change for existing users.
 
 #### F10 — Rewrite desktop README.md (HIGH)
 - **File:** `apps/desktop/README.md`
 - **Changes:**
-  - Line 1: `# Hermes Desktop ☤` → `# Zeus Desktop`
-  - Line 10: "Hermes Agent" → "Zeus"
-  - Line 13: "Hermes surface" → "Zeus surface"
-  - Line 16: "Talk to Hermes" → "Talk to Zeus"
-  - Line 25: "Install with Hermes" → "Install with Zeus"
-  - Line 33: "Hermes walks you through" → "Zeus walks you through"
-  - Line 37: "Hermes Desktop website" → "Zeus Desktop website"
+  - Line 1: `# Hermes Desktop ☤` → `# Hermes Desktop`
+  - Line 10: "Hermes Agent" → "Hermes"
+  - Line 13: "Hermes surface" → "Hermes surface"
+  - Line 16: "Talk to Hermes" → "Talk to Hermes"
+  - Line 25: "Install with Hermes" → "Install with Hermes"
+  - Line 33: "Hermes walks you through" → "Hermes walks you through"
+  - Line 37: "Hermes Desktop website" → "Hermes Desktop website"
   - Keep CLI command references (`hermes desktop`, `hermes update`) as-is unless renaming CLI
 
 #### F11 — Update translated READMEs (MEDIUM)
@@ -162,7 +162,7 @@ Five parallel investigations were conducted across the codebase:
 
 #### F12 — Update subdirectory READMEs (MEDIUM)
 - **Files:** ~35 README files across `docs/`, `plugins/`, `providers/`, `skills/`, `ui-tui/`, `web/`, `packaging/`
-- **Changes:** Replace "Hermes" → "Zeus" in user-facing text. Keep technical identifiers (paths, env vars, package names) as-is.
+- **Changes:** Replace "Hermes" → "Hermes" in user-facing text. Keep technical identifiers (paths, env vars, package names) as-is.
 
 #### F13 — Update website Docusaurus docs (LOW — separate effort)
 - **Files:** 662 `.md` files in `website/docs/` with 5,452 "Hermes" references
@@ -298,18 +298,18 @@ Five parallel investigations were conducted across the codebase:
 
 ### CATEGORY 5: User-Facing "Hermes Agent" Strings (NEW — found in deeper search)
 
-After a deeper search, I found **22 additional user-facing places** where the app says "Hermes Agent" instead of "Zeus". These are NOT in the AI system prompt — they're in the CLI banner, slash commands, web UI, setup wizard, uninstaller, messaging platforms, and HTTP headers. Every one of these is something the user sees.
+After a deeper search, I found **22 additional user-facing places** where the app says "Hermes Agent" instead of "Hermes". These are NOT in the AI system prompt — they're in the CLI banner, slash commands, web UI, setup wizard, uninstaller, messaging platforms, and HTTP headers. Every one of these is something the user sees.
 
 #### F30 — Fix `/version` slash command (CRITICAL)
 - **File:** `hermes_cli/banner.py` line 509
 - **Current:** `base = f"Hermes Agent v{VERSION} ({RELEASE_DATE})"`
-- **Fix:** `base = f"Zeus v{VERSION} ({RELEASE_DATE})"`
-- **Why:** This is what `/version` returns in both the CLI and the desktop app's chat. The desktop slash command list already says "Show Zeus Agent version" but the backend returns "Hermes Agent v...".
+- **Fix:** `base = f"Hermes v{VERSION} ({RELEASE_DATE})"`
+- **Why:** This is what `/version` returns in both the CLI and the desktop app's chat. The desktop slash command list already says "Show Hermes Agent version" but the backend returns "Hermes Agent v...".
 
 #### F31 — Fix `hermes --version` CLI output (CRITICAL)
 - **File:** `hermes_cli/main.py` line 231
 - **Current:** `print(f"Hermes Agent v{__version__} ({__release_date__})")`
-- **Fix:** `print(f"Zeus v{__version__} ({__release_date__})")`
+- **Fix:** `print(f"Hermes v{__version__} ({__release_date__})")`
 
 #### F32 — Fix CLI startup banner (CRITICAL)
 - **File:** `cli.py` lines 3243-3254
@@ -318,14 +318,14 @@ After a deeper search, I found **22 additional user-facing places** where the ap
   - Line 3244: `tiny_line = "⚕ NOUS HERMES"`
   - Line 3254: `version_line = f"Hermes Agent v{_version} ({_release_date})"`
 - **Fix:**
-  - `line1 = "Zeus - AI Agent"` (or similar)
-  - `tiny_line = "Zeus"`
-  - `version_line = f"Zeus v{_version} ({_release_date})"`
+  - `line1 = "Hermes - AI Agent"` (or similar)
+  - `tiny_line = "Hermes"`
+  - `version_line = f"Hermes v{_version} ({_release_date})"`
 
 #### F33 — Fix CLI welcome text (CRITICAL)
 - **File:** `cli.py` lines 12608, 12611
 - **Current:** `"Welcome to Hermes Agent! Type your message or /help for commands."`
-- **Fix:** `"Welcome to Zeus! Type your message or /help for commands."`
+- **Fix:** `"Welcome to Hermes! Type your message or /help for commands."`
 
 #### F34 — Fix skin engine defaults for all 6 built-in skins (HIGH)
 - **File:** `hermes_cli/skin_engine.py`
@@ -339,24 +339,24 @@ After a deeper search, I found **22 additional user-facing places** where the ap
       ...
   }
   ```
-- **Fix:** Replace all `"Hermes Agent"` → `"Zeus"`, all `"⚕ Hermes"` → `"Zeus"`, all welcome messages → `"Welcome to Zeus! ..."` across ALL 6 skins (default, ares, mono, slate, daylight, warm-lightmode) + the docstring example
-- **Also fix line 101:** `"default" — Classic Hermes gold/kawaii` → `"default" — Classic Zeus gold/kawaii`
+- **Fix:** Replace all `"Hermes Agent"` → `"Hermes"`, all `"⚕ Hermes"` → `"Hermes"`, all welcome messages → `"Welcome to Hermes! ..."` across ALL 6 skins (default, ares, mono, slate, daylight, warm-lightmode) + the docstring example
+- **Also fix line 101:** `"default" — Classic Hermes gold/kawaii` → `"default" — Classic Hermes gold/kawaii`
 
 #### F35 — Fix CLI suspend message (HIGH)
 - **File:** `cli.py` line 13455
 - **Current:** `agent_name = get_active_skin().get_branding("agent_name", "Hermes Agent")`
-- **Fix:** Change the fallback default to `"Zeus"` (F34 fixes the skin value, but the fallback string here also needs updating)
+- **Fix:** Change the fallback default to `"Hermes"` (F34 fixes the skin value, but the fallback string here also needs updating)
 
 #### F36 — Fix FastAPI API title (HIGH)
 - **File:** `hermes_cli/web_server.py` line 249
 - **Current:** `app = FastAPI(title="Hermes Agent", version=__version__, ...)`
-- **Fix:** `app = FastAPI(title="Zeus", version=__version__, ...)`
+- **Fix:** `app = FastAPI(title="Hermes", version=__version__, ...)`
 - **Why:** This shows in the Swagger/OpenAPI docs at `/docs` and in API metadata
 
 #### F37 — Fix Telegram onboarding bot_name default (HIGH)
 - **File:** `hermes_cli/web_server.py` line 5554
 - **Current:** `bot_name = (body.bot_name or "Hermes Agent").strip() or "Hermes Agent"`
-- **Fix:** `bot_name = (body.bot_name or "Zeus").strip() or "Zeus"`
+- **Fix:** `bot_name = (body.bot_name or "Hermes").strip() or "Hermes"`
 
 #### F38 — Fix setup wizard banner (HIGH)
 - **File:** `hermes_cli/setup.py` lines 2817, 2828
@@ -364,8 +364,8 @@ After a deeper search, I found **22 additional user-facing places** where the ap
   - `"│             ⚕ Hermes Agent Setup Wizard                │"`
   - `"│  Let's configure your Hermes Agent installation.       │"`
 - **Fix:**
-  - `"│             Zeus Setup Wizard                         │"`
-  - `"│  Let's configure your Zeus installation.              │"`
+  - `"│             Hermes Setup Wizard                         │"`
+  - `"│  Let's configure your Hermes installation.              │"`
 
 #### F39 — Fix uninstaller banner and goodbye message (HIGH)
 - **File:** `hermes_cli/uninstall.py` lines 606, 884
@@ -373,24 +373,24 @@ After a deeper search, I found **22 additional user-facing places** where the ap
   - `"│            ⚕ Hermes Agent Uninstaller                  │"`
   - `"Thank you for using Hermes Agent! ⚕"`
 - **Fix:**
-  - `"│            Zeus Uninstaller                            │"`
-  - `"Thank you for using Zeus!"`
+  - `"│            Hermes Uninstaller                            │"`
+  - `"Thank you for using Hermes!"`
 
 #### F40 — Fix gateway Windows service description (HIGH)
 - **File:** `hermes_cli/gateway.py` line 1662
 - **Current:** `SERVICE_DESCRIPTION = "Hermes Agent Gateway - Messaging Platform Integration"`
-- **Fix:** `SERVICE_DESCRIPTION = "Zeus Gateway - Messaging Platform Integration"`
+- **Fix:** `SERVICE_DESCRIPTION = "Hermes Gateway - Messaging Platform Integration"`
 
 #### F41 — Fix MCP OAuth client_name default (MEDIUM)
 - **File:** `tools/mcp_oauth.py` line 739
 - **Current:** `client_name = cfg.get("client_name", "Hermes Agent")`
-- **Fix:** `client_name = cfg.get("client_name", "Zeus")`
+- **Fix:** `client_name = cfg.get("client_name", "Hermes")`
 - **Why:** This is the name shown to users on the OAuth consent screen (e.g., "Hermes Agent wants to access your GitHub")
 
 #### F42 — Fix Matrix device display name (MEDIUM)
 - **File:** `plugins/platforms/matrix/adapter.py` line 1209
 - **Current:** `device_name="Hermes Agent"`
-- **Fix:** `device_name="Zeus"`
+- **Fix:** `device_name="Hermes"`
 - **Why:** Shows in Matrix's "Devices" / "Sessions" list
 
 #### F43 — Fix OpenRouter HTTP attribution headers (MEDIUM)
@@ -400,45 +400,45 @@ After a deeper search, I found **22 additional user-facing places** where the ap
   - `"X-Title": "Hermes Agent"`
 - **Fix:**
   - `"HTTP-Referer": "https://github.com/S1d11/zeus"` (or your new URL)
-  - `"X-Title": "Zeus"`
+  - `"X-Title": "Hermes"`
 - **Why:** Shows in OpenRouter dashboard as the app name making requests
 
 #### F44 — Fix CLI response label default (MEDIUM)
 - **File:** `hermes_cli/cli_commands_mixin.py` line 1645
 - **Current:** `label = _skin.get_branding("response_label", "⚕ Hermes")`
-- **Fix:** `label = _skin.get_branding("response_label", "Zeus")`
+- **Fix:** `label = _skin.get_branding("response_label", "Hermes")`
 - **Why:** This is the prefix shown before each AI response in the CLI
 
 #### F45 — Fix WhatsApp/Telegram reply header (MEDIUM)
 - **File:** `hermes_cli/config.py` line 2309
 - **Current:** `# Default (None) uses the built-in "⚕ *Hermes Agent*" header.`
-- **Fix:** Update the comment AND the actual default header logic to use "Zeus"
+- **Fix:** Update the comment AND the actual default header logic to use "Hermes"
 - **Also check:** Where the actual default header string is constructed (search for the header construction code)
 
 #### F46 — Fix CLI /update message (LOW)
 - **File:** `hermes_cli/main.py` line 8953
 - **Current:** `print("⚕ Updating Hermes Agent...")`
-- **Fix:** `print("Updating Zeus...")`
+- **Fix:** `print("Updating Hermes...")`
 
 #### F47 — Fix Discord /update command (LOW)
 - **File:** `plugins/platforms/discord/adapter.py` line 3707
 - **Current:** `description="Update Hermes Agent to the latest version"`
-- **Fix:** `description="Update Zeus to the latest version"`
+- **Fix:** `description="Update Hermes to the latest version"`
 
 #### F48 — Fix Copilot ACP client title (LOW)
 - **File:** `agent/copilot_acp_client.py` line 559
 - **Current:** `"title": "Hermes Agent"`
-- **Fix:** `"title": "Zeus"`
+- **Fix:** `"title": "Hermes"`
 
 #### F49 — Fix agent_init error message (LOW)
 - **File:** `agent/agent_init.py` line 1678
 - **Current:** `f"by Hermes Agent.  Choose a model with at least "`
-- **Fix:** `f"by Zeus.  Choose a model with at least "`
+- **Fix:** `f"by Hermes.  Choose a model with at least "`
 
 #### F50 — Fix model_switch warning (LOW)
 - **File:** `hermes_cli/model_switch.py` line 78
 - **Current:** `"for use with Hermes Agent. They lack the tool-calling capabilities "`
-- **Fix:** `"for use with Zeus. They lack the tool-calling capabilities "`
+- **Fix:** `"for use with Hermes. They lack the tool-calling capabilities "`
 
 #### F51 — Update test assertions (LOW)
 - **Files:**
@@ -448,7 +448,7 @@ After a deeper search, I found **22 additional user-facing places** where the ap
   - `tests/cli/test_cli_init.py` — 8 matches checking "Checking Running Hermes Agent"
   - `tests/test_cli_skin_integration.py` — 4 matches with "Hermes Agent v0.1.0"
   - `tests/tools/test_mcp_oauth_*.py` — 6 matches with `client_name="Hermes Agent"`
-- **Fix:** Update all assertions to expect "Zeus" instead of "Hermes Agent"
+- **Fix:** Update all assertions to expect "Hermes" instead of "Hermes Agent"
 
 ---
 
@@ -456,7 +456,7 @@ After a deeper search, I found **22 additional user-facing places** where the ap
 
 #### F26 — Update AGENTS.md (MEDIUM)
 - **File:** `AGENTS.md`
-- **Changes:** Replace "Hermes" → "Zeus" in user-facing descriptions. Keep technical references (paths, env vars like `HERMES_HOME`, `HERMES_TIMEZONE`) as-is since those are code identifiers.
+- **Changes:** Replace "Hermes" → "Hermes" in user-facing descriptions. Keep technical references (paths, env vars like `HERMES_HOME`, `HERMES_TIMEZONE`) as-is since those are code identifiers.
 - **Note:** `HERMES_HOME` and other env vars should NOT be renamed — that would be a breaking change requiring migration logic.
 
 #### F27 — Update bot descriptions for messaging platforms (LOW)
@@ -465,11 +465,11 @@ After a deeper search, I found **22 additional user-facing places** where the ap
   - `plugins/platforms/discord/adapter.py` — Command description
   - `plugins/platforms/irc/adapter.py` — Comment
   - `hermes_cli/slack_cli.py` — Bot description
-- **Change:** Replace "Hermes" → "Zeus" in user-facing bot descriptions
+- **Change:** Replace "Hermes" → "Hermes" in user-facing bot descriptions
 
 #### F28 — Update uninstall messages (LOW)
 - **File:** `hermes_cli/uninstall.py`
-- **Change:** Replace "Hermes agent" → "Zeus" in user-facing uninstall confirmation messages
+- **Change:** Replace "Hermes agent" → "Hermes" in user-facing uninstall confirmation messages
 
 ---
 
@@ -481,7 +481,7 @@ After a deeper search, I found **22 additional user-facing places** where the ap
   1. Bump version to `0.21.0`
   2. Run `npm run dist:win:nsis` to build the NSIS installer
   3. Create GitHub release `v0.21.0` in `S1d11/zeus` repo
-  4. Upload `Zeus-0.21.0-win-x64.exe`, `latest.yml`, and `.blockmap` as release assets
+  4. Upload `Hermes-0.21.0-win-x64.exe`, `latest.yml`, and `.blockmap` as release assets
   5. Write release notes covering all fixes
 
 ---
@@ -507,7 +507,7 @@ Documentation updates. Can be done in parallel with Phase 4. Large number of fil
 Nice-to-have improvements. Can be deferred to a follow-up release if needed.
 
 ### Phase 7: Test Updates (F51) — After all string changes
-Update all test assertions to expect "Zeus" instead of "Hermes Agent".
+Update all test assertions to expect "Hermes" instead of "Hermes Agent".
 
 ### Phase 8: Release (F29) — Do Last
 Version bump, build, upload.
@@ -518,9 +518,9 @@ Version bump, build, upload.
 
 | # | Question | Options |
 |---|----------|---------|
-| D1 | Should CLI commands (`hermes`, `hermes mcp`, `hermes model`) be renamed to `zeus`? | **Keep as `hermes`** (backward compat, no breaking change) / **Rename to `zeus`** (full rebrand, breaking change) |
+| D1 | Should CLI commands (`hermes`, `hermes mcp`, `hermes model`) be renamed to `hermes`? | **Keep as `hermes`** (backward compat, no breaking change) / **Rename to `hermes`** (full rebrand, breaking change) |
 | D2 | Should env vars (`HERMES_HOME`, `HERMES_TIMEZONE`, `HERMES_DESKTOP`) be renamed? | **Keep as-is** (recommended — renaming breaks existing installs) / **Rename** (requires migration logic) |
-| D3 | Should the "created by Nous Research" attribution be kept or removed? | **Keep** / **Remove** / **Change to "Zeus"** |
+| D3 | Should the "created by Nous Research" attribution be kept or removed? | **Keep** / **Remove** / **Change to "Hermes"** |
 | D4 | Should the website docs (662 files, 5,452 refs) be updated in this release? | **Skip for now** (separate effort) / **Bulk replace** (scripted) |
 | D5 | Should F25 (device code OAuth flow) be included in this release? | **Include** / **Defer to next release** |
 | D6 | Should F24 (circuit breaker reset) be included? | **Include** / **Defer** |
@@ -531,7 +531,7 @@ Version bump, build, upload.
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|------------|
-| Legacy SOUL.md detection breaks after F8 | Medium | Medium | Keep Hermes variants in `_LEGACY_TEMPLATE_SOULS` AND add Zeus variants |
+| Legacy SOUL.md detection breaks after F8 | Medium | Medium | Keep Hermes variants in `_LEGACY_TEMPLATE_SOULS` AND add Hermes variants |
 | OAuth flow doesn't work from desktop backend | Low | High | Test with GitHub MCP first; fallback to CLI instructions if browser launch fails |
 | Version refresh causes flicker in statusbar | Low | Low | Only refresh on boot + update events, not on every render |
 | README URL changes break links | Medium | Low | Keep old URLs as redirects or keep `hermes-agent.nousresearch.com` domain |

@@ -1,11 +1,11 @@
-// general-settings.ts — Persistent general preferences for Zeus desktop.
+// general-settings.ts — Persistent general preferences for Hermes desktop.
 //
 // Stores user preferences that live in the General settings tab:
-//   - autoLaunchOnStartup: whether Zeus starts when the OS boots
+//   - autoLaunchOnStartup: whether Hermes starts when the OS boots
 //   - closeToTray: whether closing the window hides to tray (true) or quits (false)
-//   - wakeWordEnabled: whether the "Hey Zeus" voice wake word listener is active
+//   - wakeWordEnabled: whether the "Hey Hermes" voice wake word listener is active
 //   - minimizeToTrayOnMinimize: whether minimizing also hides to tray
-//   - startMinimized: whether auto-launch starts Zeus minimized to tray
+//   - startMinimized: whether auto-launch starts Hermes minimized to tray
 //   - checkForUpdatesAutomatically: whether to auto-check for app updates
 //   - relaunchLastSession: whether a relaunch reopens the last-open chat (true)
 //     or lands on a fresh new chat (false, the default)
@@ -28,7 +28,7 @@ export interface GeneralPrefs {
   relaunchLastSession: boolean
 }
 
-const STORAGE_KEY = 'zeus:general-settings'
+const STORAGE_KEY = 'hermes:general-settings'
 
 const DEFAULT_PREFS: GeneralPrefs = {
   autoLaunchOnStartup: false,
@@ -74,9 +74,9 @@ function writePrefs(next: GeneralPrefs) {
 // Sync a single preference to the main process via IPC.
 async function syncToMain(key: string, value: boolean) {
   const desktop = window.hermesDesktop as any
-  if (!desktop?.zeus?.setGeneralPref) return
+  if (!desktop?.hermes?.setGeneralPref) return
   try {
-    await desktop.zeus.setGeneralPref(key, value)
+    await desktop.hermes.setGeneralPref(key, value)
   } catch {
     // IPC not available (dev mode, etc.) — preferences still persist locally
   }
@@ -97,8 +97,8 @@ export function setWakeWordEnabled(enabled: boolean) {
   $wakeWordListening.set(enabled)
   // Also toggle the actual wake word listener via IPC
   const desktop = window.hermesDesktop as any
-  if (desktop?.zeus?.toggleWakeWord) {
-    void desktop.zeus.toggleWakeWord()
+  if (desktop?.hermes?.toggleWakeWord) {
+    void desktop.hermes.toggleWakeWord()
   }
 }
 
@@ -108,11 +108,11 @@ export async function autoStartWakeWord() {
   const prefs = $generalPrefs.get()
   if (!prefs.wakeWordEnabled) return
   const desktop = window.hermesDesktop as any
-  if (!desktop?.zeus?.getWakeWordStatus || !desktop?.zeus?.toggleWakeWord) return
+  if (!desktop?.hermes?.getWakeWordStatus || !desktop?.hermes?.toggleWakeWord) return
   try {
-    const status = await desktop.zeus.getWakeWordStatus()
+    const status = await desktop.hermes.getWakeWordStatus()
     if (!status.listening) {
-      await desktop.zeus.toggleWakeWord()
+      await desktop.hermes.toggleWakeWord()
     }
     $wakeWordListening.set(true)
   } catch {

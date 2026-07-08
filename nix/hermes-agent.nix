@@ -1,4 +1,4 @@
-# nix/hermes-agent.nix — Overridable Zeus package
+# nix/hermes-agent.nix — Overridable Hermes package
 #
 # callPackage auto-wires nixpkgs args; flake inputs are passed explicitly.
 # Users override via:

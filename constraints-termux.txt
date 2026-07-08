@@ -1,4 +1,4 @@
-# Termux / Android dependency constraints for Zeus.
+# Termux / Android dependency constraints for Hermes.
 #
 # Usage:
 #   python -m pip install -e '.[termux]' -c constraints-termux.txt

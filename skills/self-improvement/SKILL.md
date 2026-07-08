@@ -9,17 +9,17 @@ metadata:
     related_skills: []
 ---
 
-# Self-Improvement: Zeus Self-Evolution System
+# Self-Improvement: Hermes Self-Evolution System
 
 ## Overview
 
-This skill guides you through Zeus's self-improvement system. Zeus can
+This skill guides you through Hermes's self-improvement system. Hermes can
 analyze its own session history to find areas where it underperforms,
 then automatically optimize its skills, tool descriptions, and system
 prompt sections using DSPy + GEPA (genetic prompt optimization).
 
 **Key principle**: All improvements are written to git branches for
-human review. Zeus never auto-modifies its running configuration —
+human review. Hermes never auto-modifies its running configuration —
 that would break prompt caching and could destabilize the agent.
 
 ## Prerequisites
@@ -57,7 +57,7 @@ evolves the top candidates. Results saved to git branches.
 hermes evolve auto --cron
 hermes evolve auto --cron --cron-interval "0 3 * * *"
 ```
-Registers the self-improvement loop as a Zeus cron job that runs
+Registers the self-improvement loop as a Hermes cron job that runs
 automatically on schedule (default: daily at 3 AM). The loop will
 analyze sessions, evolve candidates, and create git branches without
 manual intervention. Review branches at your convenience.
@@ -141,7 +141,7 @@ hermes evolve prompt --list-sections
 - **Prompt caching is sacred**: System prompt changes invalidate the
   cache. Evolved prompt sections must be reviewed carefully before
   merging.
-- **Human-in-the-loop**: Zeus creates git branches with improvements,
+- **Human-in-the-loop**: Hermes creates git branches with improvements,
   but never auto-merges. The user must review and merge.
 - **Cost**: Each evolution run makes LLM API calls for dataset
   generation and GEPA optimization. A typical 10-iteration run costs
@@ -153,8 +153,8 @@ hermes evolve prompt --list-sections
   runs pytest and TBLite (if installed) to verify no regressions.
   Failed benchmarks block PR creation automatically.
 - **SessionDB mining**: Use `--eval-source sessiondb` to build eval
-  datasets from real Zeus session history (SQLite SessionDB), not just
+  datasets from real Hermes session history (SQLite SessionDB), not just
   synthetic data. This produces more realistic evaluation examples.
 - **Cron scheduling**: `hermes evolve auto --cron` registers the loop
-  as a Zeus cron job. The loop runs on schedule, creates branches,
+  as a Hermes cron job. The loop runs on schedule, creates branches,
   and never auto-merges — you review when convenient.

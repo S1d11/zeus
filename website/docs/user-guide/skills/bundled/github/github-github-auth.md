@@ -17,7 +17,7 @@ GitHub auth setup: HTTPS tokens, SSH keys, gh CLI login.
 | Source | Bundled (installed by default) |
 | Path | `skills/github/github-auth` |
 | Version | `1.1.0` |
-| Author | Zeus |
+| Author | Hermes |
 | License | MIT |
 | Platforms | linux, macos, windows |
 | Tags | `GitHub`, `Authentication`, `Git`, `gh-cli`, `SSH`, `Setup` |

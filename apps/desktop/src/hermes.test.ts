@@ -21,7 +21,7 @@ const emptySessionsResponse = {
   total: 0
 }
 
-describe('Zeus REST session helpers', () => {
+describe('Hermes REST session helpers', () => {
   let api: ReturnType<typeof vi.fn>
 
   beforeEach(() => {

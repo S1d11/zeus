@@ -1,4 +1,4 @@
-"""Handler for ``hermes evolve`` — launches the Zeus self-evolution pipeline.
+"""Handler for ``hermes evolve`` — launches the Hermes self-evolution pipeline.
 
 This is a thin launcher. The actual optimization logic lives in the sibling
 ``zeus-self-evolution`` repo (``evolution.skills.evolve_skill`` and friends).
@@ -19,7 +19,7 @@ def _resolve_evolution_repo() -> Optional[Path]:
 
     Priority:
     1. ZEUS_SELF_EVOLUTION_REPO env var
-    2. Sibling directory: <zeus>/zeus-self-evolution (typical dev layout)
+    2. Sibling directory: <hermes>/zeus-self-evolution (typical dev layout)
     3. ~/.hermes/zeus-self-evolution
     """
     env = os.getenv("ZEUS_SELF_EVOLUTION_REPO")
@@ -57,18 +57,18 @@ def _ensure_evolution_importable() -> Path:
     return repo
 
 
-def _print_status(zeus_repo: Optional[str]) -> None:
+def _print_status(hermes_repo: Optional[str]) -> None:
     """Show self-evolution status."""
     _ensure_evolution_importable()
-    from evolution.core.config import EvolutionConfig, get_zeus_agent_path
+    from evolution.core.config import EvolutionConfig, get_hermes_agent_path
 
     try:
-        agent_path = get_zeus_agent_path() if not zeus_repo else Path(zeus_repo)
+        agent_path = get_hermes_agent_path() if not hermes_repo else Path(hermes_repo)
     except FileNotFoundError as e:
         print(f"[evolve] {e}")
         return
 
-    print(f"Zeus agent repo:  {agent_path}")
+    print(f"Hermes agent repo:  {agent_path}")
     skills_dir = agent_path / "skills"
     if skills_dir.exists():
         skills = sorted(d.name for d in skills_dir.iterdir() if d.is_dir())
@@ -107,12 +107,12 @@ def _print_status(zeus_repo: Optional[str]) -> None:
         print("\n(git branch listing unavailable)")
 
 
-def _run_monitor(days: int, zeus_repo: Optional[str]) -> None:
+def _run_monitor(days: int, hermes_repo: Optional[str]) -> None:
     """Analyze SessionDB for improvement opportunities."""
     try:
         from hermes_state import SessionDB
     except ImportError:
-        print("[evolve monitor] SessionDB not available — run from the Zeus agent repo.")
+        print("[evolve monitor] SessionDB not available — run from the Hermes agent repo.")
         return
 
     try:
@@ -187,11 +187,11 @@ def evolve_command(args) -> None:
         return
 
     if action == "status":
-        _print_status(getattr(args, "zeus_repo", None))
+        _print_status(getattr(args, "hermes_repo", None))
         return
 
     if action == "monitor":
-        _run_monitor(getattr(args, "days", 7), getattr(args, "zeus_repo", None))
+        _run_monitor(getattr(args, "days", 7), getattr(args, "hermes_repo", None))
         return
 
     if action == "auto":
@@ -204,10 +204,10 @@ def evolve_command(args) -> None:
             schedule = getattr(args, "cron_interval", None)
             job = register_cron_job(
                 schedule=schedule,
-                zeus_repo=getattr(args, "zeus_repo", None),
+                hermes_repo=getattr(args, "hermes_repo", None),
             )
             if job:
-                print(f"[evolve auto] Cron job registered: {job.get('name', 'Zeus Self-Improvement Loop')}")
+                print(f"[evolve auto] Cron job registered: {job.get('name', 'Hermes Self-Improvement Loop')}")
                 if job.get("schedule"):
                     print(f"  Schedule: {job['schedule']}")
                 if job.get("id"):
@@ -224,7 +224,7 @@ def evolve_command(args) -> None:
             max_candidates=getattr(args, "max_candidates", 5),
             iterations=getattr(args, "iterations", 5),
             dry_run=getattr(args, "dry_run", False),
-            zeus_repo=getattr(args, "zeus_repo", None),
+            hermes_repo=getattr(args, "hermes_repo", None),
             source=getattr(args, "source", None),
         )
         return
@@ -233,7 +233,7 @@ def evolve_command(args) -> None:
         _ensure_evolution_importable()
         from hermes_cli.evolve_validate import validate_all
 
-        validate_all(getattr(args, "zeus_repo", None))
+        validate_all(getattr(args, "hermes_repo", None))
         return
 
     if action == "skill":
@@ -247,7 +247,7 @@ def evolve_command(args) -> None:
             dataset_path=args.dataset_path,
             optimizer_model=args.optimizer_model,
             eval_model=args.eval_model,
-            hermes_repo=args.zeus_repo,
+            hermes_repo=args.hermes_repo,
             run_tests=getattr(args, "run_tests", False),
             dry_run=args.dry_run,
         )
@@ -264,7 +264,7 @@ def evolve_command(args) -> None:
             dataset_path=args.dataset_path,
             optimizer_model=args.optimizer_model,
             eval_model=args.eval_model,
-            hermes_repo=args.zeus_repo,
+            hermes_repo=args.hermes_repo,
             run_tests=getattr(args, "run_tests", False),
             dry_run=args.dry_run,
         )
@@ -295,7 +295,7 @@ def evolve_command(args) -> None:
             dataset_path=args.dataset_path,
             optimizer_model=args.optimizer_model,
             eval_model=args.eval_model,
-            hermes_repo=args.zeus_repo,
+            hermes_repo=args.hermes_repo,
             run_tests=getattr(args, "run_tests", False),
             dry_run=args.dry_run,
         )

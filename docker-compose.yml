@@ -1,5 +1,5 @@
 #
-# docker-compose.yml for Zeus
+# docker-compose.yml for Hermes
 #
 # Usage:
 #   HERMES_UID=$(id -u) HERMES_GID=$(id -g) docker compose up -d

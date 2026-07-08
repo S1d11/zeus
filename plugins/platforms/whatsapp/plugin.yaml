@@ -3,9 +3,9 @@ label: WhatsApp
 kind: platform
 version: 1.0.0
 description: >
-  WhatsApp gateway adapter for Zeus.
+  WhatsApp gateway adapter for Hermes.
   Connects to WhatsApp via a local Node.js bridge (WhatsApp Web client) over
-  an HTTP API and relays messages between WhatsApp chats and the Zeus.
+  an HTTP API and relays messages between WhatsApp chats and the Hermes.
   Supports DM/group policies, mention gating, free-response chats, and
   per-user allowlists.
 author: NousResearch

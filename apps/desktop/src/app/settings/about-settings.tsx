@@ -118,7 +118,7 @@ export function AboutSettings() {
               <div className="min-w-0">
                 <p className="font-medium text-foreground">Updates are handled automatically</p>
                 <p className="mt-1 text-xs">
-                  Zeus checks for new versions from GitHub Releases and installs them automatically.
+                  Hermes checks for new versions from GitHub Releases and installs them automatically.
                 </p>
               </div>
             </div>

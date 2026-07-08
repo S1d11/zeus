@@ -24,8 +24,8 @@ auth:
       required: true
       secret: true
     - name: REDDIT_USER_AGENT
-      prompt: "User agent string (e.g. 'Zeus/1.0 by your_username')"
-      default: "Zeus/1.0"
+      prompt: "User agent string (e.g. 'Hermes/1.0 by your_username')"
+      default: "Hermes/1.0"
       required: true
       secret: false
 

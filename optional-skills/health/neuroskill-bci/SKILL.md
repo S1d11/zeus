@@ -8,7 +8,7 @@ description: >
   running locally.
 platforms: [linux, macos, windows]
 version: 1.0.0
-author: Zeus + Nous Research
+author: Hermes + Nous Research
 license: MIT
 metadata:
   hermes:

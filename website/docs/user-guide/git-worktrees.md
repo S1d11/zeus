@@ -2,12 +2,12 @@
 sidebar_position: 3
 sidebar_label: "Git Worktrees"
 title: "Git Worktrees"
-description: "Run multiple Zeuss safely on the same repository using git worktrees and isolated checkouts"
+description: "Run multiple Hermess safely on the same repository using git worktrees and isolated checkouts"
 ---
 
 # Git Worktrees
 
-Zeus is often used on large, long‑lived repositories. When you want to:
+Hermes is often used on large, long‑lived repositories. When you want to:
 
 - Run **multiple agents in parallel** on the same project, or
 - Keep experimental refactors isolated from your main branch,

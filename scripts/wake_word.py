@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Wake word listener for Zeus desktop.
+"""Wake word listener for Hermes desktop.
 
-Continuously listens to the microphone for "zeus" or "hey zeus".
+Continuously listens to the microphone for "hermes" or "hey hermes".
 When detected, prints a JSON line to stdout:
 
-    {"detected": true, "phrase": "hey zeus", "full_text": "hey zeus"}
+    {"detected": true, "phrase": "hey hermes", "full_text": "hey hermes"}
 
 Status/error lines are also JSON:
 
@@ -20,7 +20,7 @@ Recognition strategy (tries each in order until one works):
   2. Google free speech-to-text (requires internet, rate-limited)
   3. Vosk offline (if installed — lightweight, accurate, no internet)
 
-The wake word "zeus" is phonetically similar to several common words
+The wake word "hermes" is phonetically similar to several common words
 ("use", "loose", "juice", "deuce"), so we match a broad set of
 near-homophones to avoid false negatives.
 """
@@ -43,31 +43,31 @@ def emit(obj):
     print(json.dumps(obj), flush=True)
 
 
-# Wake words and common misrecognitions of "zeus" / "hey zeus".
-# Google's free STT frequently transcribes "zeus" as these near-homophones.
+# Wake words and common misrecognitions of "hermes" / "hey hermes".
+# Google's free STT frequently transcribes "hermes" as these near-homophones.
 WAKE_WORDS = [
-    "zeus",
-    "hey zeus",
+    "hermes",
+    "hey hermes",
     "hey zero",
-    # Common misrecognitions of "zeus" alone:
+    # Common misrecognitions of "hermes" alone:
     "use",
     "loose",
     "juice",
     "deuce",
     "goose",
     "moose",
-    # Common misrecognitions of "hey zeus":
+    # Common misrecognitions of "hey hermes":
     "hey use",
     "hey loose",
     "hey juice",
-    "a zeus",
-    "the zeus",
+    "a hermes",
+    "the hermes",
 ]
 
 # Words that look like wake words but are NOT — filter out false positives.
 # e.g. "use" alone is too common, so we only accept it if preceded by "hey"
 # or if the full text is very short (just the one word).
-SINGLE_WORD_ACCEPT = {"zeus", "loose", "juice", "deuce", "goose", "moose"}
+SINGLE_WORD_ACCEPT = {"hermes", "loose", "juice", "deuce", "goose", "moose"}
 # "use" alone is too common in normal speech — only accept with "hey"
 HEADED_WORDS = {"use", "deuce"}
 
@@ -132,7 +132,7 @@ def _try_vosk(recognizer, audio):
     """
     try:
         text = recognizer.recognize_vosk(audio).lower().strip()
-        # Vosk returns JSON like {"text": "hey zeus"}
+        # Vosk returns JSON like {"text": "hey hermes"}
         if text.startswith("{"):
             try:
                 parsed = json.loads(text)

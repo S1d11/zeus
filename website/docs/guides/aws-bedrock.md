@@ -1,12 +1,12 @@
 ---
 sidebar_position: 14
 title: "AWS Bedrock"
-description: "Use Zeus with Amazon Bedrock — native Converse API, IAM authentication, Guardrails, and cross-region inference"
+description: "Use Hermes with Amazon Bedrock — native Converse API, IAM authentication, Guardrails, and cross-region inference"
 ---
 
 # AWS Bedrock
 
-Zeus supports Amazon Bedrock as a native provider using the **Converse API** — not the OpenAI-compatible endpoint. This gives you full access to the Bedrock ecosystem: IAM authentication, Guardrails, cross-region inference profiles, and all foundation models.
+Hermes supports Amazon Bedrock as a native provider using the **Converse API** — not the OpenAI-compatible endpoint. This gives you full access to the Bedrock ecosystem: IAM authentication, Guardrails, cross-region inference profiles, and all foundation models.
 
 ## Prerequisites
 

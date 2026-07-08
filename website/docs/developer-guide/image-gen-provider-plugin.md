@@ -1,7 +1,7 @@
 ---
 sidebar_position: 11
 title: "Image Generation Provider Plugins"
-description: "How to build an image-generation backend plugin for Zeus"
+description: "How to build an image-generation backend plugin for Hermes"
 ---
 
 # Building an Image Generation Provider Plugin

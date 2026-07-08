@@ -13,11 +13,11 @@ metadata:
 
 ## Overview
 
-This skill enables Zeus to monitor live data sources in real time — sports
+This skill enables Hermes to monitor live data sources in real time — sports
 scores, stock prices, cryptocurrency, news, weather, and more — and send
 alerts when conditions are met or values change.
 
-Monitors run as recurring cron jobs. Each tick, Zeus fetches the latest
+Monitors run as recurring cron jobs. Each tick, Hermes fetches the latest
 data using `web_search` or connected MCP servers, checks it against any
 configured conditions, and delivers an alert to the user's preferred
 channel (Telegram, Discord, CLI, etc.).

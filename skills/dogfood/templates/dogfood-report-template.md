@@ -3,7 +3,7 @@
 **Target:** {target_url}
 **Date:** {date}
 **Scope:** {scope_description}
-**Tester:** Zeus (automated exploratory QA)
+**Tester:** Hermes (automated exploratory QA)
 
 ---
 

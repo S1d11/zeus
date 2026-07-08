@@ -1,7 +1,7 @@
 ---
 sidebar_position: 2
 title: "环境变量"
-description: "Zeus 使用的所有环境变量完整参考"
+description: "Hermes 使用的所有环境变量完整参考"
 ---
 
 # 环境变量参考

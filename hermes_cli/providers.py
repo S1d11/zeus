@@ -1,5 +1,5 @@
 """
-Single source of truth for provider identity in Zeus.
+Single source of truth for provider identity in Hermes.
 
 Two data sources, merged at runtime:
 

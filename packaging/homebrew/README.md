@@ -1,4 +1,4 @@
-Homebrew packaging notes for Zeus.
+Homebrew packaging notes for Hermes.
 
 Use `packaging/homebrew/hermes-agent.rb` as a tap or `homebrew-core` starting point.
 

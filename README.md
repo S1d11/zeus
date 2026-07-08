@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="assets/banner.png" alt="Zeus" width="100%">
+  <img src="assets/banner.png" alt="Hermes" width="100%">
 </p>
 
-# Zeus ☤
+# Hermes ☤
 <p align="center">
-  <a href="https://github.com/S1d11/zeus">Zeus</a> | <a href="https://github.com/S1d11/zeus/releases">Downloads</a>
+  <a href="https://github.com/S1d11/zeus">Hermes</a> | <a href="https://github.com/S1d11/zeus/releases">Downloads</a>
 </p>
 <p align="center">
   <a href="https://github.com/S1d11/zeus/releases"><img src="https://img.shields.io/github/v/release/S1d11/zeus?style=for-the-badge&label=Latest%20Release" alt="Latest Release"></a>
@@ -48,7 +48,7 @@ Or download the **[Windows installer](https://github.com/S1d11/zeus/releases/lat
 curl -fsSL https://raw.githubusercontent.com/S1d11/zeus/main/scripts/install.sh | bash
 ```
 
-The installer handles everything: uv, Python 3.11, Node.js, ripgrep, ffmpeg, **and a portable Git Bash** (MinGit, unpacked to `%LOCALAPPDATA%\hermes\git` — no admin required, completely isolated from any system Git install). Zeus uses this bundled Git Bash to run shell commands.
+The installer handles everything: uv, Python 3.11, Node.js, ripgrep, ffmpeg, **and a portable Git Bash** (MinGit, unpacked to `%LOCALAPPDATA%\hermes\git` — no admin required, completely isolated from any system Git install). Hermes uses this bundled Git Bash to run shell commands.
 
 If you already have Git installed, the installer detects it and uses that instead. Otherwise a ~45MB MinGit download is all you need — it won't touch or interfere with any system Git.
 
@@ -61,7 +61,7 @@ hermes              # start chatting!
 
 ### Desktop App
 
-Download the latest **[Zeus Desktop](https://github.com/S1d11/zeus/releases/latest)** installer for Windows. The desktop app provides a full GUI with chat, settings, MCP server management, connections, and auto-updates.
+Download the latest **[Hermes Desktop](https://github.com/S1d11/zeus/releases/latest)** installer for Windows. The desktop app provides a full GUI with chat, settings, MCP server management, connections, and auto-updates.
 
 ---
 
@@ -82,7 +82,7 @@ hermes doctor       # Diagnose any issues
 
 ## CLI vs Messaging Quick Reference
 
-Zeus has two entry points: start the terminal UI with `hermes`, or run the gateway and talk to it from Telegram, Discord, Slack, WhatsApp, Signal, or Email. Once you're in a conversation, many slash commands are shared across both interfaces.
+Hermes has two entry points: start the terminal UI with `hermes`, or run the gateway and talk to it from Telegram, Discord, Slack, WhatsApp, Signal, or Email. Once you're in a conversation, many slash commands are shared across both interfaces.
 
 | Action                         | CLI                                           | Messaging platforms                                                              |
 | ------------------------------ | --------------------------------------------- | -------------------------------------------------------------------------------- |
@@ -107,7 +107,7 @@ Zeus has two entry points: start the terminal UI with `hermes`, or run the gatew
 | **MCP OAuth support** | One-click OAuth login for MCP servers (GitHub, Google Drive, etc.) — no CLI required |
 | **Auto-updates** | Automatic update checks and installation from GitHub Releases |
 | **Changelog dialog** | Click the version badge in the status bar to see recent release notes and download links |
-| **Tray integration** | Minimize to tray, wake word detection ("Hey Zeus"), and quick toggle |
+| **Tray integration** | Minimize to tray, wake word detection ("Hey Hermes"), and quick toggle |
 | **Settings panel** | Configure models, tools, memory, voice, skins, and more without editing config files |
 | **Session management** | Browse, search, and resume past conversations |
 
@@ -115,7 +115,7 @@ Zeus has two entry points: start the terminal UI with `hermes`, or run the gatew
 
 ## Migrating from OpenClaw
 
-If you're coming from OpenClaw, Zeus can automatically import your settings, memories, skills, and API keys.
+If you're coming from OpenClaw, Hermes can automatically import your settings, memories, skills, and API keys.
 
 **During first-time setup:** The setup wizard (`hermes setup`) automatically detects `~/.openclaw` and offers to migrate before configuration begins.
 
@@ -141,7 +141,7 @@ What gets imported:
 
 ```bash
 git clone https://github.com/S1d11/zeus.git
-cd zeus/hermes-agent
+cd hermes/hermes-agent
 source .venv/bin/activate   # or: source venv/bin/activate
 scripts/run_tests.sh
 ```
@@ -166,7 +166,7 @@ scripts/run_tests.sh
 ## Community
 
 - 🐛 [Issues](https://github.com/S1d11/zeus/issues) — Report bugs and request features
-- 🔌 [computer-use-linux](https://github.com/avifenesh/computer-use-linux) — Linux desktop-control MCP server for Zeus and other MCP hosts, with AT-SPI accessibility trees, Wayland/X11 input, screenshots, and compositor window targeting.
+- 🔌 [computer-use-linux](https://github.com/avifenesh/computer-use-linux) — Linux desktop-control MCP server for Hermes and other MCP hosts, with AT-SPI accessibility trees, Wayland/X11 input, screenshots, and compositor window targeting.
 
 ---
 

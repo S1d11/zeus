@@ -1,5 +1,5 @@
 """
-Unified tool configuration for Zeus.
+Unified tool configuration for Hermes.
 
 `hermes tools` and `hermes setup tools` both enter this module.
 Select a platform → toggle toolsets on/off → for newly enabled tools
@@ -415,7 +415,7 @@ TOOL_CATEGORIES = {
         "name": "X (Twitter) Search",
         "setup_title": "Select xAI Credential Source",
         "setup_note": (
-            "Zeus routes X searches through xAI's built-in x_search "
+            "Hermes routes X searches through xAI's built-in x_search "
             "Responses tool. Both credential sources hit the same "
             "https://api.x.ai/v1/responses endpoint — pick whichever you "
             "already have. SuperGrok OAuth is preferred when both are set "
@@ -1415,7 +1415,7 @@ def _run_post_setup(post_setup_key: str):
         except Exception as exc:
             _print_warning(f"    Could not enable plugin automatically: {exc}")
             _print_info("    Run manually: hermes plugins enable observability/langfuse")
-        _print_info("    Restart Zeus for tracing to take effect.")
+        _print_info("    Restart Hermes for tracing to take effect.")
         _print_info("    Verify: hermes plugins list")
 
     elif post_setup_key == "xai_grok":
@@ -3972,7 +3972,7 @@ def tools_command(args=None, first_install: bool = False, config: dict = None):
                 print(color("    (none enabled)", Colors.DIM))
         print()
         return
-    print(color("⚕ Zeus Tool Configuration", Colors.CYAN, Colors.BOLD))
+    print(color("⚕ Hermes Tool Configuration", Colors.CYAN, Colors.BOLD))
     print(color("  Enable or disable tools per platform.", Colors.DIM))
     print(color("  Tools that need API keys will be configured when enabled.", Colors.DIM))
     print(color("  Guide: https://github.com/S1d11/zeus", Colors.DIM))

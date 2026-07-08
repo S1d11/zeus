@@ -1,6 +1,6 @@
 # disk-cleanup
 
-Auto-tracks and cleans up ephemeral files created during Zeus
+Auto-tracks and cleans up ephemeral files created during Hermes
 sessions — test scripts, temp outputs, cron logs, stale chrome profiles.
 Scoped strictly to `$HERMES_HOME` and `/tmp/hermes-*`.
 

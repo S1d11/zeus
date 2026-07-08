@@ -1,7 +1,7 @@
 # Design System: IBM
 
 
-> **Zeus — Implementation Notes**
+> **Hermes — Implementation Notes**
 >
 > The original site uses proprietary fonts. For self-contained HTML output, use these CDN substitutes:
 > - **Primary:** `IBM Plex Sans` | **Mono:** `IBM Plex Mono`

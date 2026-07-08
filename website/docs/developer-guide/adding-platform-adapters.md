@@ -336,7 +336,7 @@ label: My Platform
 kind: platform
 version: 1.0.0
 description: >
-  My Platform gateway adapter for Zeus.
+  My Platform gateway adapter for Hermes.
 author: Your Name
 requires_env:
   - name: MY_PLATFORM_TOKEN

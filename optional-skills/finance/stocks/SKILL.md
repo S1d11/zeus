@@ -2,7 +2,7 @@
 name: stocks
 description: Stock quotes, history, search, compare, crypto via Yahoo.
 version: 0.1.0
-author: Mibay (Mibayy), Zeus
+author: Mibay (Mibayy), Hermes
 license: MIT
 platforms: [linux, macos, windows]
 metadata:

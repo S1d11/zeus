@@ -1,11 +1,11 @@
 """
-Session Insights Engine for Zeus.
+Session Insights Engine for Hermes.
 
 Analyzes historical session data from the SQLite state database to produce
 comprehensive usage insights — token consumption, cost estimates, tool usage
 patterns, activity trends, model/platform breakdowns, and session metrics.
 
-Inspired by Claude Code's /insights command, adapted for Zeus's
+Inspired by Claude Code's /insights command, adapted for Hermes's
 multi-platform architecture with additional cost estimation and platform
 breakdown capabilities.
 
@@ -729,7 +729,7 @@ class InsightsEngine:
         # Header
         lines.append("")
         lines.append("  ╔══════════════════════════════════════════════════════════╗")
-        lines.append("  ║                    📊 Zeus Insights                      ║")
+        lines.append("  ║                    📊 Hermes Insights                      ║")
         period_label = f"Last {days} days"
         if src_filter:
             period_label += f" ({src_filter})"
@@ -864,7 +864,7 @@ class InsightsEngine:
         o = report["overview"]
         days = report["days"]
 
-        lines.append(f"📊 **Zeus Insights** — Last {days} days\n")
+        lines.append(f"📊 **Hermes Insights** — Last {days} days\n")
 
         # Overview
         lines.append(f"**Sessions:** {o['total_sessions']} | **Messages:** {o['total_messages']:,} | **Tool calls:** {o['total_tool_calls']:,}")

@@ -2132,9 +2132,9 @@ The main pipeline above targets empirical ML papers. Other paper types require d
 
 ---
 
-## Zeus Integration
+## Hermes Integration
 
-This skill is designed for the Zeus. It uses Hermes tools, delegation, scheduling, and memory for the full research lifecycle.
+This skill is designed for the Hermes. It uses Hermes tools, delegation, scheduling, and memory for the full research lifecycle.
 
 ### Related Skills
 

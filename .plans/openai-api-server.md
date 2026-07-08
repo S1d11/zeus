@@ -1,4 +1,4 @@
-# OpenAI-Compatible API Server for Zeus
+# OpenAI-Compatible API Server for Hermes
 
 ## Motivation
 

@@ -88,7 +88,7 @@ def start(
     out_dir: Optional[Path] = None,
     headed: bool = False,
     auth_state: Optional[str] = None,
-    guest_name: str = "Zeus",
+    guest_name: str = "Hermes",
     duration: Optional[str] = None,
     session_id: Optional[str] = None,
     mode: str = "transcribe",

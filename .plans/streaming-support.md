@@ -1,4 +1,4 @@
-# Streaming LLM Response Support for Zeus
+# Streaming LLM Response Support for Hermes
 
 ## Overview
 

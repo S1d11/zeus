@@ -1,5 +1,5 @@
 {
-  description = "Zeus - AI agent framework by Nous Research";
+  description = "Hermes - AI agent framework by Nous Research";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";

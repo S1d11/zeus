@@ -202,40 +202,40 @@ contextBridge.exposeInMainWorld('hermesDesktop', {
     fetchMarketplace: id => ipcRenderer.invoke('hermes:vscode-theme:fetch', id),
     searchMarketplace: query => ipcRenderer.invoke('hermes:vscode-theme:search', query)
   },
-  // Zeus: wake word + tray controls
-  zeus: {
-    toggleWakeWord: () => ipcRenderer.invoke('zeus:wake-word:toggle'),
-    getWakeWordStatus: () => ipcRenderer.invoke('zeus:wake-word:status'),
-    checkWakeWordDeps: () => ipcRenderer.invoke('zeus:wake-word:check-deps'),
+  // Hermes: wake word + tray controls
+  hermes: {
+    toggleWakeWord: () => ipcRenderer.invoke('hermes:wake-word:toggle'),
+    getWakeWordStatus: () => ipcRenderer.invoke('hermes:wake-word:status'),
+    checkWakeWordDeps: () => ipcRenderer.invoke('hermes:wake-word:check-deps'),
     onWakeWordDetected: callback => {
       const listener = (_event, payload) => callback(payload)
-      ipcRenderer.on('zeus:wake-word:detected', listener)
-      return () => ipcRenderer.removeListener('zeus:wake-word:detected', listener)
+      ipcRenderer.on('hermes:wake-word:detected', listener)
+      return () => ipcRenderer.removeListener('hermes:wake-word:detected', listener)
     },
     onWakeWordError: callback => {
       const listener = (_event, msg) => callback(msg)
-      ipcRenderer.on('zeus:wake-word:error', listener)
-      return () => ipcRenderer.removeListener('zeus:wake-word:error', listener)
+      ipcRenderer.on('hermes:wake-word:error', listener)
+      return () => ipcRenderer.removeListener('hermes:wake-word:error', listener)
     },
-    showFromTray: () => ipcRenderer.invoke('zeus:tray:show'),
+    showFromTray: () => ipcRenderer.invoke('hermes:tray:show'),
     // Auto-updater
-    checkForUpdates: () => ipcRenderer.invoke('zeus:auto-updater:check'),
-    downloadUpdate: () => ipcRenderer.invoke('zeus:auto-updater:download'),
-    installUpdate: () => ipcRenderer.invoke('zeus:auto-updater:install'),
-    getUpdateStatus: () => ipcRenderer.invoke('zeus:auto-updater:status'),
+    checkForUpdates: () => ipcRenderer.invoke('hermes:auto-updater:check'),
+    downloadUpdate: () => ipcRenderer.invoke('hermes:auto-updater:download'),
+    installUpdate: () => ipcRenderer.invoke('hermes:auto-updater:install'),
+    getUpdateStatus: () => ipcRenderer.invoke('hermes:auto-updater:status'),
     onUpdateEvent: callback => {
       const listener = (_event, payload) => callback(payload)
-      ipcRenderer.on('zeus:auto-updater:event', listener)
-      return () => ipcRenderer.removeListener('zeus:auto-updater:event', listener)
+      ipcRenderer.on('hermes:auto-updater:event', listener)
+      return () => ipcRenderer.removeListener('hermes:auto-updater:event', listener)
     },
     onUpdateNotificationClicked: callback => {
       const listener = (_event, payload) => callback(payload)
-      ipcRenderer.on('zeus:auto-updater:notification-clicked', listener)
-      return () => ipcRenderer.removeListener('zeus:auto-updater:notification-clicked', listener)
+      ipcRenderer.on('hermes:auto-updater:notification-clicked', listener)
+      return () => ipcRenderer.removeListener('hermes:auto-updater:notification-clicked', listener)
     },
     // General settings
-    setGeneralPref: (key, value) => ipcRenderer.invoke('zeus:general:set-pref', key, value),
-    getGeneralPref: key => ipcRenderer.invoke('zeus:general:get-pref', key),
-    getAllGeneralPrefs: () => ipcRenderer.invoke('zeus:general:get-all-prefs')
+    setGeneralPref: (key, value) => ipcRenderer.invoke('hermes:general:set-pref', key, value),
+    getGeneralPref: key => ipcRenderer.invoke('hermes:general:get-pref', key),
+    getAllGeneralPrefs: () => ipcRenderer.invoke('hermes:general:get-all-prefs')
   }
 })

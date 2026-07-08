@@ -1,4 +1,4 @@
-// tray.test.cjs — Tests for the Zeus system tray module.
+// tray.test.cjs — Tests for the Hermes system tray module.
 // Verifies the module exports and icon resolution without requiring
 // a running Electron instance (tray creation is mocked).
 
@@ -30,9 +30,9 @@ describe('tray module exports', () => {
     const path = require('node:path');
     const trayPath = path.resolve(__dirname, '..', 'electron', 'tray.cjs');
     const src = fs.readFileSync(trayPath, 'utf8');
-    assert.ok(src.includes('Show Zeus'), 'should have Show Zeus menu item');
-    assert.ok(src.includes('Hide Zeus'), 'should have Hide Zeus menu item');
-    assert.ok(src.includes('Quit Zeus'), 'should have Quit Zeus menu item');
+    assert.ok(src.includes('Show Hermes'), 'should have Show Hermes menu item');
+    assert.ok(src.includes('Hide Hermes'), 'should have Hide Hermes menu item');
+    assert.ok(src.includes('Quit Hermes'), 'should have Quit Hermes menu item');
     assert.ok(src.includes('Wake Word'), 'should have Wake Word menu item');
   });
 
@@ -103,8 +103,8 @@ describe('wake_word.py script', () => {
     if (!scriptPath) return; // skip if not found
 
     const src = fs.readFileSync(scriptPath, 'utf8');
-    assert.ok(src.includes('zeus'), 'should detect "zeus" keyword');
-    assert.ok(src.includes('hey zeus'), 'should detect "hey zeus" keyword');
+    assert.ok(src.includes('hermes'), 'should detect "hermes" keyword');
+    assert.ok(src.includes('hey hermes'), 'should detect "hey hermes" keyword');
     assert.ok(src.includes('speech_recognition'), 'should use speech_recognition library');
   });
 });

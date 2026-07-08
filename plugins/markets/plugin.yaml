@@ -1,0 +1,10 @@
+name: markets
+version: 1.1.0
+description: "Market data lookup via yfinance. Provides stock/crypto quotes, historical prices, news, and market overview tools so the agent can answer market questions in chat."
+author: NousResearch
+kind: standalone
+provides_tools:
+  - markets_quote
+  - markets_history
+  - markets_news
+  - markets_overview

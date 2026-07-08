@@ -1,6 +1,6 @@
 """``hermes evolve`` subcommand parser.
 
-Wires the Zeus self-evolution framework (DSPy + GEPA) into the Hermes CLI.
+Wires the Hermes self-evolution framework (DSPy + GEPA) into the Hermes CLI.
 The actual optimization runs live in the sibling ``zeus-self-evolution`` repo;
 this subcommand is a thin launcher that imports and invokes it.
 
@@ -19,7 +19,7 @@ def build_evolve_parser(subparsers, *, cmd_evolve: Callable) -> None:
         "evolve",
         help="Self-improve skills, tools, and prompts via DSPy + GEPA optimization",
         description=(
-            "Run the Zeus self-evolution pipeline. Optimizes skill instructions, "
+            "Run the Hermes self-evolution pipeline. Optimizes skill instructions, "
             "tool descriptions, and system prompts using DSPy + GEPA, with "
             "benchmark gating and git-branch output for human review."
         ),
@@ -66,11 +66,11 @@ def build_evolve_parser(subparsers, *, cmd_evolve: Callable) -> None:
         help="Model for evaluations (default: openai/gpt-4.1-mini)",
     )
     evolve_skill.add_argument(
-        "--zeus-repo",
         "--hermes-repo",
-        dest="zeus_repo",
+        "--hermes-repo",
+        dest="hermes_repo",
         default=None,
-        help="Path to the Zeus agent repo (default: auto-discovered)",
+        help="Path to the Hermes agent repo (default: auto-discovered)",
     )
     evolve_skill.add_argument(
         "--run-tests",
@@ -121,11 +121,11 @@ def build_evolve_parser(subparsers, *, cmd_evolve: Callable) -> None:
         ),
     )
     evolve_status.add_argument(
-        "--zeus-repo",
         "--hermes-repo",
-        dest="zeus_repo",
+        "--hermes-repo",
+        dest="hermes_repo",
         default=None,
-        help="Path to the Zeus agent repo (default: auto-discovered)",
+        help="Path to the Hermes agent repo (default: auto-discovered)",
     )
     evolve_status.set_defaults(func=cmd_evolve)
 
@@ -147,11 +147,11 @@ def build_evolve_parser(subparsers, *, cmd_evolve: Callable) -> None:
         help="Number of days of session history to analyze (default: 7)",
     )
     evolve_monitor.add_argument(
-        "--zeus-repo",
         "--hermes-repo",
-        dest="zeus_repo",
+        "--hermes-repo",
+        dest="hermes_repo",
         default=None,
-        help="Path to the Zeus agent repo (default: auto-discovered)",
+        help="Path to the Hermes agent repo (default: auto-discovered)",
     )
     evolve_monitor.set_defaults(func=cmd_evolve)
 
@@ -190,11 +190,11 @@ def build_evolve_parser(subparsers, *, cmd_evolve: Callable) -> None:
         help="Filter by platform source (cli, telegram, tui, etc.)",
     )
     evolve_auto.add_argument(
-        "--zeus-repo",
         "--hermes-repo",
-        dest="zeus_repo",
+        "--hermes-repo",
+        dest="hermes_repo",
         default=None,
-        help="Path to the Zeus agent repo (default: auto-discovered)",
+        help="Path to the Hermes agent repo (default: auto-discovered)",
     )
     evolve_auto.add_argument(
         "--dry-run",
@@ -252,11 +252,11 @@ def build_evolve_parser(subparsers, *, cmd_evolve: Callable) -> None:
         help="Model for evaluations (default: openai/gpt-4.1-mini)",
     )
     evolve_tool.add_argument(
-        "--zeus-repo",
         "--hermes-repo",
-        dest="zeus_repo",
+        "--hermes-repo",
+        dest="hermes_repo",
         default=None,
-        help="Path to the Zeus agent repo (default: auto-discovered)",
+        help="Path to the Hermes agent repo (default: auto-discovered)",
     )
     evolve_tool.add_argument(
         "--dry-run",
@@ -345,11 +345,11 @@ def build_evolve_parser(subparsers, *, cmd_evolve: Callable) -> None:
         help="Model for evaluations (default: openai/gpt-4.1-mini)",
     )
     evolve_prompt.add_argument(
-        "--zeus-repo",
         "--hermes-repo",
-        dest="zeus_repo",
+        "--hermes-repo",
+        dest="hermes_repo",
         default=None,
-        help="Path to the Zeus agent repo (default: auto-discovered)",
+        help="Path to the Hermes agent repo (default: auto-discovered)",
     )
     evolve_prompt.add_argument(
         "--dry-run",
@@ -392,20 +392,20 @@ def build_evolve_parser(subparsers, *, cmd_evolve: Callable) -> None:
     # ── validate ──────────────────────────────────────────────────────────
     evolve_validate = evolve_subparsers.add_parser(
         "validate",
-        help="Validate the Zeus repo: imports, tools, skills, prompt sections",
+        help="Validate the Hermes repo: imports, tools, skills, prompt sections",
         description=(
-            "Run validation checks on the Zeus agent repo. Verifies core "
+            "Run validation checks on the Hermes agent repo. Verifies core "
             "imports work, all tools register correctly, skills are well-formed, "
             "and prompt sections are accessible. Use after self-modification "
             "to confirm nothing is broken."
         ),
     )
     evolve_validate.add_argument(
-        "--zeus-repo",
         "--hermes-repo",
-        dest="zeus_repo",
+        "--hermes-repo",
+        dest="hermes_repo",
         default=None,
-        help="Path to the Zeus agent repo (default: auto-discovered)",
+        help="Path to the Hermes agent repo (default: auto-discovered)",
     )
     evolve_validate.set_defaults(func=cmd_evolve)
 

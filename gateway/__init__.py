@@ -1,7 +1,7 @@
 """
 Hermes Gateway - Multi-platform messaging integration.
 
-This module provides a unified gateway for connecting the Zeus
+This module provides a unified gateway for connecting the Hermes
 to various messaging platforms (Telegram, Discord, WhatsApp, Weixin, and more) with:
 - Session management (persistent conversations with reset policies)
 - Dynamic context injection (agent knows where messages come from)

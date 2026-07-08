@@ -76,9 +76,9 @@ class TestGenerateDeepLink:
         link = generate_deep_link(
             manager_bot="Bot",
             suggested_username="test_bot",
-            suggested_name="Zeus & Friends",
+            suggested_name="Hermes & Friends",
         )
-        assert "Zeus+%26+Friends" in link
+        assert "Hermes+%26+Friends" in link
 
 
 class TestPairingNonce:
@@ -128,7 +128,7 @@ class TestCreatePairing:
         with patch(
             "hermes_cli.telegram_managed_bot.httpx.post", return_value=mock_resp
         ) as post:
-            pairing = create_pairing("https://api.example.com", bot_name="Zeus")
+            pairing = create_pairing("https://api.example.com", bot_name="Hermes")
 
         assert pairing == TelegramPairing(
             pairing_id="abcdefghijklmnop",
@@ -140,7 +140,7 @@ class TestCreatePairing:
         )
         post.assert_called_once_with(
             "https://api.example.com/v1/telegram/pairings",
-            json={"bot_name": "Zeus"},
+            json={"bot_name": "Hermes"},
             timeout=10.0,
         )
 

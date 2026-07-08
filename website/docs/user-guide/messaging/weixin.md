@@ -1,7 +1,7 @@
 ---
 sidebar_position: 15
 title: "Weixin (WeChat)"
-description: "Connect Zeus to personal WeChat accounts via the iLink Bot API"
+description: "Connect Hermes to personal WeChat accounts via the iLink Bot API"
 ---
 
 # Weixin (WeChat)
